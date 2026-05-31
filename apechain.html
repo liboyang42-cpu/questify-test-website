@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>APECHAIN — Apps Ecosystem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body {
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      font-size: 16px; line-height: 24px;
+      background: #000; color: #fff;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ===== Utility ===== */
+    .font-mono { font-family: 'DM Mono', monospace; }
+    .font-sans  { font-family: 'DM Sans', system-ui, sans-serif; }
+    .uppercase { text-transform: uppercase; }
+    .text-12 { font-size: 12px; }
+    .text-26 { font-size: 26px; }
+    .text-32 { font-size: 32px; }
+    .text-48 { font-size: 48px; }
+    .leading-none { line-height: 1; }
+    .tracking-wide { letter-spacing: 0.05em; }
+    .tracking-widest { letter-spacing: 0.1em; }
+
+    /* ===== Layout ===== */
+    .page-wrap { min-height: 100vh; }
+
+    /* ── Grid system ── */
+    .grid { display: grid; }
+    .grid-cols-6  { grid-template-columns: repeat(6, 1fr); }
+    .grid-cols-12 { grid-template-columns: repeat(12, 1fr); }
+    .grid-cols-8  { grid-template-columns: repeat(8, 1fr); }
+    .gap-x-12 { column-gap: 12px; }
+    .gap-x-24 { column-gap: 24px; }
+    .gap-y-16 { row-gap: 16px; }
+    .gap-y-60 { row-gap: 60px; }
+
+    .col-span-6  { grid-column: span 6; }
+    .col-span-4  { grid-column: span 4; }
+    .col-span-8  { grid-column: span 8; }
+    .col-span-3  { grid-column: span 3; }
+
+    .px-container { padding-left: 24px; padding-right: 24px; }
+    @media (min-width: 768px) {
+      .md\\:grid-cols-12 { grid-template-columns: repeat(12, 1fr); }
+      .md\\:grid-cols-8  { grid-template-columns: repeat(8, 1fr); }
+      .md\\:col-span-4   { grid-column: span 4; }
+      .md\\:col-span-8   { grid-column: span 8; }
+      .md\\:col-span-3   { grid-column: span 3; }
+      .md\\:col-span-9   { grid-column: span 9; }
+      .md\\:gap-x-12     { column-gap: 12px; }
+      .md\\:gap-x-48     { column-gap: 48px; }
+      .md\\:gap-y-60     { row-gap: 60px; }
+      .md\\:px-33        { padding-left: 33.6px; padding-right: 33.6px; }
+    }
+    @media (min-width: 1024px) {
+      .lg\\:col-span-3   { grid-column: span 3; }
+      .lg\\:col-span-9   { grid-column: span 9; }
+    }
+
+    /* ===== Header ===== */
+    .Header {
+      position: fixed; left: 0; top: 0; z-index: 99;
+      display: flex; width: 100%; height: 100px;
+      align-items: center; justify-content: center;
+      padding: 0 24px;
+      background: transparent;
+    }
+    .Header-inner {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; position: relative;
+    }
+    .Header-logo {
+      position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    }
+    .Header-logo svg { display: block; fill: #fff; }
+    .Header-nav {
+      display: flex; align-items: center; justify-content: center;
+      gap: 48px;
+    }
+    .Header-nav button {
+      background: none; border: none; color: #fff; cursor: pointer;
+      opacity: 0.6; transition: opacity 0.3s;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 16px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.02em;
+    }
+    .Header-nav button:hover,
+    .Header-nav button:focus { opacity: 1; }
+
+    /* ===== Main ===== */
+    .main-content {
+      position: relative; padding-top: 140px;
+      background: #000;
+    }
+
+    /* ── Hero ── */
+    .hero-section {
+      padding: 40px 24px 20px;
+    }
+    @media (min-width: 768px) {
+      .hero-section { padding: 40px 33.6px 20px; }
+    }
+    .hero-title {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 56px; font-weight: 700;
+      line-height: 1.4; letter-spacing: 0.02em;
+      color: #fff;
+    }
+    .hero-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 14px; letter-spacing: 0.05em;
+      color: rgba(255,255,255,0.6);
+      margin-top: 16px; line-height: 1.5;
+    }
+
+    /* ── Layout row: sidebar + grid ── */
+    .layout-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px 12px;
+      padding: 0 24px 80px;
+    }
+    @media (min-width: 768px) {
+      .layout-row {
+        grid-template-columns: repeat(12, 1fr);
+        gap: 48px;
+        padding: 0 33.6px 80px;
+      }
+    }
+
+    /* ===== Sidebar ===== */
+    .Sidebar { width: 100%; max-width: 233px; }
+    @media (min-width: 768px) {
+      .Sidebar {
+        grid-column: span 4; max-width: 233px;
+        padding: 0; position: static;
+      }
+    }
+    @media (min-width: 1024px) {
+      .Sidebar { grid-column: span 3; }
+    }
+
+    /* Search */
+    .SearchBox {
+      position: relative; margin-bottom: 32px;
+    }
+    .SearchBox input {
+      appearance: none;
+      width: 100%; height: 46px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 10px 36px 10px 12px;
+      color: #fff;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .SearchBox input::placeholder { color: rgba(255,255,255,0.3); }
+    .SearchBox input:focus { border-color: rgba(255,255,255,0.5); }
+    .SearchBox svg {
+      position: absolute; right: 12px; top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    /* Filter list */
+    .FilterList { margin-bottom: 32px; }
+    .FilterItem {
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer;
+      padding: 4px 0;
+      transition: opacity 0.3s;
+      user-select: none;
+    }
+    .FilterItem:not(.active) { opacity: 0.2; }
+    .FilterItem:hover { opacity: 1; }
+    .FilterItem.active { opacity: 1; }
+
+    .FilterItem input[type="checkbox"] { display: none; }
+
+    .FilterItem-name {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-weight: 700;
+      font-size: 16px; line-height: 1.4;
+      letter-spacing: 0.02em;
+      color: #fff;
+    }
+    .FilterItem-count {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; font-weight: 400;
+      letter-spacing: 0.05em;
+      color: #fff;
+      padding-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* Sort */
+    .SortSection { margin-top: 16px; }
+    .SortLabel {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; font-weight: 400;
+      text-transform: uppercase; letter-spacing: 0.24px;
+      color: #fff; margin-bottom: 8px;
+    }
+    .SortSelect {
+      position: relative;
+    }
+    .SortSelect select {
+      height: 40px; border-radius: 2px;
+      cursor: pointer; color: #fff;
+      width: 100%;
+      background: transparent;
+      border: 0; padding: 0;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-weight: 700;
+      font-size: 32px; line-height: 0.785;
+      text-transform: uppercase;
+      appearance: none;
+      -webkit-appearance: none;
+      position: relative; z-index: 2;
+      opacity: 0;
+    }
+    .SortSelect-display {
+      pointer-events: none;
+      position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-weight: 700;
+      font-size: 32px; line-height: 0.785;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.2;
+      z-index: 1;
+      white-space: nowrap;
+    }
+    .SortSelect select:hover + .SortSelect-display,
+    .SortSelect select:focus + .SortSelect-display { opacity: 1; }
+    .SortSelect select option {
+      color: #000; background: #fff;
+      font-size: 12px; font-family: 'DM Mono', monospace;
+    }
+
+    /* ===== App Grid ===== */
+    .AppGrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px 12px;
+    }
+    @media (min-width: 768px) {
+      .AppGrid {
+        grid-column: span 8;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 60px 24px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .AppGrid { grid-column: span 9; }
+    }
+
+    /* ===== Card ===== */
+    .AppCard {
+      display: flex; flex-direction: column;
+      gap: 8px; position: relative;
+    }
+    @media (min-width: 768px) {
+      .AppCard { gap: 24px; }
+    }
+    @media (min-width: 768px) {
+      .AppGrid {
+        grid-template-columns: repeat(8, 1fr);
+        gap: 60px 24px;
+      }
+      .AppCard-wrapper { grid-column: span 4; }
+    }
+    @media (min-width: 1024px) {
+      .AppGrid { grid-template-columns: repeat(9, 1fr); }
+      .AppCard-wrapper { grid-column: span 3; }
+    }
+
+    .AppCard-preview {
+      position: relative;
+      border-radius: 8px; overflow: hidden;
+      aspect-ratio: 608 / 336;
+      background: rgba(255,255,255,0.05);
+    }
+    .AppCard-preview img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .AppCard:hover .AppCard-preview img {
+      transform: scale(1.05);
+    }
+
+    /* Category pill */
+    .AppCard-category {
+      position: absolute; top: 12px; left: 12px; z-index: 10;
+    }
+    .AppCard-pill {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1.2px; line-height: 14px;
+      color: #fff;
+      background: rgba(255,255,255,0.3);
+      border-radius: 8px;
+      padding: 5px 8px;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Card frame glow (SVG gradient border) */
+    .AppCard-frame {
+      position: absolute; top: -16px; left: -16px;
+      pointer-events: none;
+      width: calc(100% + 32px); height: calc(100% + 32px);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .AppCard-frame svg {
+      width: 100%; height: 100%;
+      display: block;
+    }
+    .AppCard:hover .AppCard-frame { opacity: 1; }
+
+    /* Card content */
+    .AppCard-content {
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+    }
+    .AppCard-content-inner {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .AppCard-name {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-weight: 700;
+      font-size: 24px; line-height: 1.3;
+      letter-spacing: 0.02em;
+      color: #fff;
+    }
+    @media (min-width: 768px) {
+      .AppCard-name { font-size: 28px; line-height: 1.35; }
+    }
+    .AppCard-desc {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; line-height: 1.4;
+      letter-spacing: 0.02em;
+      color: rgba(255,255,255,0.75);
+    }
+
+    /* ===== Footer ===== */
+    .Footer {
+      position: relative; color: #fff;
+      padding: 80px 0 0;
+    }
+    .Footer-bg {
+      position: absolute; inset: 0; z-index: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .Footer-inner {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; gap: 24px;
+      padding: 48px 24px 32px;
+    }
+    @media (min-width: 768px) {
+      .Footer-inner {
+        flex-direction: row; gap: 24px;
+        padding: 80px 32px 18px;
+        justify-content: flex-end;
+      }
+    }
+
+    .Footer-col {
+      min-width: 0;
+    }
+    @media (min-width: 768px) {
+      .Footer-col { width: calc(100% / 6 * 2); }
+    }
+    .Footer-col h4 {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 26px; font-weight: 400;
+      text-transform: uppercase; line-height: 1;
+      color: #fff; margin-bottom: 22px;
+    }
+    .Footer-col ul { display: flex; flex-direction: column; gap: 8px; }
+    @media (min-width: 768px) {
+      .Footer-col ul { gap: 16px; }
+    }
+    .Footer-col a {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; line-height: 14px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      color: #fff; display: inline-block;
+      transition: opacity 0.2s;
+    }
+    .Footer-col a:hover { opacity: 0.7; }
+
+    .Footer-bottom {
+      position: relative; z-index: 1;
+      padding: 32px 24px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .Footer-bottom-inner {
+      display: flex; flex-direction: column; gap: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; color: rgba(255,255,255,0.5);
+    }
+    .Footer-bottom-inner a { color: rgba(255,255,255,0.5); }
+    .Footer-bottom-inner a:hover { color: #fff; }
+    @media (min-width: 768px) {
+      .Footer-bottom-inner { flex-direction: row; gap: 24px; }
+    }
+
+    /* ===== Animations ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .anim-fade-up {
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .anim-delay-1 { animation-delay: 0.1s; }
+    .anim-delay-2 { animation-delay: 0.2s; }
+    .anim-delay-3 { animation-delay: 0.3s; }
+    .anim-delay-4 { animation-delay: 0.4s; }
+    .anim-delay-5 { animation-delay: 0.5s; }
+    .anim-delay-6 { animation-delay: 0.6s; }
+
+    /* Card stagger on scroll */
+    .AppCard {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .AppCard.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ===== Header ===== -->
+  <header class="Header">
+    <div class="Header-inner">
+      <a class="Header-logo" href="/" title="Home">
+        <svg width="140" height="48" viewBox="0 0 140 48" fill="currentColor">
+          <path d="M69.094 32.7394V26.9929H65.0311V33.1008C65.0311 34.185 64.7409 34.8356 64.0517 34.8356C63.3262 34.8356 63.036 34.185 63.036 33.1008V15.8615C63.036 14.7411 63.3262 14.0905 64.0517 14.0905C64.7409 14.0905 65.0311 14.7411 65.0311 15.8615V21.7163H69.094V16.1867C69.094 12.7172 67.3528 10.8017 64.0517 10.8017C60.7506 10.8017 58.7192 12.7172 58.7192 16.1867V32.7394C58.7192 36.2089 60.7506 38.1244 64.0517 38.1244C67.3528 38.1244 69.094 36.2089 69.094 32.7394Z"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4045 11.0908H17.3985L14.17 37.8353H18.1966L18.6682 32.0166H20.9172L21.3888 37.8353H25.633L22.4045 11.0908ZM18.9584 28.4747L19.3937 22.9813L19.7202 18.3552H19.829L20.1555 22.9813L20.627 28.4747H18.9584Z"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M30.2117 37.8353H34.5284V27.7519H35.8706C38.954 27.7519 40.8403 25.9448 40.8403 22.7283V16.1506C40.8403 12.8979 38.954 11.0908 35.8706 11.0908H30.2117V37.8353ZM35.5079 24.5353H34.5647V14.3074H35.5079C36.2334 14.3074 36.5236 14.9579 36.5236 16.1506V22.7283C36.5236 23.8848 36.2334 24.5353 35.5079 24.5353Z"/>
+          <path d="M45.8129 37.8353V11.0908H54.2287V14.6327H50.1296V22.5476H53.7934V26.0894H50.1296V34.2935H54.2287V37.8353H45.8129Z"/>
+          <path d="M80.7851 37.8353V26.1617H78.4635V37.8353H74.1104V11.0908H78.4635V22.5114H80.7851V11.0908H85.1019V37.8353H80.7851Z"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M97.8954 11.0908H92.8894L89.6609 37.8353H93.6875L94.1591 32.0166H96.4081L96.8797 37.8353H101.124L97.8954 11.0908ZM94.4493 28.4747L94.8846 22.9813L95.2111 18.3552H95.3199L95.6464 22.9813L96.1179 28.4747H94.4493Z"/>
+          <path d="M105.703 37.8353V11.0908H110.056V37.8353H105.703Z"/>
+          <path d="M122.174 24.4992L119.888 11.0908H115.281V37.8353H119.018V22.1862H119.09L122.138 37.8353H125.983V11.0908H122.246V24.4992H122.174Z"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0.564706C0 0.252827 0.253766 0 0.566802 0H139.433C139.746 0 140 0.252827 140 0.564706V47.4353C140 47.7472 139.746 48 139.433 48H0.566802C0.253766 48 0 47.7472 0 47.4353V0.564706ZM3.96761 44.0471V3.95294H136.032V44.0471H3.96761Z"/>
+        </svg>
+      </a>
+      <nav class="Header-nav">
+        <button>Explore</button>
+        <button>Learn</button>
+        <button>Build</button>
+        <button>Bridge</button>
+      </nav>
+    </div>
+  </header>
+
+  <style>
+  /* ===== Header ===== */
+  .Header {
+    position: fixed; left: 0; top: 0; z-index: 99;
+    display: flex; width: 100%; height: 96px;
+    align-items: center; justify-content: center;
+    padding: 0 24px;
+    background: transparent;
+    transition: transform 0.3s ease-in-out;
+  }
+  @media (min-width: 768px) {
+    .Header { height: 100px; }
+  }
+  .Header::before {
+    content: "";
+    pointer-events: none;
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    background-color: #000;
+    transition: transform 0.3s ease-in-out;
+    transform: translateY(-100%);
+  }
+  .Header.scrolled::before {
+    transform: translateY(0);
+  }
+  .Header.hidden-header {
+    transform: translateY(-100%);
+  }
+  .Header.hidden-header::before {
+    transform: translateY(0);
+  }
+  .Header.show-header {
+    transform: translateY(0);
+  }
+
+  .Header-bg-gradient {
+    pointer-events: none;
+    position: absolute; left: 0; right: 0; top: 0;
+    height: 11.25rem;
+    background: linear-gradient(to bottom, #000, transparent);
+    transition: opacity 0.3s ease-in-out;
+    opacity: 1;
+  }
+  .Header.hidden-header .Header-bg-gradient,
+  .Header.scrolled .Header-bg-gradient {
+    opacity: 0;
+  }
+
+  .Header-inner {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; position: relative; max-width: 1440px;
+  }
+  .Header-logo {
+    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  }
+  .Header-logo svg { display: block; }
+  .Header-nav {
+    display: flex; align-items: center; justify-content: center;
+    gap: 48px;
+  }
+  .Header-nav button {
+    background: none; border: none; color: #fff; cursor: pointer;
+    opacity: 0.6; transition: opacity 0.3s;
+    font-family: 'Bebas Neue', 'Oswald', sans-serif;
+    font-size: 26px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.02em;
+    line-height: 0.785;
+  }
+  .Header-nav button:hover,
+  .Header-nav button.active { opacity: 1; }
+
+  /* Hamburger */
+  .hamburger-btn {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    left: 0; z-index: 20;
+    padding: 6px; transition: all 0.3s;
+    background: none; border: none; color: #fff;
+  }
+  .hamburger-btn:hover { background: #fff; color: #000; }
+  @media (min-width: 768px) { .hamburger-btn { display: none; } }
+
+  .mobile-hidden {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .mobile-hidden { display: block; }
+    .mobile-logo { display: none !important; }
+  }
+</style>
+
+<header class="Header" id="mainHeader">
+  <div class="Header-bg-gradient"></div>
+
+  <!-- Hamburger (mobile) -->
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-colors duration-300">
+      <line x1="2" y1="24" x2="30" y2="24" stroke="currentColor" stroke-width="2"></line>
+      <line x1="2" y1="16" x2="30" y2="16" stroke="currentColor" stroke-width="2"></line>
+      <line x1="2" y1="8" x2="30" y2="8" stroke="currentColor" stroke-width="2"></line>
+    </svg>
+  </button>
+
+  <!-- Mobile Logo -->
+  <a title="Home" class="mobile-logo" href="/" style="display:none;">
+    <svg id="ape-chain-logo" width="140" height="48" viewBox="0 0 140 48" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+      <path d="M69.094 32.7394V26.9929H65.0311V33.1008C65.0311 34.185 64.7409 34.8356 64.0517 34.8356C63.3262 34.8356 63.036 34.185 63.036 33.1008V15.8615C63.036 14.7411 63.3262 14.0905 64.0517 14.0905C64.7409 14.0905 65.0311 14.7411 65.0311 15.8615V21.7163H69.094V16.1867C69.094 12.7172 67.3528 10.8017 64.0517 10.8017C60.7506 10.8017 58.7192 12.7172 58.7192 16.1867V32.7394C58.7192 36.2089 60.7506 38.1244 64.0517 38.1244C67.3528 38.1244 69.094 36.2089 69.094 32.7394Z"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4045 11.0908H17.3985L14.17 37.8353H18.1966L18.6682 32.0166H20.9172L21.3888 37.8353H25.633L22.4045 11.0908ZM18.9584 28.4747L19.3937 22.9813L19.7202 18.3552H19.829L20.1555 22.9813L20.627 28.4747H18.9584Z"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.2117 37.8353H34.5284V27.7519H35.8706C38.954 27.7519 40.8403 25.9448 40.8403 22.7283V16.1506C40.8403 12.8979 38.954 11.0908 35.8706 11.0908H30.2117V37.8353ZM35.5079 24.5353H34.5647V14.3074H35.5079C36.2334 14.3074 36.5236 14.9579 36.5236 16.1506V22.7283C36.5236 23.8848 36.2334 24.5353 35.5079 24.5353Z"/>
+      <path d="M45.8129 37.8353V11.0908H54.2287V14.6327H50.1296V22.5476H53.7934V26.0894H50.1296V34.2935H54.2287V37.8353H45.8129Z"/>
+      <path d="M80.7851 37.8353V26.1617H78.4635V37.8353H74.1104V11.0908H78.4635V22.5114H80.7851V11.0908H85.1019V37.8353H80.7851Z"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M97.8954 11.0908H92.8894L89.6609 37.8353H93.6875L94.1591 32.0166H96.4081L96.8797 37.8353H101.124L97.8954 11.0908ZM94.4493 28.4747L94.8846 22.9813L95.2111 18.3552H95.3199L95.6464 22.9813L96.1179 28.4747H94.4493Z"/>
+      <path d="M105.703 37.8353V11.0908H110.056V37.8353H105.703Z"/>
+      <path d="M122.174 24.4992L119.888 11.0908H115.281V37.8353H119.018V22.1862H119.09L122.138 37.8353H125.983V11.0908H122.246V24.4992H122.174Z"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0.564706C0 0.252827 0.253766 0 0.566802 0H139.433C139.746 0 140 0.252827 140 0.564706V47.4353C140 47.7472 139.746 48 139.433 48H0.566802C0.253766 48 0 47.7472 0 47.4353V0.564706ZM3.96761 44.0471V3.95294H136.032V44.0471H3.96761Z"/>
+    </svg>
+  </a>
+
+  <div class="Header-inner">
+    <!-- Desktop Logo -->
+    <a class="Header-logo mobile-hidden" href="/" title="Home">
+      <svg width="140" height="48" viewBox="0 0 140 48" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+        <path d="M69.094 32.7394V26.9929H65.0311V33.1008C65.0311 34.185 64.7409 34.8356 64.0517 34.8356C63.3262 34.8356 63.036 34.185 63.036 33.1008V15.8615C63.036 14.7411 63.3262 14.0905 64.0517 14.0905C64.7409 14.0905 65.0311 14.7411 65.0311 15.8615V21.7163H69.094V16.1867C69.094 12.7172 67.3528 10.8017 64.0517 10.8017C60.7506 10.8017 58.7192 12.7172 58.7192 16.1867V32.7394C58.7192 36.2089 60.7506 38.1244 64.0517 38.1244C67.3528 38.1244 69.094 36.2089 69.094 32.7394Z"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4045 11.0908H17.3985L14.17 37.8353H18.1966L18.6682 32.0166H20.9172L21.3888 37.8353H25.633L22.4045 11.0908ZM18.9584 28.4747L19.3937 22.9813L19.7202 18.3552H19.829L20.1555 22.9813L20.627 28.4747H18.9584Z"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M30.2117 37.8353H34.5284V27.7519H35.8706C38.954 27.7519 40.8403 25.9448 40.8403 22.7283V16.1506C40.8403 12.8979 38.954 11.0908 35.8706 11.0908H30.2117V37.8353ZM35.5079 24.5353H34.5647V14.3074H35.5079C36.2334 14.3074 36.5236 14.9579 36.5236 16.1506V22.7283C36.5236 23.8848 36.2334 24.5353 35.5079 24.5353Z"/>
+        <path d="M45.8129 37.8353V11.0908H54.2287V14.6327H50.1296V22.5476H53.7934V26.0894H50.1296V34.2935H54.2287V37.8353H45.8129Z"/>
+        <path d="M80.7851 37.8353V26.1617H78.4635V37.8353H74.1104V11.0908H78.4635V22.5114H80.7851V11.0908H85.1019V37.8353H80.7851Z"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M97.8954 11.0908H92.8894L89.6609 37.8353H93.6875L94.1591 32.0166H96.4081L96.8797 37.8353H101.124L97.8954 11.0908ZM94.4493 28.4747L94.8846 22.9813L95.2111 18.3552H95.3199L95.6464 22.9813L96.1179 28.4747H94.4493Z"/>
+        <path d="M105.703 37.8353V11.0908H110.056V37.8353H105.703Z"/>
+        <path d="M122.174 24.4992L119.888 11.0908H115.281V37.8353H119.018V22.1862H119.09L122.138 37.8353H125.983V11.0908H122.246V24.4992H122.174Z"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0.564706C0 0.252827 0.253766 0 0.566802 0H139.433C139.746 0 140 0.252827 140 0.564706V47.4353C140 47.7472 139.746 48 139.433 48H0.566802C0.253766 48 0 47.7472 0 47.4353V0.564706ZM3.96761 44.0471V3.95294H136.032V44.0471H3.96761Z"/>
+      </svg>
+    </a>
+
+    <nav class="Header-nav">
+      <button data-nav="explore" class="active">Explore</button>
+      <button data-nav="learn">Learn</button>
+      <button data-nav="build">Build</button>
+      <button data-nav="bridge">Bridge</button>
+    </nav>
+  </div>
+</header>
+
+<script>
+(function() {
+  const header = document.getElementById('mainHeader');
+  if (!header) return;
+
+  let lastScrollY = 0;
+  let ticking = false;
+
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      window.requestAnimationFrame(function() {
+        const currentScrollY = window.scrollY;
+
+        if (currentScrollY > 100) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+
+        if (currentScrollY > lastScrollY && currentScrollY > 200) {
+          header.classList.add('hidden-header');
+          header.classList.remove('show-header');
+        } else if (currentScrollY < lastScrollY && currentScrollY > 200) {
+          header.classList.remove('hidden-header');
+          header.classList.add('show-header');
+        } else if (currentScrollY <= 200) {
+          header.classList.remove('hidden-header');
+          header.classList.remove('show-header');
+        }
+
+        lastScrollY = currentScrollY;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  // Nav button click handlers
+  const navButtons = document.querySelectorAll('.Header-nav button');
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const nav = this.dataset.nav;
+      navButtons.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+
+      // Navigate based on button
+      switch(nav) {
+        case 'explore':
+          window.location.href = '/apechain-home.html';
+          break;
+        case 'build':
+          window.location.href = '/apechain.html';
+          break;
+        case 'learn':
+        case 'bridge':
+          // Placeholder for future pages
+          console.log('Navigate to:', nav);
+          break;
+      }
+    });
+  });
+})();
+</script>
+
+  <!-- ===== Main Content ===== -->
+  <main class="main-content">
+
+    <!-- Hero removed - cleaner layout -->
+
+    <!-- Layout Row -->
+    <div class="layout-row">
+
+      <!-- Sidebar -->
+      <aside class="Sidebar anim-fade-up anim-delay-1">
+        <!-- Search -->
+        <div class="SearchBox">
+          <input type="search" placeholder="Search" aria-label="Filter apps by name" />
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <g clip-path="url(#search-clip)">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M7.9304 9.00619C7.10698 9.59976 6.09456 9.9497 5 9.9497C2.23858 9.9497 0 7.72239 0 4.97485C0 2.22732 2.23858 0 5 0C7.76142 0 10 2.22732 10 4.97485C10 6.09489 9.62799 7.12848 9.00021 7.95997L12 10.9447L10.9393 12L7.9304 9.00619ZM8.5 4.97485C8.5 6.89813 6.933 8.45725 5 8.45725C3.067 8.45725 1.5 6.89813 1.5 4.97485C1.5 3.05158 3.067 1.49246 5 1.49246C6.933 1.49246 8.5 3.05158 8.5 4.97485Z" fill="white"/>
+            </g>
+            <defs><clipPath id="search-clip"><rect width="12" height="12" fill="white"/></clipPath></defs>
+          </svg>
+        </div>
+
+        <!-- Filters -->
+        <div class="FilterList" id="filterList"></div>
+
+        <!-- Sort -->
+        <div class="SortSection">
+          <p class="SortLabel">Sort by:</p>
+          <div class="SortSelect">
+            <select id="sortSelect">
+              <option value="alpha-asc">Alphabetical ASC</option>
+              <option value="alpha-desc">Alphabetical DESC</option>
+            </select>
+            <span class="SortSelect-display" id="sortDisplay">Alphabetical ASC</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- App Grid -->
+      <div class="AppGrid" id="appGrid"></div>
+
+    </div>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="Footer">
+    <picture class="Footer-bg">
+      <source media="(min-width:985px)" srcset="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='400'%3E%3Crect width='1440' height='400' fill='%23000'/%3E%3C/svg%3E" />
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='400'%3E%3Crect width='1440' height='400' fill='%23000'/%3E%3C/svg%3E" alt="" />
+    </picture>
+    <div class="Footer-inner">
+      <div class="Footer-col">
+        <h4>Build on ApeChain</h4>
+        <nav aria-label="Footer navigation">
+          <ul>
+            <li><a href="https://docs.apechain.com/" target="_blank">Docs</a></li>
+            <li><a href="https://apechain.hub.caldera.xyz/" target="_blank">Mainnet Hub</a></li>
+            <li><a href="https://curtis.hub.caldera.xyz/" target="_blank">Testnet Hub</a></li>
+            <li><a href="https://apescan.io" target="_blank">Block Explorer</a></li>
+            <li><a href="https://github.com/yuga-labs/ape-portal-public" target="_blank">Ape Portal</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="Footer-col">
+        <h4>ApeCoin</h4>
+        <nav aria-label="Footer navigation">
+          <ul>
+            <li><a href="https://discord.gg/apecoindao" target="_blank">Discord</a></li>
+            <li><a href="https://x.com/apecoin" target="_blank">Twitter / X</a></li>
+            <li><a href="https://othersidecalendar.apechain.com/" target="_blank">Otherside Calendar</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="Footer-col">
+        <h4>ApeChain</h4>
+        <nav aria-label="Footer navigation">
+          <ul>
+            <li><a href="https://apechain.com/bridge" target="_blank">Bridge</a></li>
+            <li><a href="https://relay.link/" target="_blank">Relay Bridge</a></li>
+            <li><a href="https://docs.apechain.com/the-blueprint" target="_blank">The Blueprint</a></li>
+            <li><a href="https://t.me/ApeChain" target="_blank">Telegram</a></li>
+            <li><a href="https://x.com/apechain" target="_blank">Twitter / X</a></li>
+            <li><a href="https://docs.apechain.com/brand-kit" target="_blank">Brand Kit</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="Footer-bottom">
+      <div class="Footer-bottom-inner">
+        <span>&copy; 2026 Ape Foundation</span>
+        <a href="https://www.apecoin.com/terms">Terms of Service</a>
+        <a href="https://www.apecoin.com/privacy">Privacy Notice</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+// ─── App Data ────────────────────────────────────────────────
+const APPS = [
+  // 游戏类
+  { title: "城市任务链", category: "游戏", desc: "动态生成的城市探险任务与挑战", img: "//images.ctfassets.net/opj3ybl4k7mx/7Cn10d3ErtqfrG6H7EFGg8/1942238297ed97ef14f5e9f1049389f7/apeChain-thumbnail-608x336-Otherside.jpg" },
+  { title: "地标收集", category: "游戏", desc: "扫码打卡城市地点解锁成就", img: "//images.ctfassets.net/opj3ybl4k7mx/4RY933fgr5bhgvPho9Sl98/a27e42b0db63cc884c2bd355d95b840b/608x336-clutch.jpg" },
+  { title: "商户竞赛", category: "游戏", desc: "跨店铺竞速与排行榜系统", img: "//images.ctfassets.net/opj3ybl4k7mx/56iy1xSMTycZMcQ5Iiqa5E/265998e1a0f024b5a4f04075ad5538a6/apeChain-thumbnail-608x336-Gains.jpg" },
+  { title: "时间竞速", category: "游戏", desc: "限时任务与动态事件触发", img: "//images.ctfassets.net/opj3ybl4k7mx/5aOyMzNqSJ6m3XIWx6YaYu/5c2d03cdaa4b908240fef402dbacf88c/apeChain-thumbnail-608x336-Chimpers.jpg" },
+  { title: "阵营战争", category: "游戏", desc: "多人社交对抗与领地争夺", img: "//images.ctfassets.net/opj3ybl4k7mx/4yLgRnZRRhfHEbswLgglr2/a5ba7e89fd20ddc0810fd5ee6f22709c/apeChain-thumbnail-608x336-Head2head.jpg" },
+  { title: "解谜探案", category: "游戏", desc: "城市故事线谜题解构系统", img: "//images.ctfassets.net/opj3ybl4k7mx/2MyTpFnGOBzUsXrXcJz3wt/c9cc84647c976bbd8bcbb87f4c33fcc8/apeChain-thumbnail-608x336-SerumCity.jpg" },
+  
+  // 剧情插件
+  { title: "AI故事引擎", category: "剧情插件", desc: "生成式叙事与动态分支剧情", img: "//images.ctfassets.net/opj3ybl4k7mx/48OMy3cRzsdFbNYR8el1Zk/b2a2036389810b0ac2e3c6dff023d3fb/apeChain-thumbnail-608x336-MadeByApes.jpg" },
+  { title: "角色伴侣系统", category: "剧情插件", desc: "AI NPC全程陪伴与实时对话", img: "//images.ctfassets.net/opj3ybl4k7mx/6D7pFjKr2HtDFGKVc7KXgx/57f2906658c2804867b08a85d0eceea1/apeChain-thumbnail-608x336-CoffeeWCaptain.jpg" },
+  { title: "城市传奇库", category: "剧情插件", desc: "本地化品牌故事与商户背景", img: "//images.ctfassets.net/opj3ybl4k7mx/799tGxJK4QifSPw15l3T5Q/9501459206666bb641f11a9913f8ae36/608x336-dashbo.jpg" },
+  { title: "历史寻踪", category: "剧情插件", desc: "地点关联的互动内容解锁", img: "//images.ctfassets.net/opj3ybl4k7mx/1sIW0LN0KGP4fhqHJpaIbH/88bac67f63a64d4d6db478bc08f5b734/608x336_opensea.jpg" },
+  
+  // 交互插件
+  { title: "AR扫描引擎", category: "交互插件", desc: "虚实互动的沉浸式体验", img: "//images.ctfassets.net/opj3ybl4k7mx/7lOf1BD4ceSm1Ek4IqutpY/10199cab67dd68fc16a404adcbf3f41e/ape-portal-bg.png" },
+  { title: "QR即触发", category: "交互插件", desc: "门店二维码一键启动任务", img: "//images.ctfassets.net/opj3ybl4k7mx/1hUS9PZuBjADG8Jv0obB5e/1ea09046386d84d518c9381ed9bfce4f/apeChain-hero-960x960-apeExpress.jpg" },
+  { title: "社交互动点", category: "交互插件", desc: "多人共享与协作游戏模式", img: "//images.ctfassets.net/opj3ybl4k7mx/1vAafALPxP7FpFMQPSl0Wl/71f61f6a46fd7f9bf1a34f923be49d87/apeChain-hero-960x960-apeStaked.jpg" },
+  { title: "位置签到卡", category: "交互插件", desc: "持久化身份与进度保存", img: "//images.ctfassets.net/opj3ybl4k7mx/1qRoO1Zqjo5yOV0Hlfanyn/e94b79e334d60b963d4da197a3822234/apeChain-thumbnail-608x336-MintPad.jpg" },
+  { title: "即时推送系统", category: "交互插件", desc: "隐藏任务与时限事件通知", img: "//images.ctfassets.net/opj3ybl4k7mx/1e40wdhm9t2mNSVf2wczv4/fcff96473ce757556dfaf2739487b133/apeChain-thumbnail-608x336-OpenOcean.jpg" },
+  
+  // AI插件
+  { title: "AI导游伴侣", category: "AI插件", desc: "实时路线规划与动态推荐", img: "//images.ctfassets.net/opj3ybl4k7mx/2j93hSibyaTc5YkT62uAIV/fb0c60c57b3699212a264bea7ea0ec8f/apeChain-thumbnail-608x336-Cyan.jpg" },
+  { title: "任务生成器", category: "AI插件", desc: "基于用户与环境的智能生成", img: "//images.ctfassets.net/opj3ybl4k7mx/3vJOgW7fMadcfXrn492l0w/ba71dfec0eba4735b6bc714f3d03effa/apeChain-thumbnail-608x336-Camelot.jpg" },
+  { title: "对话代理", category: "AI插件", desc: "多轮交互的自然语言处理", img: "//images.ctfassets.net/opj3ybl4k7mx/32WPBqQxnODkWsSCwmgXJn/c510903d6b36c2cc3b0361dfcbc15370/apeChain-thumbnail-608x336-Privy.jpg" },
+  { title: "智能匹配器", category: "AI插件", desc: "用户偏好与商户的精准适配", img: "//images.ctfassets.net/opj3ybl4k7mx/4BpxZwFJZr0RWYiTibqCuV/3f39f0bc84582df9ae37426561466eb5/apeChain-thumbnail-608x336-Pyth.jpg" },
+  { title: "行为分析器", category: "AI插件", desc: "实时学习与系统持续优化", img: "//images.ctfassets.net/opj3ybl4k7mx/jt0U8MNhEKwAnUq4jizEc/7b4d9d0b35f23aa63f5884064bd71f08/apeChain-thumbnail-608x336-RainbowWallet.jpg" },
+  
+  // 成就激励
+  { title: "徽章收集簿", category: "成就激励", desc: "完成任务解锁专属勋章", img: "//images.ctfassets.net/opj3ybl4k7mx/5xp5L5ZAAWNFmZeF1mt6Qr/668ab55c759cf6dc36ad95b04ca2ac05/apeChain-thumbnail-608x336-Relay.jpg" },
+  { title: "排行榜竞技", category: "成就激励", desc: "实时排名与周期结算奖励", img: "//images.ctfassets.net/opj3ybl4k7mx/7p8NZGKQYkFu2NEiFRjBpj/e9b655c1a04555d1febf7bf050dc9eac/apeChain-thumbnail-608x336-Spotlight.jpg" },
+  { title: "等级进阶", category: "成就激励", desc: "持久化身份与角色成长体系", img: "//images.ctfassets.net/opj3ybl4k7mx/5D9igzUo4DOCTuN00ziJii/abb51f5bccf7695cfcaa827a685ccab8/apeChain-thumbnail-608x336-Stargate.jpg" },
+  { title: "奖励兑换", category: "成就激励", desc: "链上NFT与商户优惠券整合", img: "//images.ctfassets.net/opj3ybl4k7mx/606Ce7C4Bg7OEG0qjKb7W0/5c8d49fc02d156228b5d5e3c8b85de9f/Banner.png" }
+];
+
+// ─── Category counts ───
+const CATEGORIES = [
+  { name: "全部", key: null },
+  { name: "游戏", key: "游戏" },
+  { name: "剧情插件", key: "剧情插件" },
+  { name: "交互插件", key: "交互插件" },
+  { name: "AI插件", key: "AI插件" },
+  { name: "成就激励", key: "成就激励" }
+];
+
+function countCategory(key) {
+  if (!key) return APPS.length;
+  return APPS.filter(a => a.category.includes(key)).length;
+}
+
+// ─── Render filters ───
+function renderFilters() {
+  const el = document.getElementById('filterList');
+  el.innerHTML = CATEGORIES.map((cat, i) => {
+    const count = countCategory(cat.key);
+    const active = i === 0 ? 'active' : '';
+    return `
+      <label class="FilterItem ${active}" data-filter="${cat.key || 'all'}">
+        <input type="checkbox" ${i === 0 ? 'checked' : ''} />
+        <span class="FilterItem-name">${cat.name}</span>
+        <span class="FilterItem-count">${count}</span>
+      </label>
+    `;
+  }).join('');
+
+  el.addEventListener('click', (e) => {
+    // Ignore clicks on the checkbox itself to prevent double-fire from <label> default behavior
+    if (e.target.tagName === 'INPUT') return;
+    const label = e.target.closest('.FilterItem');
+    if (!label) return;
+
+    // Toggle
+    if (label.dataset.filter === 'all') {
+      // "All" activates only itself
+      el.querySelectorAll('.FilterItem').forEach(l => l.classList.remove('active'));
+      label.classList.add('active');
+      label.querySelector('input[type="checkbox"]').checked = true;
+    } else {
+      // Toggle this filter
+      label.classList.toggle('active');
+      const cb = label.querySelector('input[type="checkbox"]');
+      cb.checked = label.classList.contains('active');
+
+      // If no category filter is active, activate "All"
+      const anyActive = el.querySelectorAll('.FilterItem[data-filter]:not([data-filter="all"]).active').length > 0;
+      const allItem = el.querySelector('[data-filter="all"]');
+      allItem.classList.toggle('active', !anyActive);
+      allItem.querySelector('input[type="checkbox"]').checked = !anyActive;
+    }
+    renderGrid();
+  });
+}
+
+// ─── Render grid ───
+function renderGrid() {
+  const grid = document.getElementById('appGrid');
+
+  // Get active filters
+  const activeFilters = [];
+  document.querySelectorAll('.FilterItem.active[data-filter]:not([data-filter="all"])').forEach(l => {
+    activeFilters.push(l.dataset.filter);
+  });
+  const showAll = activeFilters.length === 0;
+
+  // Get sort
+  const sortVal = document.getElementById('sortSelect').value;
+
+  // Filter
+  let filtered = showAll
+    ? [...APPS]
+    : APPS.filter(a => activeFilters.some(f => a.category.includes(f)));
+
+  // Sort
+  if (sortVal === 'alpha-asc') {
+    filtered.sort((a, b) => a.title.localeCompare(b.title));
+  } else {
+    filtered.sort((a, b) => b.title.localeCompare(a.title));
+  }
+
+  // Render
+  grid.innerHTML = filtered.map((app, i) => `
+    <div class="AppCard-wrapper"><a href="deploy.html?id=${i}" class="AppCard" style="transition-delay: ${i * 30}ms">
+      <div class="AppCard-preview">
+        <img src="${app.img}" alt="${app.title}" loading="lazy" />
+        <div class="AppCard-category">
+          <span class="AppCard-pill">${app.category.split(',')[0]}</span>
+        </div>
+        <!-- frame glow -->
+        <div class="AppCard-frame">
+          <svg viewBox="0 0 373 220" fill="none">
+            <defs>
+              <linearGradient id="g${i}" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="10%" stop-color="#A281FF"/>
+                <stop offset="33%" stop-color="#EB8280"/>
+                <stop offset="66%" stop-color="#EBBF9A"/>
+                <stop offset="90%" stop-color="#89D0FF"/>
+              </linearGradient>
+            </defs>
+            <rect x="16" y="16" width="341" height="188" rx="8" stroke="url(#g${i})" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+      </div>
+      <div class="AppCard-content">
+        <div class="AppCard-content-inner">
+          <div class="AppCard-name">${app.title}</div>
+          ${app.desc ? `<div class="AppCard-desc">${app.desc}</div>` : ''}
+        </div>
+      </div>
+    </a></div>
+  `).join('');
+
+  // Trigger scroll reveal
+  observeCards();
+}
+
+// ─── Scroll reveal ───
+function observeCards() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px 60px 0px' });
+
+  document.querySelectorAll('.AppCard:not(.visible)').forEach(el => observer.observe(el));
+}
+
+// ─── Sort init ───
+document.getElementById('sortSelect').addEventListener('change', function() {
+  const txt = this.options[this.selectedIndex].text;
+  document.getElementById('sortDisplay').textContent = txt;
+  renderGrid();
+});
+
+// ─── Search ───
+document.querySelector('.SearchBox input').addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  document.querySelectorAll('.AppCard').forEach(card => {
+    const name = card.querySelector('.AppCard-name').textContent.toLowerCase();
+    card.style.display = name.includes(q) ? '' : 'none';
+  });
+});
+
+// ─── Init ───
+renderFilters();
+renderGrid();
+</script>
+
+</body>
+</html>

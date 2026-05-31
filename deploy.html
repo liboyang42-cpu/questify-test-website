@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APECHAIN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100%;
+      background: #000;
+      color: #fff;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Cosmic canvas ───────────────────────────────── */
+    #cosmicCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── Nav header ──────────────────────────────────── */
+    .SiteHeader {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+    }
+    .SiteHeader::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+      pointer-events: none;
+    }
+    .Header-logo {
+      position: relative;
+      z-index: 1;
+      font-family: 'Bebas Neue', 'Oswald', sans-serif;
+      font-size: 22px;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #fff;
+      text-decoration: none;
+    }
+    .Header-back {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .Header-back:hover { color: #fff; }
+    .Header-back svg { width: 14px; height: 14px; }
+
+    /* ── Page layout ─────────────────────────────────── */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 100px 32px 64px;
+    }
+    .page-inner {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    @media (min-width: 768px) {
+      .page-inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+      }
+    }
+
+    /* ── 3D Card ─────────────────────────────────────── */
+    .card-perspective {
+      perspective: 900px;
+      perspective-origin: center center;
+    }
+    .card-tilt {
+      position: relative;
+      border-radius: 20px;
+      transform-style: preserve-3d;
+      transition: transform 0.12s ease;
+      cursor: default;
+    }
+    .card-tilt.resetting {
+      transition: transform 0.55s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    /* Rainbow gradient border */
+    .card-tilt::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #A281FF 10%, #EB8280 33%, #EBBF9A 66%, #89D0FF 90%);
+      z-index: 0;
+    }
+    .card-img-wrap {
+      position: relative;
+      z-index: 1;
+      border-radius: 18px;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+    }
+    .card-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* Specular highlight that follows the mouse */
+    .card-shine {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      border-radius: 18px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.18), transparent 60%);
+    }
+    .card-tilt:hover .card-shine { opacity: 1; }
+
+    /* ── App info ─────────────────────────────────────── */
+    .app-info {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .app-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .app-eyebrow::before {
+      content: "";
+      display: inline-block;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #0088FF;
+    }
+
+    .app-name {
+      font-family: 'Bebas Neue', 'Oswald', sans-serif;
+      font-size: clamp(52px, 7vw, 96px);
+      font-weight: 400;
+      line-height: 0.9;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+
+    .app-desc {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.65);
+      max-width: 440px;
+    }
+
+    /* ── Action buttons ───────────────────────────────── */
+    .app-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .UIBtn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      border-radius: 16px;
+      padding: 15px 28px;
+      cursor: pointer;
+      min-width: 140px;
+      overflow: visible;
+    }
+    .UIBtn.primary {
+      background: #fff;
+      color: #000;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .UIBtn.primary:hover {
+      background: #0088FF;
+      color: #fff;
+    }
+    .UIBtn.secondary {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7);
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .UIBtn.secondary:hover {
+      background: #0088FF;
+      color: #fff;
+    }
+
+    /* Rainbow glow border on hover */
+    .UIBtn-glow {
+      position: absolute;
+      pointer-events: none;
+      top: -3px; left: -3px;
+      width: calc(100% + 6px);
+      height: calc(100% + 6px);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    .UIBtn-glow svg { width: 100%; height: 100%; display: block; }
+    .UIBtn:hover .UIBtn-glow { opacity: 1; }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+      cursor: pointer;
+    }
+    .btn-icon:hover {
+      border-color: rgba(0,136,255,0.6);
+      background: rgba(0,136,255,0.12);
+      color: #fff;
+    }
+    .btn-icon svg { width: 17px; height: 17px; }
+  </style>
+</head>
+<body>
+
+  <canvas id="cosmicCanvas"></canvas>
+
+  <!-- Nav -->
+  <header class="SiteHeader">
+    <a class="Header-logo" href="apechain-home.html">APECHAIN</a>
+    <a class="Header-back" href="apechain-home.html">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M9 2.5L4.5 7 9 11.5"/>
+      </svg>
+      返回
+    </a>
+  </header>
+
+  <main class="page">
+    <div class="page-inner">
+
+      <!-- Card with 3D tilt -->
+      <div class="card-perspective">
+        <div class="card-tilt" id="card3d">
+          <div class="card-img-wrap">
+            <img id="appImg" src="" alt="" />
+            <div class="card-shine" id="cardShine"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- App info -->
+      <div class="app-info">
+        <div class="app-eyebrow" id="appCategory">剧情插件</div>
+        <h1 class="app-name" id="appName">LBS任务链引擎</h1>
+        <p class="app-desc" id="appDesc">基于位置服务的Web3任务链引擎，将现实城市地点与链上成就系统深度融合。</p>
+
+        <!-- App info details -->
+        <div id="appInfo" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.85);"></div>
+
+        <div class="app-actions">
+          <!-- Launch button -->
+          <a class="UIBtn primary" id="appLaunchBtn" href="#">
+            <span class="UIBtn-glow">
+              <svg viewBox="0 0 196 78" preserveAspectRatio="none">
+                <defs>
+                  <filter id="dg1"><feGaussianBlur stdDeviation="2"/></filter>
+                  <filter id="dg2">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+                    <feFlood flood-color="white" flood-opacity="0.4"/>
+                    <feComposite operator="in" in2="SourceAlpha"/>
+                    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                  <linearGradient id="dgrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="10%"  stop-color="#A281FF"/>
+                    <stop offset="33%"  stop-color="#EB8280"/>
+                    <stop offset="66%"  stop-color="#EBBF9A"/>
+                    <stop offset="90%"  stop-color="#89D0FF"/>
+                  </linearGradient>
+                </defs>
+                <rect x="0" y="0" width="196" height="78" rx="16" fill="none" stroke="url(#dgrad)" stroke-width="1" filter="url(#dg1)"/>
+                <rect x="0" y="0" width="196" height="78" rx="16" fill="none" stroke="url(#dgrad)" stroke-width="1" filter="url(#dg2)"/>
+                <rect x="0" y="0" width="196" height="78" rx="16" fill="none" stroke="url(#dgrad)" stroke-width="1.5"/>
+              </svg>
+            </span>
+            立即体验
+          </a>
+
+          <!-- Share icon -->
+          <button class="btn-icon" title="分享">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/>
+            </svg>
+          </button>
+
+          <!-- X/Twitter icon -->
+          <a class="btn-icon" href="#" title="Twitter / X">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Load content data -->
+  const APPS = [
+  // 游戏类
+  {
+    title: "城市任务链",
+    category: "游戏",
+    desc: "动态生成的城市探险任务与挑战",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/7Cn10d3ErtqfrG6H7EFGg8/1942238297ed97ef14f5e9f1049389f7/apeChain-thumbnail-608x336-Otherside.jpg",
+    introduction: "城市任务链是城瘾核心引擎，将城市地理转化为任务流。AI实时生成任务线路，用户探索城市同时完成目标。每条街道、每家门店都可能成为新的任务节点。",
+    gameplay: "打开应用 → 接收AI任务 → 导航至目标位置 → 完成交互 → 获得奖励 → 解锁下一环节。支持单人探险和多人协作。"
+  },
+  {
+    title: "地标收集",
+    category: "游戏",
+    desc: "扫码打卡城市地点解锁成就",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/4RY933fgr5bhgvPho9Sl98/a27e42b0db63cc884c2bd355d95b840b/608x336-clutch.jpg",
+    introduction: "探索城市的同时自动发现地标。每个地点都有独特的标识和背景故事。集齐同类型地标可解锁特殊徽章和奖励。",
+    gameplay: "靠近地标 → 自动识别 → 扫码或拍照确认 → 收集地标卡片 → 积累地点进度 → 达成主题集合获奖励。"
+  },
+  {
+    title: "商户竞赛",
+    category: "游戏",
+    desc: "跨店铺竞速与排行榜系统",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/56iy1xSMTycZMcQ5Iiqa5E/265998e1a0f024b5a4f04075ad5538a6/apeChain-thumbnail-608x336-Gains.jpg",
+    introduction: "多人竞速模式，挑战用户在规定时间内访问指定商户数量。排行榜实时更新，周期结算奖励。商户合作创建专属挑战。",
+    gameplay: "参加竞赛 → 接收商户清单 → 在限时内完成签到 → 提交成绩 → 查看排名 → 领取周期奖励。支持邀请好友组队竞争。"
+  },
+  {
+    title: "时间竞速",
+    category: "游戏",
+    desc: "限时任务与动态事件触发",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/5aOyMzNqSJ6m3XIWx6YaYu/5c2d03cdaa4b908240fef402dbacf88c/apeChain-thumbnail-608x336-Chimpers.jpg",
+    introduction: "时间驱动的任务系统，任务在特定时间自动出现和消失。抓住稍纵即逝的机会，完成闪电任务获得高倍奖励。",
+    gameplay: "接收时限提示 → 在规定时间内赶往地点 → 完成快速交互 → 获得加成奖励。夜间、周末、节假日有特殊任务加成。"
+  },
+  {
+    title: "阵营战争",
+    category: "游戏",
+    desc: "多人社交对抗与领地争夺",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/4yLgRnZRRhfHEbswLgglr2/a5ba7e89fd20ddc0810fd5ee6f22709c/apeChain-thumbnail-608x336-Head2head.jpg",
+    introduction: "城市被划分为多个势力范围。加入阵营与其他玩家争夺领地控制权。控制的地区越多，每日收益越高。",
+    gameplay: "选择加入阵营 → 前往敌方领地 → 完成控制任务 → 转换领地颜色 → 每日获得地区收益 → 参与阵营战役。"
+  },
+  {
+    title: "解谜探案",
+    category: "游戏",
+    desc: "城市故事线谜题解构系统",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/2MyTpFnGOBzUsXrXcJz3wt/c9cc84647c976bbd8bcbb87f4c33fcc8/apeChain-thumbnail-608x336-SerumCity.jpg",
+    introduction: "多线程故事线，玩家通过收集线索解开城市之谜。线索分散在各个地点，需要逻辑推理才能破案。",
+    gameplay: "接收案件线索 → 前往相关地点 → 收集物证 → 进行推理 → 提交答案 → 解锁故事下一章 → 获得剧情奖励。"
+  },
+
+  // 剧情插件
+  {
+    title: "AI故事引擎",
+    category: "剧情插件",
+    desc: "生成式叙事与动态分支剧情",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/48OMy3cRzsdFbNYR8el1Zk/b2a2036389810b0ac2e3c6dff023d3fb/apeChain-thumbnail-608x336-MadeByApes.jpg",
+    introduction: "AI动态生成故事线，根据用户选择创建分支剧情。每个决定都影响故事走向，同一个任务可能有完全不同的结局。",
+    gameplay: "进入故事场景 → 阅读AI生成的叙述 → 做出选择影响剧情 → 解锁新的故事分支 → 体验不同的结局 → 重复游玩发现隐藏剧情。"
+  },
+  {
+    title: "角色伴侣系统",
+    category: "剧情插件",
+    desc: "AI NPC全程陪伴与实时对话",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/6D7pFjKr2HtDFGKVc7KXgx/57f2906658c2804867b08a85d0eceea1/apeChain-thumbnail-608x336-CoffeeWCaptain.jpg",
+    introduction: "AI驱动的动态NPC，可自然对话交互。NPC会记住你的选择，根据历史互动调整态度和任务。",
+    gameplay: "与NPC对话 → 选择对话选项 → 发展NPC关系 → 触发角色支线任务 → 解锁隐藏剧情 → NPC提供特殊帮助。"
+  },
+  {
+    title: "城市传奇库",
+    category: "剧情插件",
+    desc: "本地化品牌故事与商户背景",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/799tGxJK4QifSPw15l3T5Q/9501459206666bb641f11a9913f8ae36/608x336-dashbo.jpg",
+    introduction: "每个商户都有自己的品牌故事和背景设定。探索商户历史，了解其在城市中的角色和影响力。",
+    gameplay: "进入商户地点 → 触发故事弹窗 → 阅读品牌背景 → 参与商户特殊活动 → 收集商户徽章 → 解锁隐藏优惠。"
+  },
+  {
+    title: "历史寻踪",
+    category: "剧情插件",
+    desc: "地点关联的互动内容解锁",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/1sIW0LN0KGP4fhqHJpaIbH/88bac67f63a64d4d6db478bc08f5b734/608x336_opensea.jpg",
+    introduction: "地点本身就是内容。靠近特定位置自动解锁历史信息、文化背景或地理故事。",
+    gameplay: "靠近地点 → 自动接收历史提示 → 阅读地点背景 → 完成相关任务 → 拍照打卡 → 积累知识徽章。"
+  },
+
+  // 交互插件
+  {
+    title: "AR扫描引擎",
+    category: "交互插件",
+    desc: "虚实互动的沉浸式体验",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/7lOf1BD4ceSm1Ek4IqutpY/10199cab67dd68fc16a404adcbf3f41e/ape-portal-bg.png",
+    introduction: "增强现实技术将虚拟内容叠加到现实城市。扫描真实世界发现隐藏的AR内容、虚拟NPC和交互物件。",
+    gameplay: "打开AR扫描 → 对准城市环境 → 发现虚拟元素 → 与AR对象交互 → 收集虚拟奖励 → 拍摄AR照片分享。"
+  },
+  {
+    title: "QR即触发",
+    category: "交互插件",
+    desc: "门店二维码一键启动任务",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/1hUS9PZuBjADG8Jv0obB5e/1ea09046386d84d518c9381ed9bfce4f/apeChain-hero-960x960-apeExpress.jpg",
+    introduction: "商户在门店贴二维码，玩家扫码立即触发该商户的专属任务和优惠。简单快速的交互入口。",
+    gameplay: "靠近商户 → 看到二维码 → 快速扫描 → 任务自动启动 → 完成店内交互 → 领取优惠或奖励。"
+  },
+  {
+    title: "社交互动点",
+    category: "交互插件",
+    desc: "多人共享与协作游戏模式",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/1vAafALPxP7FpFMQPSl0Wl/71f61f6a46fd7f9bf1a34f923be49d87/apeChain-hero-960x960-apeStaked.jpg",
+    introduction: "在特定地点与其他玩家互动。共同完成合作任务、交换物品或进行竞技。",
+    gameplay: "进入社交地点 → 匹配其他玩家 → 组织合作或竞争 → 共同完成目标 → 获得分享奖励 → 建立社交关系。"
+  },
+  {
+    title: "位置签到卡",
+    category: "交互插件",
+    desc: "持久化身份与进度保存",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/1qRoO1Zqjo5yOV0Hlfanyn/e94b79e334d60b963d4da197a3822234/apeChain-thumbnail-608x336-MintPad.jpg",
+    introduction: "在地点签到建立持久化足迹。签到卡记录你在城市中的探索历史，形成个人的位置数据档案。",
+    gameplay: "到达新地点 → 进行签到 → 收集位置卡片 → 查看签到历史 → 达成位置成就 → 分享签到路线。"
+  },
+  {
+    title: "即时推送系统",
+    category: "交互插件",
+    desc: "隐藏任务与时限事件通知",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/1e40wdhm9t2mNSVf2wczv4/fcff96473ce757556dfaf2739487b133/apeChain-thumbnail-608x336-OpenOcean.jpg",
+    introduction: "系统根据你的位置推送实时通知。发现隐藏的快闪活动、限时优惠、周边任务机会。",
+    gameplay: "接收位置推送 → 阅读隐藏任务信息 → 在指定时间赶去 → 完成闪电任务 → 获得稀有奖励。"
+  },
+
+  // AI插件
+  {
+    title: "AI导游伴侣",
+    category: "AI插件",
+    desc: "实时路线规划与动态推荐",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/2j93hSibyaTc5YkT62uAIV/fb0c60c57b3699212a264bea7ea0ec8f/apeChain-thumbnail-608x336-Cyan.jpg",
+    introduction: "AI智能导游根据你的偏好、位置和时间智能规划游览路线。动态调整推荐，避免冷门或危险区域。",
+    gameplay: "输入兴趣 → AI规划最优路线 → 跟随AI导航 → 接收实时推荐 → 发现隐藏景点 → 反馈评价优化AI。"
+  },
+  {
+    title: "任务生成器",
+    category: "AI插件",
+    desc: "基于用户与环境的智能生成",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/3vJOgW7fMadcfXrn492l0w/ba71dfec0eba4735b6bc714f3d03effa/apeChain-thumbnail-608x336-Camelot.jpg",
+    introduction: "AI根据你的行为习惯、当前位置、时间、天气等因素实时生成个性化任务。每次打开都有新任务。",
+    gameplay: "打开应用 → AI自动生成个性化任务 → 完成任务获奖励 → 系统学习你的偏好 → 下次任务更贴切。"
+  },
+  {
+    title: "对话代理",
+    category: "AI插件",
+    desc: "多轮交互的自然语言处理",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/32WPBqQxnODkWsSCwmgXJn/c510903d6b36c2cc3b0361dfcbc15370/apeChain-thumbnail-608x336-Privy.jpg",
+    introduction: "自然对话的AI助手，可以用自然语言提问、寻求建议、解决问题。支持长对话上下文记忆。",
+    gameplay: "点击对话 → 自然语言提问 → AI实时回复 → 多轮对话追问 → 获得帮助信息 → 反馈改进AI。"
+  },
+  {
+    title: "智能匹配器",
+    category: "AI插件",
+    desc: "用户偏好与商户的精准适配",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/4BpxZwFJZr0RWYiTibqCuV/3f39f0bc84582df9ae37426561466eb5/apeChain-thumbnail-608x336-Pyth.jpg",
+    introduction: "AI学习你的消费习惯和兴趣偏好，推荐最匹配的商户、优惠和活动。精准度随使用次数提升。",
+    gameplay: "使用系统建立偏好档案 → AI推荐相关商户 → 前往消费 → 系统记录反馈 → 推荐越来越精准。"
+  },
+  {
+    title: "行为分析器",
+    category: "AI插件",
+    desc: "实时学习与系统持续优化",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/jt0U8MNhEKwAnUq4jizEc/7b4d9d0b35f23aa63f5884064bd71f08/apeChain-thumbnail-608x336-RainbowWallet.jpg",
+    introduction: "后台AI不断分析所有用户行为，优化系统推荐、任务生成、路线规划。个人体验随时间不断改进。",
+    gameplay: "正常使用系统 → AI在后台学习 → 逐步优化体验 → 周期获得个性化报告 → 享受定制体验。"
+  },
+
+  // 成就激励
+  {
+    title: "徽章收集簿",
+    category: "成就激励",
+    desc: "完成任务解锁专属勋章",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/5xp5L5ZAAWNFmZeF1mt6Qr/668ab55c759cf6dc36ad95b04ca2ac05/apeChain-thumbnail-608x336-Relay.jpg",
+    introduction: "完成各类任务和挑战解锁勋章。勋章代表你的成就，可分享展示。集齐主题勋章组合激活特殊效果。",
+    gameplay: "完成特定任务 → 解锁相关勋章 → 查看徽章详情 → 集齐同系列勋章 → 激活勋章加成 → 展示成就。"
+  },
+  {
+    title: "排行榜竞技",
+    category: "成就激励",
+    desc: "实时排名与周期结算奖励",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/7p8NZGKQYkFu2NEiFRjBpj/e9b655c1a04555d1febf7bf050dc9eac/apeChain-thumbnail-608x336-Spotlight.jpg",
+    introduction: "多维度排行榜实时更新排名。按积分、任务完成数、地点探索数等不同维度竞争。每周期结算奖励。",
+    gameplay: "完成任务累积积分 → 查看实时排名 → 目标冲刺高排名 → 周期结算获奖励 → 新周期排名重置。"
+  },
+  {
+    title: "等级进阶",
+    category: "成就激励",
+    desc: "持久化身份与角色成长体系",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/5D9igzUo4DOCTuN00ziJii/abb51f5bccf7695cfcaa827a685ccab8/apeChain-thumbnail-608x336-Stargate.jpg",
+    introduction: "完成任务获经验升级。等级决定可解锁内容、任务难度和奖励幅度。高等级玩家获得特殊头衔。",
+    gameplay: "完成任务获经验 → 积累升级经验条 → 等级提升解锁新功能 → 获得等级奖励 → 挑战更高难度任务。"
+  },
+  {
+    title: "奖励兑换",
+    category: "成就激励",
+    desc: "链上NFT与商户优惠券整合",
+    img: "//images.ctfassets.net/opj3ybl4k7mx/606Ce7C4Bg7OEG0qjKb7W0/5c8d49fc02d156228b5d5e3c8b85de9f/Banner.png",
+    introduction: "积累的成就和代币可兑换商户优惠、NFT资产或现实奖励。链上记录保证权益永久有效。",
+    gameplay: "积累成就积分 → 进入兑换商城 → 选择奖励类型 → 完成兑换交易 → 获得链上凭证 → 商户使用优惠。"
+  }
+];
+
+  <script src="content.js"></script>
+
+  <script>
+    // ── Populate from URL param ──────────────────────────
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var id = parseInt(params.get('id') || '0', 10);
+      var app = APPS[id];
+      if (!app) return;
+
+      document.title = app.title + ' — APECHAIN';
+      document.getElementById('appName').textContent = app.title;
+      document.getElementById('appCategory').textContent = app.category;
+      document.getElementById('appDesc').textContent = app.desc;
+      
+      // Add introduction and gameplay
+      var infoSection = document.getElementById('appInfo');
+      if (infoSection && app.introduction) {
+        infoSection.innerHTML = '<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 18px; font-weight: 600;">应用介绍</h3>' +
+                                '<p style="line-height: 1.6; margin-bottom: 20px;">' + app.introduction + '</p>' +
+                                '<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 18px; font-weight: 600;">玩法说明</h3>' +
+                                '<p style="line-height: 1.6;">' + app.gameplay + '</p>';
+      }
+
+      var img = document.getElementById('appImg');
+      img.crossOrigin = 'anonymous';
+      img.alt = app.name;
+      function extractAndApplyColor() {
+        try {
+          var tmp = document.createElement('canvas');
+          tmp.width = 80; tmp.height = 80;
+          var tc = tmp.getContext('2d');
+          tc.drawImage(img, 0, 0, 80, 80);
+          var px = tc.getImageData(0, 0, 80, 80).data;
+          // Find the most vivid (saturated + bright) pixels
+          var candidates = [];
+          for (var i=0; i<px.length; i+=4) {
+            var r=px[i], g=px[i+1], b=px[i+2];
+            var mx=Math.max(r,g,b), mn=Math.min(r,g,b), d=mx-mn;
+            var brightness=(r+g+b)/3;
+            // Require meaningful brightness and color (not gray/black/white)
+            if (brightness<45 || brightness>230 || mx<60 || d<30) continue;
+            var sat = d/mx;
+            // Score = saturation weighted by brightness (prefer visible, colorful pixels)
+            var score = sat * (1 - Math.abs(brightness/255 - 0.55));
+            candidates.push({r:r, g:g, b:b, s:score});
+          }
+          if (candidates.length===0) return;
+          candidates.sort(function(a,b){return b.s-a.s;});
+          var topN = Math.max(1, Math.floor(candidates.length*0.08));
+          var sr=0, sg=0, sb=0;
+          for (var j=0; j<topN; j++) { sr+=candidates[j].r; sg+=candidates[j].g; sb+=candidates[j].b; }
+          // Normalize to guaranteed visible brightness (max channel ≥ 150)
+          var ar=Math.round(sr/topN), ag=Math.round(sg/topN), ab=Math.round(sb/topN);
+          var maxC = Math.max(ar, ag, ab);
+          if (maxC > 0 && maxC < 150) { var f=150/maxC; ar=Math.min(255,Math.round(ar*f)); ag=Math.min(255,Math.round(ag*f)); ab=Math.min(255,Math.round(ab*f)); }
+          var rgb = [ar, ag, ab];
+          window.__pendingNebulaColor = rgb;
+          if (window.__setNebulaColor) window.__setNebulaColor(rgb[0], rgb[1], rgb[2]);
+        } catch(e) {}
+      }
+      img.onload = extractAndApplyColor;
+      img.src = app.thumb || app.image || '';
+      if (img.complete && img.naturalWidth > 0) extractAndApplyColor();
+    })();
+
+    // ── Cosmic starfield canvas ──────────────────────────
+    (function() {
+      var canvas = document.getElementById('cosmicCanvas');
+      var ctx = canvas.getContext('2d');
+      var W, H, stars = [], nebulas = [];
+      var domR = null, domG = null, domB = null;
+      window.__setNebulaColor = function(r, g, b) {
+        domR = r; domG = g; domB = b;
+        // Recolor a percentage of stars with the dominant color and rebuild color clouds
+        if (stars.length > 0) { recolorStars(); initNebulas(); }
+      };
+      function initNebulas() {
+        nebulas = [];
+        for (var i = 0; i < 7; i++) {
+          var c;
+          if (domR !== null && i < 3) c = [domR, domG, domB];
+          else if (domR !== null && i < 5) c = [domG, domB, domR];
+          else c = [180+Math.floor(Math.random()*60), 180+Math.floor(Math.random()*60), 220+Math.floor(Math.random()*35)];
+          nebulas.push({
+            x: Math.random()*W, y: Math.random()*H,
+            r: 40 + Math.random()*80,
+            c: 'rgba('+c[0]+','+c[1]+','+c[2]+',',
+            a: 0.04 + Math.random()*0.06
+          });
+        }
+      }
+      // Apply pending color extracted before this script ran
+      if (window.__pendingNebulaColor) {
+        var p = window.__pendingNebulaColor;
+        domR = p[0]; domG = p[1]; domB = p[2];
+      }
+
+      function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+
+      function pickStarColor() {
+        // ~20% dominant, ~10% accent, rest white/slight bluish
+        if (domR !== null && Math.random() < 0.20) {
+          return [domR, domG, domB];
+        } else if (Math.random() < 0.10) {
+          // accent: complementary-ish shift from dominant, or light purple/cyan
+          if (domR !== null) {
+            // rotate hue ~120° by shuffling channels
+            return [domG, domB, domR];
+          }
+          return [180, 200, 255];
+        } else {
+          // White-ish with slight blue tint
+          var b = 200 + Math.floor(Math.random()*55);
+          return [b, b, Math.min(255, b+15)];
+        }
+      }
+
+      function recolorStars() {
+        stars.forEach(function(s) {
+          if (s.layer === 2 || (s.layer === 1 && Math.random() < 0.5)) {
+            s.color = pickStarColor();
+          } else if (Math.random() < 0.15) {
+            s.color = pickStarColor();
+          }
+        });
+      }
+
+      function initStars() {
+        stars = [];
+        // Far small dim stars — slow drift
+        for (var i = 0; i < 320; i++) {
+          stars.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*0.8+0.1, a: Math.random(), speed: Math.random()*0.004+0.001, layer: 0,
+            vx: (Math.random()-0.5)*0.12, vy: (Math.random()-0.5)*0.08, color: pickStarColor() });
+        }
+        // Mid stars — medium drift
+        for (var i = 0; i < 100; i++) {
+          stars.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.2+0.5, a: Math.random(), speed: Math.random()*0.003+0.001, layer: 1,
+            vx: (Math.random()-0.5)*0.22, vy: (Math.random()-0.5)*0.15, color: pickStarColor() });
+        }
+        // Bright foreground stars — faster drift
+        for (var i = 0; i < 32; i++) {
+          stars.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.8+0.8, a: Math.random(), speed: Math.random()*0.002+0.0005, layer: 2,
+            vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.28, color: pickStarColor() });
+        }
+        // Tiny scattered color clouds (replaces big nebulas) — small, low-opacity, distributed
+        nebulas = [];
+        for (var i = 0; i < 7; i++) {
+          var c;
+          if (domR !== null && i < 3) c = [domR, domG, domB];
+          else if (domR !== null && i < 5) c = [domG, domB, domR]; // accent
+          else c = [180+Math.floor(Math.random()*60), 180+Math.floor(Math.random()*60), 220+Math.floor(Math.random()*35)];
+          nebulas.push({
+            x: Math.random()*W, y: Math.random()*H,
+            r: 40 + Math.random()*80,
+            c: 'rgba('+c[0]+','+c[1]+','+c[2]+',',
+            a: 0.04 + Math.random()*0.06
+          });
+        }
+      }
+
+      var raf;
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Subtle deep-space background — uniform dark, faint color hint (no center halo)
+        var tR = domR !== null ? Math.min(20, 4 + Math.round(domR*0.06)) : 4;
+        var tG = domG !== null ? Math.min(20, 5 + Math.round(domG*0.05)) : 5;
+        var tB = domB !== null ? Math.min(28, 12+ Math.round(domB*0.07)) : 12;
+        ctx.fillStyle = 'rgb('+tR+','+tG+','+tB+')';
+        ctx.fillRect(0, 0, W, H);
+
+        // Small scattered color clouds (very subtle, no central halo)
+        nebulas.forEach(function(n) {
+          var grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+          grad.addColorStop(0, n.c + n.a + ')');
+          grad.addColorStop(1, n.c + '0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+          ctx.fill();
+        });
+
+        // Stars — drift + twinkle, individual colors
+        var now = Date.now() * 0.001;
+        stars.forEach(function(s) {
+          s.x += s.vx;
+          s.y += s.vy;
+          if (s.x < -5) s.x = W + 5;
+          else if (s.x > W + 5) s.x = -5;
+          if (s.y < -5) s.y = H + 5;
+          else if (s.y > H + 5) s.y = -5;
+
+          var twinkle = (Math.sin(now * s.speed * 60 + s.a * 20) + 1) * 0.5;
+          var alpha = s.layer === 0 ? twinkle * 0.45 + 0.05
+                    : s.layer === 1 ? twinkle * 0.65 + 0.15
+                    : twinkle * 0.85 + 0.25;
+          var c = s.color || [255,255,255];
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+          ctx.fillStyle = 'rgba('+c[0]+','+c[1]+','+c[2]+','+alpha+')';
+          ctx.fill();
+          // Glow for brighter stars
+          if (s.layer === 2) {
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r*2.5, 0, Math.PI*2);
+            ctx.fillStyle = 'rgba('+c[0]+','+c[1]+','+c[2]+','+(alpha*0.18)+')';
+            ctx.fill();
+          }
+        });
+
+        raf = requestAnimationFrame(draw);
+      }
+
+      resize();
+      initStars();
+      draw();
+      window.addEventListener('resize', function() {
+        resize();
+        initStars();
+      });
+    })();
+
+    // ── 3D card tilt interaction ─────────────────────────
+    (function() {
+      var card = document.getElementById('card3d');
+      var shine = document.getElementById('cardShine');
+      if (!card) return;
+
+      var resetTimer;
+
+      card.addEventListener('mousemove', function(e) {
+        clearTimeout(resetTimer);
+        card.classList.remove('resetting');
+
+        var rect = card.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width;   // 0..1
+        var y = (e.clientY - rect.top) / rect.height;   // 0..1
+        var nx = x - 0.5;  // -0.5..0.5
+        var ny = y - 0.5;
+
+        // Pressed-in effect: tilt toward the mouse position
+        var maxTilt = 18;
+        var rx = ny * -maxTilt;   // top of mouse → card top tilts away
+        var ry = nx *  maxTilt;   // right of mouse → card right tilts away
+
+        card.style.transform = 'rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) scale3d(1.02,1.02,1.02)';
+
+        // Move specular highlight to mouse position
+        shine.style.backgroundImage =
+          'radial-gradient(circle at ' + (x*100) + '% ' + (y*100) + '%, rgba(255,255,255,0.2), transparent 55%)';
+      });
+
+      card.addEventListener('mouseleave', function() {
+        card.classList.add('resetting');
+        card.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
+        shine.style.backgroundImage = '';
+        resetTimer = setTimeout(function() {
+          card.classList.remove('resetting');
+        }, 600);
+      });
+    })();
+  </script>
+</body>
+</html>

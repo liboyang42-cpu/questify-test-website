@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="A real-time WebGL galaxy field with deep-space particles and gravitational motion." data-content-key="galaxy.description" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title data-content-key="galaxy.title">Galactic Core</title>
+  </head>
+  <body>
+    <canvas id="gl-stage" aria-label="Interactive cinematic galaxy field"></canvas>
+    <canvas id="overlay-stage" aria-hidden="true"></canvas>
+
+    <main class="hud" aria-label="Experiment interface">
+      <header class="hud__top">
+        <a class="brand" href="/" aria-label="Galactic Core home">
+          <span class="brand__mark"></span>
+          <span data-content-key="galaxy.brand">Galactic Core</span>
+        </a>
+        <div class="hud__status">
+          <span data-status="fps">60</span>
+          <span data-content-key="galaxy.status">Realtime WebGL</span>
+        </div>
+      </header>
+
+      <section class="hero-panel" aria-labelledby="hero-title">
+        <p class="eyebrow" data-content-key="galaxy.eyebrow">Deep-space gravitational field</p>
+        <h1 id="hero-title" data-content-key="galaxy.heroTitle">A galaxy wakes.</h1>
+        <p class="hero-panel__copy" data-content-key="galaxy.heroCopy">A cinematic star system where dust lanes, stellar cores, pointer gravity, and camera drift share one slow orbital pulse.</p>
+      </section>
+
+      <footer class="hud__bottom">
+        <button class="hud-trigger" type="button" data-transition-trigger data-next-scene="vex" data-content-key="galaxy.triggers.0.label">Drag gravity</button>
+        <button class="hud-trigger" type="button" data-transition-trigger data-next-scene="asme" data-content-key="galaxy.triggers.1.label">Ignite the core</button>
+        <button class="hud-trigger" type="button" data-transition-trigger data-next-scene="bloom" data-content-key="galaxy.triggers.2.label">Compress spacetime</button>
+      </footer>
+    </main>
+
+    <div id="next-scene" aria-label="Asme landing experience"></div>
+
+    <script src="./content.js"></script>
+    <script type="module" src="/src/app.js"></script>
+  </body>
+</html>
