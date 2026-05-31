@@ -5,3 +5,11 @@ dist/
 .env
 .env.*
 test-results/
+
+# Temporary / snapshot files
+thomas-*
+tm-*
+test-save
+vex-fixed
+vex-visible
+videos/
