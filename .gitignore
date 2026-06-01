@@ -14,3 +14,8 @@ vex-fixed
 vex-visible
 videos/
 # auto-commit test
+
+# 测试工具缓存 / 备份(绝不入库)
+.ms-playwright/
+.codex-backups/
+.claude/
