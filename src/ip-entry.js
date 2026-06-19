@@ -676,6 +676,8 @@ function renderDetail() {
   const projectIndex = projects.findIndex(item => item.id === project.id);
   const leftProject = projects[wrapProjectIndex(projectIndex - 1)];
   const rightProject = projects[wrapProjectIndex(projectIndex + 1)];
+  const nextProject = rightProject;
+  const nextRightProject = projects[wrapProjectIndex(projectIndex + 2)];
 
   root.innerHTML = `
     ${baseStyles()}
@@ -748,7 +750,7 @@ function renderDetail() {
       .play:hover { background: #fff; color: #000; box-shadow: 0 0 36px rgba(214,235,255,0.36); }
       @keyframes playFloat { 0%,100% { transform: translate(-50%,-50%) scale(1); } 50% { transform: translate(-50%,-54%) scale(1.025); } }
       .play::before { content: "▶"; display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid #fff; border-radius: 8px; font-family: var(--mono); font-size: 24px; }
-      .content { position: relative; width: min(100%, 1440px); margin: 0 auto; padding: 88px 20px 160px; }
+      .content { position: relative; width: min(100%, 1440px); margin: 0 auto; padding: 88px 20px 80px; }
       .article { margin-left: 24vw; max-width: 760px; padding-top: 34px; opacity: 0; transform: translate3d(0,44px,0); transition: opacity 0.85s ease, transform 0.95s cubic-bezier(.2,.8,.2,1); }
       .article.in-view { opacity: 1; transform: translate3d(0,0,0); }
       .section-kicker { color: rgba(255,255,255,0.46); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
@@ -772,6 +774,117 @@ function renderDetail() {
       .map-nodes::after { inset: 31% 25%; border-color: rgba(156,255,109,0.28); }
       .node { position: absolute; transform: translate(-50%,-50%); min-width: 128px; padding: 10px 12px; border-radius: 6px; background: rgba(0,0,0,0.76); border: 1px solid rgba(255,255,255,0.22); color: #fff; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; animation: nodePulse 3.8s ease-in-out infinite; }
       @keyframes nodePulse { 0%,100% { box-shadow: 0 0 0 rgba(125,249,255,0); } 50% { box-shadow: 0 0 26px rgba(125,249,255,0.14); } }
+      .next-scroll {
+        position: relative;
+        min-height: 92vh;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background: #000;
+      }
+      .next-scroll::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 52% 40%, rgba(255,255,255,0.08), transparent 13%),
+          linear-gradient(180deg, transparent, rgba(255,255,255,0.04));
+        opacity: 0.72;
+      }
+      .next-scroll__label {
+        position: relative;
+        z-index: 1;
+        color: #fff;
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .handoff {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        overflow: hidden;
+        background: #000;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        perspective: 980px;
+        perspective-origin: 50% 42%;
+        transform-style: preserve-3d;
+        transition: opacity 0.42s ease, visibility 0.42s ease;
+      }
+      .handoff.is-active { opacity: 1; visibility: visible; }
+      .handoff-ring {
+        position: absolute;
+        left: 50%;
+        top: 9vh;
+        width: min(52vw, 730px);
+        aspect-ratio: 1 / 1;
+        transform-style: preserve-3d;
+        transform-origin: 50% 50%;
+        will-change: transform;
+      }
+      .handoff-card {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        border: 0;
+        background: #dde1fb;
+        box-shadow:
+          -3px 0 0 rgba(255,75,24,0.72),
+          3px 0 0 rgba(0,118,255,0.9),
+          0 0 0 8px #030303,
+          28px 22px 0 rgba(0,0,0,0.9);
+        transform-style: preserve-3d;
+        backface-visibility: visible;
+        will-change: transform, opacity, filter;
+      }
+      .handoff-card.front {
+        background:
+          radial-gradient(circle at 62% 38%, rgba(255,255,255,0.18), transparent 15%),
+          linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+          #07080d;
+        background-size: auto, 44px 44px, 44px 44px, auto;
+      }
+      .handoff-card svg {
+        position: absolute;
+        inset: 13%;
+        width: 74%;
+        height: 74%;
+        filter: drop-shadow(0 20px 18px rgba(0,0,0,0.28));
+      }
+      .handoff-card:not(.front) svg { opacity: 0.34; }
+      .handoff-title {
+        position: absolute;
+        left: 1vw;
+        right: -1vw;
+        bottom: 4.2vh;
+        z-index: 7;
+        color: #fff;
+        font-family: var(--display);
+        font-size: clamp(108px, 18vw, 260px);
+        line-height: 0.7;
+        letter-spacing: 0;
+        text-transform: uppercase;
+        pointer-events: none;
+      }
+      .handoff-status {
+        position: absolute;
+        left: 24px;
+        bottom: 26px;
+        z-index: 8;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+      }
+      body.handoff-lock { overflow: hidden; }
       @media (max-width: 900px) {
         .side-nav { display: none; }
         .hero { min-height: 1180px; }
@@ -784,6 +897,8 @@ function renderDetail() {
         .media-block { min-height: 460px; }
         .article { margin-left: 0; padding-left: 20px; padding-right: 20px; }
         .event-strip, .entry-row, .entity-row { grid-template-columns: 1fr; }
+        .handoff-ring { top: 18vh; width: 82vw; }
+        .handoff-title { font-size: 45vw; bottom: 6vh; }
       }
     </style>
     <div class="page project-${project.id}">
@@ -820,6 +935,16 @@ function renderDetail() {
         <article class="article" id="participation"><span class="section-kicker">[PARTICIPATION]</span><h2>This city is not watched. It is entered.</h2><p>You are not a user. You are a system node. Join live events, create a city narrative node, or become a persistent entity in the World / IP Layer.</p><div class="entry-row"><div class="entry"><h3>Join Event</h3><p>Participate in live city events.</p></div><div class="entry"><h3>Create Event</h3><p>Generate your own city narrative node.</p></div><div class="entry"><h3>Become Entity</h3><p>Join as a persistent character.</p></div></div></article>
         <article class="article" id="related-archives"><span class="section-kicker">[RELATED ARCHIVES]</span><h2>Additional city records remain partially indexed</h2><p>Recovered fragments, inactive event nodes, and future city expansions are staged here as a living archive for the next system release.</p></article>
       </main>
+      <section class="next-scroll" aria-label="Scroll for next archive"><div class="next-scroll__label">Scroll for ${nextProject.title}</div></section>
+      <div class="handoff" aria-hidden="true">
+        <div class="handoff-ring">
+          <div class="handoff-card left">${projectVisual(leftProject, true)}</div>
+          <div class="handoff-card front">${projectVisual(project, true)}</div>
+          <div class="handoff-card right">${projectVisual(nextProject, true)}</div>
+        </div>
+        <div class="handoff-title">WORLD / IP</div>
+        <div class="handoff-status">Scroll for ${nextProject.short}</div>
+      </div>
     </div>
   `;
 
@@ -834,6 +959,15 @@ function renderDetail() {
   const archiveCard = document.querySelector('.archive-card');
   const heroIndex = document.querySelector('.hero-index');
   const sideNav = document.querySelector('.side-nav');
+  const nextScroll = document.querySelector('.next-scroll');
+  const handoff = document.querySelector('.handoff');
+  const handoffRing = document.querySelector('.handoff-ring');
+  const handoffFaces = {
+    left: document.querySelector('.handoff-card.left'),
+    front: document.querySelector('.handoff-card.front'),
+    right: document.querySelector('.handoff-card.right')
+  };
+  let handoffStarted = false;
 
   requestAnimationFrame(() => setTimeout(() => document.body.classList.add('loaded'), 540));
 
@@ -862,6 +996,14 @@ function renderDetail() {
   }
 
   let ticking = false;
+  function maybeStartHandoff() {
+    if (handoffStarted) return;
+    const nextRect = nextScroll.getBoundingClientRect();
+    const nearDocumentEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 140;
+    const nextPromptEntered = nextRect.top <= window.innerHeight * 0.42;
+    if (nearDocumentEnd || nextPromptEntered) startNextHandoff();
+  }
+
   function updateMotion() {
     const y = window.scrollY || 0;
     const p = clamp(y / 1000, 0, 1);
@@ -889,6 +1031,7 @@ function renderDetail() {
       requestAnimationFrame(updateMotion);
       ticking = true;
     }
+    maybeStartHandoff();
   }, { passive: true });
   updateMotion();
 
@@ -898,6 +1041,105 @@ function renderDetail() {
     });
   }, { threshold: 0.18 });
   document.querySelectorAll('.article, .archive-image, .event-card, .entity-row, .entry').forEach(el => revealObserver.observe(el));
+
+  const handoffObserver = new IntersectionObserver((entries) => {
+    if (entries.some(entry => entry.isIntersecting)) startNextHandoff();
+  }, { threshold: 0.34 });
+  handoffObserver.observe(nextScroll);
+
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function setHandoffFace(face, projectForFace, role) {
+    face.dataset.project = projectForFace.id;
+    face.innerHTML = projectVisual(projectForFace, role !== 'front');
+    face.classList.toggle('front', role === 'front');
+    face.classList.toggle('left', role === 'left');
+    face.classList.toggle('right', role === 'right');
+  }
+
+  function updateHandoffGeometry(angle = 0) {
+    const size = handoffRing.getBoundingClientRect().width;
+    const half = size / 2;
+    const wallAngle = 72;
+    const wallRadians = wallAngle * Math.PI / 180;
+    const hingeX = half;
+    const sideCenter = half + (Math.cos(wallRadians) * half) - size * 0.045;
+    const sideZ = Math.sin(wallRadians) * half;
+    const states = {
+      '-2': { x: -sideCenter - size * 0.64, z: sideZ * 1.16, ry: wallAngle + 18, opacity: 0, filter: 0.42 },
+      '-1': { x: -sideCenter, z: sideZ, ry: wallAngle, opacity: 0.94, filter: 0.86 },
+      '0': { x: 0, z: 0, ry: 0, opacity: 1, filter: 1 },
+      '1': { x: sideCenter, z: sideZ, ry: -wallAngle, opacity: 0.94, filter: 0.86 },
+      '2': { x: sideCenter + size * 0.64, z: sideZ * 1.16, ry: -wallAngle - 18, opacity: 0, filter: 0.42 }
+    };
+
+    function mix(from, to, t) {
+      return from + (to - from) * t;
+    }
+
+    function stateFor(slot) {
+      const clamped = Math.max(-2, Math.min(2, slot));
+      const lower = Math.floor(clamped);
+      const upper = Math.ceil(clamped);
+      if (lower === upper) return states[String(lower)];
+      const start = states[String(lower)];
+      const end = states[String(upper)];
+      const t = clamped - lower;
+      return {
+        x: mix(start.x, end.x, t),
+        z: mix(start.z, end.z, t),
+        ry: mix(start.ry, end.ry, t),
+        opacity: mix(start.opacity, end.opacity, t),
+        filter: mix(start.filter, end.filter, t)
+      };
+    }
+
+    function place(face, baseSlot) {
+      const state = stateFor(baseSlot - angle);
+      face.style.transform = `translate3d(calc(-50% + ${state.x}px), 0, ${state.z}px) rotateY(${state.ry}deg)`;
+      face.style.opacity = state.opacity;
+      face.style.filter = `brightness(${state.filter}) saturate(${face.classList.contains('front') ? 1 : 0.9})`;
+      face.style.zIndex = String(Math.round((state.z + hingeX) * 10));
+    }
+
+    handoffRing.style.transform = 'translateX(-50%) rotateZ(-4deg)';
+    place(handoffFaces.left, -1);
+    place(handoffFaces.front, 0);
+    place(handoffFaces.right, 1);
+  }
+
+  function startNextHandoff() {
+    if (handoffStarted) return;
+    handoffStarted = true;
+    handoffObserver.disconnect();
+    document.body.classList.add('handoff-lock');
+    handoff.classList.add('is-active');
+    updateHandoffGeometry(0);
+
+    const duration = 980;
+    const startedAt = performance.now() + 180;
+
+    function step(now) {
+      const t = Math.max(0, Math.min((now - startedAt) / duration, 1));
+      updateHandoffGeometry(easeInOutCubic(t));
+      if (t < 1) {
+        requestAnimationFrame(step);
+        return;
+      }
+
+      setHandoffFace(handoffFaces.left, project, 'left');
+      setHandoffFace(handoffFaces.front, nextProject, 'front');
+      setHandoffFace(handoffFaces.right, nextRightProject, 'right');
+      updateHandoffGeometry(0);
+      setTimeout(() => {
+        window.location.href = `./ip.html?project=${nextProject.id}`;
+      }, 260);
+    }
+
+    requestAnimationFrame(step);
+  }
 }
 
 if (detailMode) renderDetail();
