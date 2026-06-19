@@ -598,7 +598,7 @@ window.__siteContent = {
 
   function hydrateApechainHome() {
     const content = window.__siteContent && window.__siteContent.apechain;
-    if (!content) return;
+    if (!content || !document.querySelector('#heroSection')) return;
 
     injectStyleRules('site-content-apechain-styles', apechainStyleRules(content));
 

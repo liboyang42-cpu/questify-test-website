@@ -354,6 +354,7 @@
   </main>
 
   <!-- Load content data -->
+  <script>
   const APPS = [
   // 游戏类
   {
@@ -557,6 +558,7 @@
     gameplay: "积累成就积分 → 进入兑换商城 → 选择奖励类型 → 完成兑换交易 → 获得链上凭证 → 商户使用优惠。"
   }
 ];
+  </script>
 
   <script src="content.js"></script>
 
@@ -564,22 +566,55 @@
     // ── Populate from URL param ──────────────────────────
     (function() {
       var params = new URLSearchParams(window.location.search);
+      var site = window.__siteContent && window.__siteContent.apechain;
+      var featuredId = params.has('featured') ? parseInt(params.get('featured') || '0', 10) : null;
       var id = parseInt(params.get('id') || '0', 10);
-      var app = APPS[id];
+
+      function normalizeApp(app, fallback) {
+        if (!app) return null;
+        var name = app.name || app.title || (fallback && fallback.name) || 'APECHAIN APP';
+        var category = app.category || (fallback && fallback.category) || '应用';
+        var description = app.description || app.desc || (fallback && fallback.description) || '';
+        return {
+          name: name,
+          category: category,
+          description: description,
+          image: app.thumb || app.image || app.img || (fallback && (fallback.thumb || fallback.image || fallback.img)) || '',
+          color: app.color || (fallback && fallback.color) || '#0088FF',
+          introduction: app.introduction || '这是一个面向 ApeChain 生态的城市应用模块，将现实地点、用户行为和链上记录连接成可持续运行的互动体验。',
+          gameplay: app.gameplay || '进入应用后选择目标任务，按提示完成地点互动、内容触发或数据提交，系统会同步更新进度并展示对应奖励。'
+        };
+      }
+
+      var sourceApp = null;
+      var fallbackCard = null;
+      if (featuredId !== null && site && site.appsData) {
+        sourceApp = site.appsData[featuredId];
+      } else {
+        sourceApp = site && site.appsSection && site.appsSection.cards ? site.appsSection.cards[id] : null;
+        fallbackCard = APPS[id];
+      }
+
+      var app = normalizeApp(sourceApp, fallbackCard);
       if (!app) return;
 
-      document.title = app.title + ' — APECHAIN';
-      document.getElementById('appName').textContent = app.title;
+      document.title = app.name + ' — APECHAIN';
+      document.getElementById('appName').textContent = app.name;
       document.getElementById('appCategory').textContent = app.category;
-      document.getElementById('appDesc').textContent = app.desc;
+      document.getElementById('appDesc').textContent = app.description;
       
       // Add introduction and gameplay
       var infoSection = document.getElementById('appInfo');
-      if (infoSection && app.introduction) {
+      function escapeHTML(value) {
+        return String(value).replace(/[&<>"']/g, function(ch) {
+          return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
+        });
+      }
+      if (infoSection) {
         infoSection.innerHTML = '<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 18px; font-weight: 600;">应用介绍</h3>' +
-                                '<p style="line-height: 1.6; margin-bottom: 20px;">' + app.introduction + '</p>' +
+                                '<p style="line-height: 1.6; margin-bottom: 20px;">' + escapeHTML(app.introduction) + '</p>' +
                                 '<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 18px; font-weight: 600;">玩法说明</h3>' +
-                                '<p style="line-height: 1.6;">' + app.gameplay + '</p>';
+                                '<p style="line-height: 1.6;">' + escapeHTML(app.gameplay) + '</p>';
       }
 
       var img = document.getElementById('appImg');
@@ -620,7 +655,7 @@
         } catch(e) {}
       }
       img.onload = extractAndApplyColor;
-      img.src = app.thumb || app.image || '';
+      img.src = app.image || '';
       if (img.complete && img.naturalWidth > 0) extractAndApplyColor();
     })();
 
