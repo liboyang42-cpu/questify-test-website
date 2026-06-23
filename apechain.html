@@ -460,30 +460,7 @@
 
 <div class="page-wrap">
 
-  <!-- ===== Header ===== -->
-  <header class="Header">
-    <div class="Header-inner">
-      <a class="Header-logo" href="/" title="Home">
-        <svg width="140" height="48" viewBox="0 0 140 48" fill="currentColor">
-          <path d="M69.094 32.7394V26.9929H65.0311V33.1008C65.0311 34.185 64.7409 34.8356 64.0517 34.8356C63.3262 34.8356 63.036 34.185 63.036 33.1008V15.8615C63.036 14.7411 63.3262 14.0905 64.0517 14.0905C64.7409 14.0905 65.0311 14.7411 65.0311 15.8615V21.7163H69.094V16.1867C69.094 12.7172 67.3528 10.8017 64.0517 10.8017C60.7506 10.8017 58.7192 12.7172 58.7192 16.1867V32.7394C58.7192 36.2089 60.7506 38.1244 64.0517 38.1244C67.3528 38.1244 69.094 36.2089 69.094 32.7394Z"/>
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4045 11.0908H17.3985L14.17 37.8353H18.1966L18.6682 32.0166H20.9172L21.3888 37.8353H25.633L22.4045 11.0908ZM18.9584 28.4747L19.3937 22.9813L19.7202 18.3552H19.829L20.1555 22.9813L20.627 28.4747H18.9584Z"/>
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M30.2117 37.8353H34.5284V27.7519H35.8706C38.954 27.7519 40.8403 25.9448 40.8403 22.7283V16.1506C40.8403 12.8979 38.954 11.0908 35.8706 11.0908H30.2117V37.8353ZM35.5079 24.5353H34.5647V14.3074H35.5079C36.2334 14.3074 36.5236 14.9579 36.5236 16.1506V22.7283C36.5236 23.8848 36.2334 24.5353 35.5079 24.5353Z"/>
-          <path d="M45.8129 37.8353V11.0908H54.2287V14.6327H50.1296V22.5476H53.7934V26.0894H50.1296V34.2935H54.2287V37.8353H45.8129Z"/>
-          <path d="M80.7851 37.8353V26.1617H78.4635V37.8353H74.1104V11.0908H78.4635V22.5114H80.7851V11.0908H85.1019V37.8353H80.7851Z"/>
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M97.8954 11.0908H92.8894L89.6609 37.8353H93.6875L94.1591 32.0166H96.4081L96.8797 37.8353H101.124L97.8954 11.0908ZM94.4493 28.4747L94.8846 22.9813L95.2111 18.3552H95.3199L95.6464 22.9813L96.1179 28.4747H94.4493Z"/>
-          <path d="M105.703 37.8353V11.0908H110.056V37.8353H105.703Z"/>
-          <path d="M122.174 24.4992L119.888 11.0908H115.281V37.8353H119.018V22.1862H119.09L122.138 37.8353H125.983V11.0908H122.246V24.4992H122.174Z"/>
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0.564706C0 0.252827 0.253766 0 0.566802 0H139.433C139.746 0 140 0.252827 140 0.564706V47.4353C140 47.7472 139.746 48 139.433 48H0.566802C0.253766 48 0 47.7472 0 47.4353V0.564706ZM3.96761 44.0471V3.95294H136.032V44.0471H3.96761Z"/>
-        </svg>
-      </a>
-      <nav class="Header-nav">
-        <a href="./apechain-home.html" aria-current="page">探索</a>
-        <a href="./ip.html">IP</a>
-        <a href="./build.html">构建</a>
-        <a href="./about.html">联系我们</a>
-      </nav>
-    </div>
-  </header>
+  <!-- (重复的静态 Header 已移除,统一用下方 #mainHeader) -->
 
   <style>
   /* ===== Header ===== */
@@ -619,10 +596,10 @@
     </a>
 
     <nav class="Header-nav">
-      <button data-nav="explore" class="active">Explore</button>
-      <button data-nav="learn">Learn</button>
-      <button data-nav="build">Build</button>
-      <button data-nav="bridge">Bridge</button>
+      <a href="./apechain-home.html" aria-current="page">探索</a>
+      <a href="./ip.html">IP</a>
+      <a href="./build.html">构建</a>
+      <a href="./about.html">联系我们</a>
     </nav>
   </div>
 </header>
@@ -791,6 +768,7 @@
 // ─── App Data ────────────────────────────────────────────────
 const APPS = [
   // 游戏类
+  { title: "d20 判定", category: "游戏", desc: "城市任务里的掷骰判定 · 点击试玩", link: "d20.html", img: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='608'%20height='336'%3E%3Crect%20width='608'%20height='336'%20fill='%23120608'/%3E%3Cpolygon%20points='304%2C84%20402%2C152%20366%2C246%20242%2C246%20206%2C152'%20fill='none'%20stroke='%23ff2233'%20stroke-width='6'/%3E%3Ctext%20x='304'%20y='292'%20font-family='Arial'%20font-size='58'%20font-weight='bold'%20fill='%23ff2233'%20text-anchor='middle'%3Ed20%3C/text%3E%3C/svg%3E" },
   { title: "城市任务链", category: "游戏", desc: "动态生成的城市探险任务与挑战", img: "//images.ctfassets.net/opj3ybl4k7mx/7Cn10d3ErtqfrG6H7EFGg8/1942238297ed97ef14f5e9f1049389f7/apeChain-thumbnail-608x336-Otherside.jpg" },
   { title: "地标收集", category: "游戏", desc: "扫码打卡城市地点解锁成就", img: "//images.ctfassets.net/opj3ybl4k7mx/4RY933fgr5bhgvPho9Sl98/a27e42b0db63cc884c2bd355d95b840b/608x336-clutch.jpg" },
   { title: "商户竞赛", category: "游戏", desc: "跨店铺竞速与排行榜系统", img: "//images.ctfassets.net/opj3ybl4k7mx/56iy1xSMTycZMcQ5Iiqa5E/265998e1a0f024b5a4f04075ad5538a6/apeChain-thumbnail-608x336-Gains.jpg" },
@@ -911,7 +889,7 @@ function renderGrid() {
 
   // Render
   grid.innerHTML = filtered.map((app, i) => `
-    <div class="AppCard-wrapper"><a href="deploy.html?id=${i}" class="AppCard" style="transition-delay: ${i * 30}ms">
+    <div class="AppCard-wrapper"><a href="${app.link || 'deploy.html?id=' + i}" class="AppCard" style="transition-delay: ${i * 30}ms">
       <div class="AppCard-preview">
         <img src="${app.img}" alt="${app.title}" loading="lazy" />
         <div class="AppCard-category">

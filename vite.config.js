@@ -13,6 +13,7 @@ export default defineConfig({
         apechain: resolve(__dirname, 'apechain.html'),
         build: resolve(__dirname, 'build.html'),
         about: resolve(__dirname, 'about.html'),
+        d20: resolve(__dirname, 'd20.html'),
       },
     },
   },
