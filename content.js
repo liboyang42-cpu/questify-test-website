@@ -55,7 +55,7 @@ window.__siteContent = {
     ]
   },
   apechain: {
-    pageTitle: 'APECHAIN',
+    pageTitle: '城瘾',
 
     header: {
       homeTitle: 'Home',
@@ -117,7 +117,7 @@ window.__siteContent = {
           'text-transform': 'uppercase'
         }
       },
-      description: '基于位置服务的Web3任务链引擎，将现实地点与链上成就深度融合',
+      description: '基于位置服务的任务链引擎，将现实地点与成就系统深度融合',
       descriptionStyle: {
         selector: '.Hero-description p span',
         css: {
@@ -159,18 +159,18 @@ window.__siteContent = {
       {
         name: 'LBS任务链引擎',
         category: '剧情插件',
-        description: '基于位置服务的Web3任务链引擎，将现实城市地点与链上成就系统深度融合',
-        image: 'https://images.ctfassets.net/opj3ybl4k7mx/7Cn10d3ErtqfrG6H7EFGg8/1942238297ed97ef14f5e9f1049389f7/apeChain-thumbnail-608x336-Otherside.jpg',
-        thumb: 'https://images.ctfassets.net/opj3ybl4k7mx/2J6KKq5u2F9zIl5L9maX9g/ab97e1bd1e38cbb58718e991ee123583/apeChain-hero-960x960-Otherside.jpg',
+        description: '基于位置服务的任务链引擎，将现实城市地点与成就系统深度融合',
+        image: '/assets/placeholder-app.svg',
+        thumb: '/assets/placeholder-app.svg',
         link: '/apps/otherside',
         color: '#A281FF'
       },
       {
         name: 'D20判定',
         category: '游戏',
-        description: '基于D20规则的链上游戏判定系统，每次掷骰都上链记录',
-        image: 'https://images.ctfassets.net/opj3ybl4k7mx/48OMy3cRzsdFbNYR8el1Zk/b2a2036389810b0ac2e3c6dff023d3fb/apeChain-thumbnail-608x336-MadeByApes.jpg',
-        thumb: 'https://images.ctfassets.net/opj3ybl4k7mx/15yPALJilSS9qb07GSF8Zs/9bccadf42723734f55ec2a0b5d3f6fe7/apeChain-feature-608x960-MadeByApes.jpg',
+        description: '基于D20规则的游戏判定系统，每次掷骰都有记录判定',
+        image: '/assets/placeholder-app.svg',
+        thumb: '/assets/placeholder-app.svg',
         link: '/apps/made-by-apes',
         color: '#EB8280'
       },
@@ -178,35 +178,35 @@ window.__siteContent = {
         name: ' NPC对话引导',
         category: 'AI插件',
         description: '智能NPC对话引导插件，基于大语言模型驱动的角色扮演系统',
-        image: 'https://images.ctfassets.net/opj3ybl4k7mx/1sIW0LN0KGP4fhqHJpaIbH/88bac67f63a64d4d6db478bc08f5b734/608x336_opensea.jpg',
-        thumb: 'https://images.ctfassets.net/opj3ybl4k7mx/7iFJe0Q1aX5fKc1d8epQaE/39743450485b7dd498b312c0efa990b9/960x960_opensea.jpg',
+        image: '/assets/placeholder-app.svg',
+        thumb: '/assets/placeholder-app.svg',
         link: '/apps/opensea',
         color: '#EBBF9A'
       },
       {
         name: '商户分析',
         category: '商户插件',
-        description: '链上商户数据分析平台，实时追踪门店客流与链上转化',
-        image: 'https://images.ctfassets.net/opj3ybl4k7mx/4RY933fgr5bhgvPho9Sl98/a27e42b0db63cc884c2bd355d95b840b/608x336-clutch.jpg',
-        thumb: 'https://images.ctfassets.net/opj3ybl4k7mx/4YlMJVGA2312YhmLtu4bGQ/a6144db6461b8e317e9722dd50ffc43e/960x960-clutch.jpg',
+        description: '商户数据分析平台，实时追踪门店客流与转化',
+        image: '/assets/placeholder-app.svg',
+        thumb: '/assets/placeholder-app.svg',
         link: '/apps/clutch-market',
         color: '#89D0FF'
       },
       {
         name: 'AR互动',
         category: '交互插件',
-        description: 'AR互动 is a RWA platform built for the EVM, with support for ApeChain',
-        image: 'https://images.ctfassets.net/opj3ybl4k7mx/606Ce7C4Bg7OEG0qjKb7W0/5c8d49fc02d156228b5d5e3c8b85de9f/Banner.png',
-        thumb: 'https://images.ctfassets.net/opj3ybl4k7mx/606Ce7C4Bg7OEG0qjKb7W0/5c8d49fc02d156228b5d5e3c8b85de9f/Banner.png',
+        description: '虚实互动的沉浸式 AR 体验',
+        image: '/assets/placeholder-app.svg',
+        thumb: '/assets/placeholder-app.svg',
         link: '/apps/slab-cash',
         color: '#0054FA'
       },
       {
         name: '收集图鉴',
         category: '成就激励',
-        description: '链上成就收集系统，完成任务解锁专属图鉴与NFT勋章',
-        image: 'https://images.ctfassets.net/opj3ybl4k7mx/7Cn10d3ErtqfrG6H7EFGg8/1942238297ed97ef14f5e9f1049389f7/apeChain-thumbnail-608x336-Otherside.jpg',
-        thumb: 'https://images.ctfassets.net/opj3ybl4k7mx/2J6KKq5u2F9zIl5L9maX9g/ab97e1bd1e38cbb58718e991ee123583/apeChain-hero-960x960-Otherside.jpg',
+        description: '成就收集系统，完成任务解锁专属图鉴与勋章',
+        image: '/assets/placeholder-app.svg',
+        thumb: '/assets/placeholder-app.svg',
         link: '/apps/成就激励',
         color: '#00A7FA'
       }
@@ -254,7 +254,7 @@ window.__siteContent = {
       launch: '立即体验',
       about: '了解更多',
       featured: {
-        name: 'Clutch Markets',
+        name: '应用名称待补',
         nameStyle: {
           selector: '.Spotlight-featured-card .card-text h3',
           css: {
@@ -271,7 +271,7 @@ window.__siteContent = {
             }
           }
         },
-        description: '去中心化链上竞猜平台，ApeChain原生体验',
+        description: '城市主题竞猜玩法',
         descriptionStyle: {
           selector: '.Spotlight-featured-card .card-text p',
           css: {
@@ -287,7 +287,7 @@ window.__siteContent = {
     },
 
     appsSection: {
-      title: 'ApeChain 应用',
+      title: '城瘾 应用',
       titleStyle: {
         selector: '.SectionGridCarousel .section-title h2',
         css: {
@@ -378,7 +378,7 @@ window.__siteContent = {
         { name: '徽章收集簿', category: '成就激励', description: '完成任务解锁专属勋章' },
         { name: '排行榜竞技', category: '成就激励', description: '实时排名与周期结算奖励' },
         { name: '等级进阶', category: '成就激励', description: '持久化身份与角色成长体系' },
-        { name: '奖励兑换', category: '成就激励', description: '链上NFT与商户优惠券整合' }
+        { name: '奖励兑换', category: '成就激励', description: '奖励凭证与商户优惠券整合' }
       ]
     },
 
@@ -419,7 +419,7 @@ window.__siteContent = {
     },
 
     footer: {
-      brand: 'APECHAIN',
+      brand: '城瘾',
       brandStyle: {
         selector: '.Footer-big-word',
         css: {
@@ -431,7 +431,7 @@ window.__siteContent = {
           'text-transform': 'uppercase'
         }
       },
-      copyright: '© 2026 Ape Foundation',
+      copyright: '© 2026 城瘾',
       legal: ['Terms of Service', 'Privacy Notice'],
       legalStyle: {
         selector: '.Footer-bottom-inner',
@@ -466,20 +466,7 @@ window.__siteContent = {
           'text-transform': 'uppercase'
         }
       },
-      columns: [
-        {
-          title: 'Build on ApeChain',
-          links: ['Docs', 'Mainnet Hub', 'Testnet Hub', 'Block Explorer', 'Ape Portal']
-        },
-        {
-          title: 'ApeCoin',
-          links: ['Discord', 'Twitter / X', 'Otherside Calendar']
-        },
-        {
-          title: 'ApeChain',
-          links: ['Bridge', 'Relay Bridge', 'The Blueprint', 'Telegram', 'Twitter / X', 'Brand Kit']
-        }
-      ]
+      columns: []
     }
   }
 };

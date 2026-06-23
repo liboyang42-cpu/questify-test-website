@@ -280,7 +280,6 @@ const projects = [
     year: '[2026 - LIVE]',
     date: '2000 WINTER',
     contract: 'CY-CASE-001',
-    chain: 'SHANGHAI',
     tag: 'UNSOLVED',
     tone: 'gold',
     about: 'A city detective story flow about Chen Mo, a puzzle-book writer forced to wear his missing twin brother’s police identity and enter a chain of old cases filed as accidents.',
@@ -288,31 +287,29 @@ const projects = [
   },
   {
     id: 'forging',
-    title: 'CLONE X SZN1 FORGING',
-    short: 'FORGING',
+    title: '应用名称待补',
+    short: 'APP 010',
     index: '010',
     year: '[2026 - DROP]',
     date: 'APR. 24TH, 2026',
-    contract: 'ERC-721',
-    chain: 'APECHAIN',
+    contract: 'CY-APP-010',
     tag: 'PHYSICAL',
     tone: 'purple',
-    about: 'Forging is a ritualized production layer where digital identity unlocks physical objects, limited claims, and staged city access.',
-    headline: 'Clone X SZN1 Forging: city identity becomes physical'
+    about: '应用简介待补。',
+    headline: '应用标题待补'
   },
   {
     id: 'airforce',
-    title: 'NIKE AIR FORCE 1',
-    short: 'AIR FORCE',
+    title: '应用名称待补',
+    short: 'APP 011',
     index: '011',
     year: '[2026 - OBJECT]',
     date: 'AUG. 30TH, 2026',
-    contract: 'ERC-721',
-    chain: 'APECHAIN',
+    contract: 'CY-APP-011',
     tag: 'SNEAKERS',
     tone: 'shoe',
-    about: 'The Air Force 1 layer turns a cultural object into an indexed city artifact, connecting wearable identity with event-based ownership.',
-    headline: 'Nike Air Force 1: wearable artifacts enter the city'
+    about: '应用简介待补。',
+    headline: '应用标题待补'
   }
 ];
 
@@ -353,7 +350,7 @@ function projectVisual(project, side = false) {
   if (project.tone === 'purple') {
     return `
       <div class="archive-surface purple-surface">
-        <div class="forging-core">FORGING</div>
+        <div class="forging-core">APP 010</div>
         <div class="forging-rays"></div>
       </div>
       ${side ? '' : '<span class="enter-tip">Click to enter</span>'}
@@ -2113,8 +2110,6 @@ function renderDetail() {
           <div class="meta-grid">
             <div><div class="meta-label">Launch Date</div><div class="meta-value">${project.date}</div></div>
             <div><div class="meta-label">Contract</div><div class="meta-value">${project.contract}</div></div>
-            <div><div class="meta-label">Chain</div><div class="meta-value">${project.chain}</div></div>
-            <div><div class="meta-label">Address</div><div class="meta-value">0xIP...${project.id}</div></div>
           </div>
           <div></div><div class="tag-pill">${project.tag}</div>
         </div>
