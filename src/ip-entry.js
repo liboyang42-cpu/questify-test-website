@@ -461,11 +461,11 @@ function baseStyles() {
 function topbar(center = '') {
   return `
     <div class="topbar">
-      <a class="mark" href="./apechain-home.html" aria-label="Back to home">
+      <a class="mark" href="./index.html" aria-label="Back to home">
         <svg viewBox="0 0 100 60" aria-hidden="true"><path d="M5 8L88 25L74 36L94 52L26 35L37 27L5 8Z" fill="white"/></svg>
       </a>
       <nav class="topbar-nav">
-        <a href="./apechain-home.html">探索</a>
+        <a href="./index.html">探索</a>
         <a href="./ip.html" aria-current="page">IP</a>
         <a href="./build.html">构建</a>
         <a href="./about.html">联系我们</a>
