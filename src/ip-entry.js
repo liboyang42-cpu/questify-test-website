@@ -24,20 +24,267 @@ const navItems = [
   ['related archives', 'related-archives']
 ];
 
+const caseStoryNavItems = [
+  ['intro', 'case-intro'],
+  ['background', 'case-background'],
+  ['route', 'case-route'],
+  ['chapters', 'case-chapters'],
+  ['what happens', 'case-actions'],
+  ['evidence wall', 'case-evidence'],
+  ['enter case', 'case-enter']
+];
+
+const caseAssets = {
+  street: '/assets/case-detective/shanghai-native-quarter.jpg',
+  alley: '/assets/case-detective/longmen-cun.jpg',
+  diary: '/assets/case-detective/detective-diary-page.jpg',
+  noir: '/assets/case-detective/noir-figure.jpg',
+  nanjingRoad: '/assets/case-citywalk/nanjing-road-pedestrians.jpg',
+  nanjingSide: '/assets/case-citywalk/nanjing-side-street.jpg',
+  nightStreet: '/assets/case-citywalk/shanghai-night-street.jpg',
+  fuzhouRoad: '/assets/case-citywalk/fuzhou-henan-road.jpg',
+  peoplesSquare: '/assets/case-citywalk/peoples-square-night.jpg',
+  bund: '/assets/case-citywalk/bund-walk.jpg'
+  ,
+  crosswalkPeople: '/assets/case-citywalk/shanghai-crosswalk-people.jpg',
+  nanjingEveningPeople: '/assets/case-citywalk/nanjing-pedestrian-evening.jpg',
+  nanjingPeopleZone: '/assets/case-citywalk/nanjing-pedestrian-zone.jpg',
+  gameLaneWalk: '/assets/case-game/chapter-01-lane-walk.png',
+  gamePhotoCheck: '/assets/case-game/chapter-02-photo-check.png',
+  gamePagerWalk: '/assets/case-game/chapter-03-pager-walk.png',
+  gameBookshopClue: '/assets/case-game/chapter-04-bookshop-clue.png',
+  gameBundFinal: '/assets/case-game/chapter-05-bund-final.png',
+  xhsCover: '/assets/case-xhs/xhs-cover.png',
+  xhsChapter01: '/assets/case-xhs/xhs-chapter-01.png',
+  xhsChapter02: '/assets/case-xhs/xhs-chapter-02.png',
+  xhsChapter03: '/assets/case-xhs/xhs-chapter-03.png',
+  xhsChapter04: '/assets/case-xhs/xhs-chapter-04.png',
+  xhsChapter05: '/assets/case-xhs/xhs-chapter-05.png',
+  refStartPacket: '/assets/case-citywalk-ref/cropped/IMG_9542-crop.jpg',
+  refNightPacket: '/assets/case-citywalk-ref/cropped/IMG_9543-crop.jpg',
+  refNightStreet: '/assets/case-citywalk-ref/cropped/IMG_9544-crop.jpg',
+  refDetectiveCard: '/assets/case-citywalk-ref/cropped/IMG_9545-crop.jpg',
+  refWalkingBooklet: '/assets/case-citywalk-ref/cropped/IMG_9546-crop.jpg',
+  refMapDocument: '/assets/case-citywalk-ref/cropped/IMG_9547-crop.jpg',
+  refStreetEvidence: '/assets/case-citywalk-ref/cropped/IMG_9551-crop.jpg',
+  refRouteMap: '/assets/case-citywalk-ref/cropped/IMG_9554-crop.jpg',
+  refWalker: '/assets/case-citywalk-ref/cropped/IMG_9557-crop.jpg'
+};
+
+const caseRoutes = [
+  {
+    index: '01',
+    title: '静安别墅',
+    address: '南京西路1025弄',
+    distance: '0.0 KM',
+    time: '00:00',
+    event: '林婉带来皮夹克、传呼机和一封信。',
+    task: '观察弄堂入口编号，把“1025”和传呼机时间 03:17 对应到第一组坐标。',
+    hidden: '门牌号 / 信纸折痕 / 03:17'
+  },
+  {
+    index: '02',
+    title: '张园 / 茂名北路',
+    address: '茂名北路历史街区',
+    distance: '0.9 KM',
+    time: '00:28',
+    event: '陈朗最后一次被目击，一张模糊照片拍到他进入弄堂。',
+    task: '沿茂名北路对比照片里的门楼轮廓、橱窗倒影和街角方向。',
+    hidden: '门楼形状 / 倒影 / 手写时间'
+  },
+  {
+    index: '03',
+    title: '南京西路移动段',
+    address: '张园 → 人民广场方向',
+    distance: '2.2 KM',
+    time: '01:05',
+    event: '陈默以陈朗身份穿过城市，传呼机连续收到三条互相矛盾的消息。',
+    task: '记录三个路口时间点，判断哪条传呼来自陈朗，哪条是诱导路线。',
+    hidden: '公共电话 / 路口钟 / 地铁入口编号'
+  },
+  {
+    index: '04',
+    title: '上海书城福州路店',
+    address: '福州路465号',
+    distance: '3.7 KM',
+    time: '01:55',
+    event: '陈默在自己的旧解谜书里找到第一组真正线索。',
+    task: '把书脊编号、页码 317 和错填数独格转换成下一站街区坐标。',
+    hidden: '书脊编号 / 页码317 / 陈默笔名'
+  },
+  {
+    index: '05',
+    title: '福州路文化街',
+    address: '福州路书店街',
+    distance: '4.6 KM',
+    time: '02:25',
+    event: '三份证词分散在沿街书店、路牌和橱窗里，时间线开始互相打架。',
+    task: '收集三份证词，重排它们的时间顺序，找出不可能同时成立的一分钟。',
+    hidden: '旧书店招牌 / 路牌方向 / 证词碎片'
+  },
+  {
+    index: '06',
+    title: '外滩档案点',
+    address: '中山东二路9号一带',
+    distance: '6.2 KM',
+    time: '03:00',
+    event: '旧案被重新排列，陈朗留下的最后坐标指向城市档案空间。',
+    task: '把六个地点挂回地图，解出最终档案编号，触发案件结局。',
+    hidden: '最终坐标 / 档案编号 / 黄浦江方向'
+  }
+];
+
+const caseChapters = [
+  {
+    index: '01',
+    title: '静安别墅：敲门声',
+    address: '南京西路1025弄',
+    time: '03:17',
+    copy: '穿上皮夹克，从南京西路的弄堂出发。',
+    objective: '进入弄堂',
+    tasks: ['门牌 1025'],
+    clues: ['03:17'],
+    next: '0.9 KM TO ZHANGYUAN',
+    image: caseAssets.refStartPacket,
+    altImage: caseAssets.xhsCover,
+    layout: 'entry'
+  },
+  {
+    index: '02',
+    title: '张园：最后目击',
+    address: '茂名北路历史街区',
+    time: '03:42',
+    copy: '在人群里找陈朗最后出现的入口。',
+    objective: '比对旧照',
+    tasks: ['对照旧照片'],
+    clues: ['倒影'],
+    next: '1.3 KM ON FOOT',
+    image: caseAssets.refDetectiveCard,
+    altImage: caseAssets.refWalkingBooklet,
+    layout: 'photo-check'
+  },
+  {
+    index: '03',
+    title: '南京西路：替身行走',
+    address: '张园 → 人民广场方向',
+    time: '04:18',
+    copy: '沿南京西路继续走，传呼机开始震动。',
+    objective: '跟随传呼',
+    tasks: ['跟随人流'],
+    clues: ['传呼代码'],
+    next: '1.5 KM TO FUZHOU RD',
+    image: caseAssets.refNightPacket,
+    altImage: caseAssets.refNightStreet,
+    layout: 'transit'
+  },
+  {
+    index: '04',
+    title: '上海书城：错填格子',
+    address: '福州路465号',
+    time: '05:03',
+    copy: '在福州路，把旧书页码换成下一段坐标。',
+    objective: '找到页码',
+    tasks: ['页码 317'],
+    clues: ['书脊'],
+    next: '0.9 KM ALONG FUZHOU RD',
+    image: caseAssets.refMapDocument,
+    altImage: caseAssets.refStreetEvidence,
+    layout: 'evidence'
+  },
+  {
+    index: '05',
+    title: '外滩档案点：旧案重排',
+    address: '福州路 → 中山东二路9号一带',
+    time: '05:51',
+    copy: '走到外滩，把一路收集的时间重新排好。',
+    objective: '重排时间',
+    tasks: ['最终档案'],
+    clues: ['6.2 KM'],
+    next: 'ROUTE COMPLETE',
+    image: caseAssets.refRouteMap,
+    altImage: caseAssets.refWalker,
+    layout: 'archive'
+  }
+];
+
+const caseActions = [
+  ['传呼机信息', '移动途中会收到新代码，决定下一站的阅读顺序。'],
+  ['证词碎片', '线索藏在路牌、门牌、橱窗和街角，不只在固定地点。'],
+  ['路线偏移', '如果走错方向，系统会给出新的城市提示。'],
+  ['隐藏线索', '非必需线索会改变最终结局解释的完整度。'],
+  ['现场重排', '把地点、证词、时间重新挂回城市地图。']
+];
+
+const caseClues = [
+  ['静安别墅', '皮夹克 / 信 / 传呼机 / 03:17'],
+  ['张园', '模糊照片 / 门楼 / 橱窗倒影'],
+  ['南京西路移动段', '传呼代码 / 路口时间 / 错误短信'],
+  ['上海书城', '书脊编号 / 页码317 / 数独格'],
+  ['福州路文化街', '三份证词 / 路牌 / 旧案编号'],
+  ['外滩档案点', '最终坐标 / 档案编号 / 黄浦江方向']
+];
+
+function renderCaseStoryArticles() {
+  return `
+        <article class="article story-article case-intro-article" id="about-copy">
+          <div class="case-intro-copy">
+            <span class="section-kicker">[ROUTE INTRO]</span>
+            <h2>6.2 KM 上海夜行</h2>
+            <p>五个地点。三个小时。陈默穿上哥哥的皮夹克，沿南京西路一路走到外滩。</p>
+          </div>
+          <div class="case-intro-visuals" aria-label="案件开场视觉">
+            <div class="case-intro-photo case-intro-photo-primary" style="--intro-image:url('${caseAssets.xhsCover}')"></div>
+            <div class="case-intro-photo case-intro-photo-secondary" style="--intro-image:url('${caseAssets.xhsChapter05}')"></div>
+          </div>
+        </article>
+        ${caseChapters.map((chapter, index) => {
+          const ids = ['live-events', 'city-entities', 'narrative-map', 'participation', 'related-archives'];
+          return `<article class="article story-article story-wide chapter-walk chapter-${chapter.layout}" id="${ids[index]}" data-walk-chapter data-layout="${chapter.layout}" style="--chapter-image:url('${chapter.image}');--chapter-alt-image:url('${chapter.altImage}')">
+            <div class="chapter-route-line" aria-hidden="true"><span></span></div>
+            <div class="chapter-layout">
+              <div class="chapter-content">
+                <span class="section-kicker">[CHAPTER ${chapter.index}]</span>
+                <h2>${chapter.title}</h2>
+                <div class="chapter-meta"><span>${chapter.time}</span><span>${chapter.address}</span></div>
+                <p>${chapter.copy}</p>
+                <div class="chapter-objective"><span>OBJECTIVE</span><strong>${chapter.objective}</strong></div>
+                <div class="chapter-next">${chapter.next}</div>
+              </div>
+              <div class="chapter-visual" aria-label="${chapter.title} 城市照片">
+                <div class="chapter-media chapter-media-main"></div>
+                <div class="chapter-media chapter-media-alt"></div>
+              </div>
+            </div>
+          </article>`;
+        }).join('')}
+  `;
+}
+
+function renderDefaultProjectArticles(project) {
+  return `
+        <article class="article" id="about-copy"><span class="section-kicker">[ABOUT]</span><h2>${project.headline}</h2><p>${project.about}</p><p>The system treats every campaign as a city behavior. Citizens enter through checkpoints, events expand through participation, and story fragments become infrastructure that can be replayed, modified, and inherited by future layers.</p></article>
+        <article class="article" id="live-events"><span class="section-kicker">[LIVE EVENTS]</span><h2>IP events are products, not announcements</h2><div class="event-strip">${events.map(event => `<div class="event-card"><span><em>${event[1]}</em><em>${event[2]}</em></span><h3>${event[0]}</h3><p>${event[3]}</p></div>`).join('')}</div></article>
+        <article class="article" id="city-entities"><span class="section-kicker">[CITY ENTITIES]</span><h2>Persistent agents operate inside the city system</h2><div class="entity-list">${entities.map(entity => `<div class="entity-row"><strong>${entity[0]}</strong><span>${entity[1]}</span><span>${entity[2]}</span></div>`).join('')}</div></article>
+        <article class="article" id="narrative-map"><span class="section-kicker">[NARRATIVE MAP]</span><h2>Story routes operate as city infrastructure</h2><div class="archive-image"><div class="map-nodes"><div class="node" style="left:12%;top:52%;">Reality Entry</div><div class="node" style="left:36%;top:36%;">City Events</div><div class="node" style="left:61%;top:22%;">Night Zone</div><div class="node" style="left:68%;top:54%;">Theater Zone</div><div class="node" style="left:86%;top:38%;">Data Core</div><div class="node" style="left:52%;top:78%;">Hidden Layer</div></div></div></article>
+        <article class="article" id="participation"><span class="section-kicker">[PARTICIPATION]</span><h2>This city is not watched. It is entered.</h2><p>You are not a user. You are a system node. Join live events, create a city narrative node, or become a persistent entity in the World / IP Layer.</p><div class="entry-row"><div class="entry"><h3>Join Event</h3><p>Participate in live city events.</p></div><div class="entry"><h3>Create Event</h3><p>Generate your own city narrative node.</p></div><div class="entry"><h3>Become Entity</h3><p>Join as a persistent character.</p></div></div></article>
+        <article class="article" id="related-archives"><span class="section-kicker">[RELATED ARCHIVES]</span><h2>Additional city records remain partially indexed</h2><p>Recovered fragments, inactive event nodes, and future city expansions are staged here as a living archive for the next system release.</p></article>
+  `;
+}
+
 const projects = [
   {
     id: 'geisai',
-    title: 'WORLD / IP LAYER',
-    short: 'WORLD / IP',
-    index: '009',
+    title: '那一夜，我们一起当警察',
+    short: 'CITY STORY',
+    index: '001',
     year: '[2026 - LIVE]',
-    date: 'JUN. 18TH, 2026',
-    contract: 'CITY-09',
-    chain: 'APECHAIN',
-    tag: 'LIVE',
+    date: '2000 WINTER',
+    contract: 'CY-CASE-001',
+    chain: 'SHANGHAI',
+    tag: 'UNSOLVED',
     tone: 'gold',
-    about: 'World / IP Layer is a living city archive where intellectual property is no longer displayed as static content. It is operated as a sequence of live events, persistent entities, and connected narrative routes.',
-    headline: 'World / IP Layer: the city event system by 城瘾'
+    about: 'A city detective story flow about Chen Mo, a puzzle-book writer forced to wear his missing twin brother’s police identity and enter a chain of old cases filed as accidents.',
+    headline: 'A puzzle writer wears a missing detective’s skin'
   },
   {
     id: 'forging',
@@ -120,9 +367,11 @@ function projectVisual(project, side = false) {
       ${side ? '' : '<span class="enter-tip">Click to enter</span>'}
     `;
   }
-  return side ? sigilSvg(0.8) : `
-    <div class="archive-surface"><div class="object"></div></div>
-    <span class="enter-tip">Click to enter</span>
+  return `
+    <div class="archive-surface gold-surface">
+      <div class="gold-sigil">${sigilSvg(side ? 0.72 : 0.96)}</div>
+    </div>
+    ${side ? '' : '<span class="enter-tip">Click to enter</span>'}
   `;
 }
 
@@ -184,6 +433,11 @@ function baseStyles() {
       .menu::after { content: ""; position: absolute; left: 15px; right: 15px; height: 2px; background: #fff; }
       .menu::before { top: 17px; }
       .menu::after { top: 27px; }
+      .topbar-nav { display: flex; gap: 24px; align-items: center; }
+      .topbar-nav a { color: rgba(255,255,255,.6); text-decoration: none; font-size: 14px; letter-spacing: .08em; }
+      .topbar-nav a:hover,
+      .topbar-nav a[aria-current="page"] { color: #fff; }
+      @media (max-width: 640px) { .topbar-nav { display: none; } }
       .loader-screen {
         position: fixed;
         inset: 0;
@@ -210,6 +464,12 @@ function topbar(center = '') {
       <a class="mark" href="./apechain-home.html" aria-label="Back to home">
         <svg viewBox="0 0 100 60" aria-hidden="true"><path d="M5 8L88 25L74 36L94 52L26 35L37 27L5 8Z" fill="white"/></svg>
       </a>
+      <nav class="topbar-nav">
+        <a href="./apechain-home.html">探索</a>
+        <a href="./ip.html" aria-current="page">IP</a>
+        <a href="./build.html">构建</a>
+        <a href="./about.html">联系我们</a>
+      </nav>
       ${center}
       <button class="menu" type="button" aria-label="Menu"></button>
     </div>
@@ -337,6 +597,30 @@ function renderHome() {
           radial-gradient(circle at 67% 42%, rgba(255,255,255,0.08), transparent 8%),
           radial-gradient(circle at 48% 70%, rgba(255,255,255,0.06), transparent 9%),
           #07080d;
+      }
+      .gold-surface {
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at 50% 46%, rgba(255,230,130,0.14), transparent 18%),
+          linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+          #07080d;
+        background-size: auto, 44px 44px, 44px 44px, auto;
+      }
+      .gold-sigil {
+        position: relative;
+        width: min(72%, 520px);
+        aspect-ratio: 1 / 1;
+        display: grid;
+        place-items: center;
+        filter: drop-shadow(0 24px 22px rgba(0,0,0,0.34));
+      }
+      .gold-sigil svg {
+        position: static;
+        inset: auto;
+        width: 100%;
+        height: 100%;
       }
       .archive-surface .object {
         position: absolute;
@@ -735,6 +1019,756 @@ function renderDetail() {
       .project-forging .media-block { background: radial-gradient(circle at 50% 45%, rgba(126,68,255,0.44), transparent 22%), linear-gradient(rgba(132,93,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(132,93,255,0.08) 1px, transparent 1px), #070414; background-size: auto, 48px 48px, 48px 48px, auto; }
       .project-airforce .hero-blur-field { background: radial-gradient(circle at 50% 39%, rgba(38,207,232,0.32), transparent 17%), radial-gradient(circle at 50% 45%, rgba(225,230,244,0.86), rgba(118,130,156,0.74) 52%, transparent 70%); }
       .project-airforce .media-block { background: radial-gradient(ellipse at 50% 65%, rgba(35,205,225,0.22), transparent 30%), linear-gradient(180deg, #cfd4df, #737d91); }
+      .project-geisai {
+        --case-white: #e8e4da;
+        --case-red: #8b1e1e;
+      }
+      .project-geisai .hero-bg-panel {
+        background:
+          linear-gradient(135deg, rgba(139,30,30,0.16), rgba(5,5,5,0.92)),
+          linear-gradient(rgba(232,228,218,0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(232,228,218,0.035) 1px, transparent 1px);
+        background-size: auto, 44px 44px, 44px 44px;
+        filter: grayscale(1);
+      }
+      .project-geisai .hero-blur-field {
+        background:
+          radial-gradient(circle at 50% 38%, rgba(139,30,30,0.24), transparent 15%),
+          radial-gradient(circle at 50% 45%, rgba(232,228,218,0.46), rgba(22,22,22,0.82) 54%, transparent 70%);
+        filter: blur(34px) grayscale(1) contrast(1.14);
+      }
+      .project-geisai .hero-title {
+        font-family: "Inter", "PingFang SC", "Noto Sans SC", sans-serif;
+        top: 620px;
+        font-size: clamp(42px, 5.2vw, 82px);
+        font-weight: 900;
+        line-height: 1.08;
+        max-width: 760px;
+        text-transform: none;
+      }
+      .project-geisai .archive-card { background: rgba(5,5,5,0.94); border: 1px solid rgba(232,228,218,0.12); }
+      .project-geisai .archive-thumb {
+        background:
+          linear-gradient(rgba(5,5,5,0.2), rgba(5,5,5,0.58)),
+          url('${caseAssets.diary}') center / cover no-repeat;
+        filter: grayscale(100%) contrast(1.18);
+      }
+      .project-geisai .archive-thumb > * { display: none; }
+      .project-geisai .tag-pill { background: rgba(139,30,30,0.28); color: var(--case-white); }
+      .project-geisai .media-block {
+        background:
+          linear-gradient(180deg, rgba(0,0,0,0) 66%, rgba(0,0,0,0.58)),
+          linear-gradient(90deg, rgba(5,5,5,0.94), rgba(5,5,5,0.28)),
+          url('${caseAssets.nanjingRoad}') center / cover no-repeat;
+        filter: saturate(0.9) contrast(1.06);
+      }
+      .project-geisai .play {
+        font-family: "Inter", "PingFang SC", "Noto Sans SC", sans-serif;
+        font-size: 0;
+        font-weight: 900;
+        text-transform: none;
+      }
+      .project-geisai .play::after { content: "接下这件皮衣"; }
+      .project-geisai .play::before {
+        width: 34px;
+        height: 34px;
+        font-size: 16px;
+      }
+      .project-geisai .play::after { font-size: 16px; }
+      .project-geisai .article h2 {
+        font-family: "Inter", "PingFang SC", "Noto Sans SC", sans-serif;
+        font-size: clamp(40px, 5vw, 76px);
+        font-weight: 900;
+        line-height: 1.08;
+        text-transform: none;
+      }
+      .project-geisai .section-kicker { color: rgba(139,30,30,0.92); }
+      .project-geisai .article p { color: rgba(232,228,218,0.62); font-size: 16px; line-height: 1.72; }
+      .case-duo { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 32px; }
+      .case-duo div, .story-paper, .story-clue, .story-cta { border: 1px solid rgba(232,228,218,0.14); background: rgba(255,255,255,0.045); }
+      .case-duo div { min-height: 128px; padding: 16px; }
+      .case-duo strong { display: block; color: #fff; font-size: 28px; margin-bottom: 12px; }
+      .case-duo span { color: rgba(232,228,218,0.5); font-size: 12px; line-height: 1.5; }
+      .story-wide { max-width: 1120px; }
+      .chapter-walk {
+        position: relative;
+        min-height: 104vh;
+        max-width: 1120px;
+        padding: 18px;
+        overflow: hidden;
+        border: 1px solid rgba(232,228,218,0.12);
+        background: #090909;
+      }
+      .chapter-layout {
+        position: relative;
+        z-index: 2;
+        min-height: calc(104vh - 36px);
+        display: grid;
+        grid-template-columns: minmax(330px, 0.82fr) minmax(520px, 1.18fr);
+        gap: 18px;
+      }
+      .chapter-route-line {
+        display: none;
+      }
+      .chapter-route-line::before {
+        content: "";
+        position: absolute;
+        left: 42px;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: rgba(232,228,218,0.22);
+      }
+      .chapter-route-line span {
+        position: absolute;
+        left: 42px;
+        top: 0;
+        width: 2px;
+        height: 54%;
+        background: #e8e4da;
+      }
+      .chapter-route-line span::after {
+        content: "";
+        position: absolute;
+        left: -6px;
+        bottom: -1px;
+        width: 14px;
+        height: 14px;
+        border-right: 2px solid #e8e4da;
+        border-bottom: 2px solid #e8e4da;
+        transform: rotate(45deg);
+      }
+      .chapter-content {
+        position: relative;
+        z-index: 3;
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 72px 28px 72px 118px;
+        border: 1px solid rgba(232,228,218,0.12);
+        background:
+          linear-gradient(rgba(232,228,218,0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(232,228,218,0.035) 1px, transparent 1px),
+          rgba(5,5,5,0.9);
+        background-size: 34px 34px;
+      }
+      .chapter-content h2 {
+        margin-bottom: 18px;
+        max-width: 420px;
+      }
+      .chapter-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      .chapter-meta span {
+        min-height: 30px;
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid rgba(232,228,218,0.18);
+        background: rgba(232,228,218,0.06);
+        padding: 0 10px;
+        color: rgba(232,228,218,0.82);
+        font: 800 11px/1 var(--mono);
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+      .chapter-content > p {
+        max-width: 430px;
+        color: rgba(232,228,218,0.78);
+        font-size: 15px;
+        line-height: 1.72;
+      }
+      .chapter-objective {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: fit-content;
+        margin-top: 20px;
+        padding: 9px 12px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.08);
+      }
+      .chapter-objective span {
+        color: rgba(139,30,30,0.95);
+        font: 900 10px/1 var(--mono);
+        letter-spacing: 0.12em;
+      }
+      .chapter-objective strong {
+        color: rgba(232,228,218,0.9);
+        font: 900 13px/1 "Inter", "PingFang SC", sans-serif;
+      }
+      .chapter-task-panel {
+        width: min(100%, 430px);
+        margin-top: 24px;
+        display: grid;
+        gap: 10px;
+        border: 1px solid rgba(232,228,218,0.18);
+        background: rgba(232,228,218,0.045);
+        padding: 16px;
+      }
+      .chapter-task-panel strong,
+      .chapter-clue-strip strong {
+        color: rgba(139,30,30,0.95);
+        font: 900 11px/1 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .chapter-task-panel span {
+        border-top: 1px solid rgba(232,228,218,0.1);
+        padding-top: 9px;
+        color: rgba(232,228,218,0.78);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      .chapter-clue-strip {
+        width: min(100%, 430px);
+        margin-top: 14px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .chapter-clue-strip em {
+        min-height: 28px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 9px;
+        border: 1px solid rgba(232,228,218,0.18);
+        background: rgba(232,228,218,0.08);
+        color: rgba(232,228,218,0.78);
+        font: 700 12px/1 var(--mono);
+        font-style: normal;
+      }
+      .chapter-next {
+        margin-top: 28px;
+        color: rgba(232,228,218,0.72);
+        font: 900 11px/1 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .chapter-next::before {
+        content: none;
+      }
+      .chapter-visual {
+        position: relative;
+        min-height: 100%;
+        overflow: hidden;
+        border: 1px solid rgba(232,228,218,0.12);
+        background: #050505;
+      }
+      .chapter-media {
+        position: absolute;
+        border: 1px solid rgba(232,228,218,0.12);
+        filter: saturate(1.08) contrast(1.02);
+        transition: filter 220ms ease, transform 420ms cubic-bezier(.2,.8,.2,1);
+      }
+      .chapter-media-main { background: var(--chapter-image) center / cover no-repeat; }
+      .chapter-media-alt { background: var(--chapter-alt-image) center / cover no-repeat; }
+      .chapter-walk.in-view .chapter-media { filter: saturate(1.24) contrast(1.08) brightness(1.14); transform: translate3d(0,0,0) scale(1); }
+      .chapter-media::after {
+        content: none;
+      }
+      .chapter-route-card {
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+        width: min(46%, 260px);
+        min-height: 108px;
+        padding: 14px;
+        border: 1px solid rgba(232,228,218,0.16);
+        background: rgba(5,5,5,0.82);
+        backdrop-filter: blur(10px);
+      }
+      .chapter-route-card span {
+        color: rgba(139,30,30,0.96);
+        font: 900 12px/1 var(--mono);
+      }
+      .chapter-route-card strong {
+        display: block;
+        margin: 16px 0 8px;
+        color: rgba(232,228,218,0.9);
+        font: 900 11px/1 var(--mono);
+        letter-spacing: 0.11em;
+      }
+      .chapter-route-card em {
+        color: rgba(232,228,218,0.58);
+        font: 800 11px/1.4 var(--mono);
+        font-style: normal;
+        text-transform: uppercase;
+      }
+      .chapter-entry .chapter-layout { grid-template-columns: minmax(340px, 0.82fr) minmax(540px, 1.18fr); }
+      .chapter-entry .chapter-media-main {
+        inset: 0;
+        transform: translate3d(0, 20px, 0) scale(1.04);
+      }
+      .chapter-entry .chapter-media-alt {
+        left: 22px;
+        bottom: 22px;
+        width: 34%;
+        aspect-ratio: 4 / 5;
+        transform: translate3d(-18px, 26px, 0) rotate(-2deg);
+      }
+      .chapter-photo-check .chapter-layout { grid-template-columns: minmax(520px, 1.1fr) minmax(330px, 0.9fr); }
+      .chapter-photo-check .chapter-content { order: 2; padding-left: 52px; }
+      .chapter-photo-check .chapter-route-line { left: auto; right: 398px; }
+      .chapter-photo-check .chapter-media-main {
+        left: 22px;
+        top: 22px;
+        width: 70%;
+        height: 58%;
+        transform: translate3d(-28px, -10px, 0) rotate(-1.2deg);
+      }
+      .chapter-photo-check .chapter-media-alt {
+        right: 34px;
+        bottom: 44px;
+        width: 58%;
+        height: 46%;
+        transform: translate3d(24px, 24px, 0) rotate(1.4deg);
+      }
+      .chapter-photo-check .chapter-route-card { left: 28px; right: auto; bottom: 30px; }
+      .chapter-transit {
+        border-color: rgba(232,228,218,0.08);
+        background:
+          linear-gradient(90deg, rgba(232,228,218,0.045) 1px, transparent 1px),
+          #050505;
+        background-size: 13.5% 100%;
+      }
+      .chapter-transit .chapter-layout { grid-template-columns: 1fr; }
+      .chapter-transit .chapter-content {
+        order: 2;
+        width: min(560px, 72%);
+        min-height: auto;
+        padding: 28px;
+        margin: 18px 0 0 42px;
+      }
+      .chapter-transit .chapter-visual {
+        order: 1;
+        min-height: 68vh;
+      }
+      .chapter-transit .chapter-media-main {
+        left: 25%;
+        top: 0;
+        width: 75%;
+        height: 54%;
+        transform: translate3d(48px, -18px, 0);
+      }
+      .chapter-transit .chapter-media-alt {
+        left: 8%;
+        bottom: 0;
+        width: 68%;
+        height: 48%;
+        transform: translate3d(-34px, 28px, 0);
+      }
+      .chapter-transit .chapter-route-card { right: 34px; top: 56%; bottom: auto; }
+      .chapter-evidence .chapter-layout { grid-template-columns: minmax(380px, 0.72fr) minmax(620px, 1.28fr); }
+      .chapter-evidence .chapter-visual {
+        display: grid;
+        grid-template-columns: 1fr 0.72fr;
+        gap: 14px;
+        padding: 18px;
+      }
+      .chapter-evidence .chapter-media {
+        position: relative;
+        inset: auto;
+        min-height: 100%;
+        transform: translate3d(0, 20px, 0);
+      }
+      .chapter-evidence .chapter-media-main { min-height: 100%; }
+      .chapter-evidence .chapter-media-alt { min-height: 58%; align-self: end; filter: saturate(0.82) contrast(1.05); }
+      .chapter-evidence .chapter-route-card { right: 32px; top: 32px; bottom: auto; width: 230px; }
+      .chapter-archive .chapter-layout { grid-template-columns: 1fr; }
+      .chapter-archive .chapter-content {
+        order: 2;
+        justify-self: end;
+        width: min(520px, 56%);
+        min-height: auto;
+        padding: 28px;
+        margin-top: 18px;
+      }
+      .chapter-archive .chapter-visual {
+        order: 1;
+        min-height: 68vh;
+      }
+      .chapter-archive .chapter-media-main {
+        left: 0;
+        top: 0;
+        width: 68%;
+        height: 72%;
+        transform: translate3d(-24px, -20px, 0) scale(1.03);
+      }
+      .chapter-archive .chapter-media-alt {
+        right: 0;
+        bottom: 0;
+        width: 56%;
+        height: 48%;
+        transform: translate3d(24px, 30px, 0);
+      }
+      .chapter-archive .chapter-route-card { left: 34px; right: auto; bottom: 34px; }
+      .project-geisai .chapter-entry .chapter-layout {
+        grid-template-columns: minmax(500px, 0.86fr) minmax(700px, 1.14fr);
+      }
+      .project-geisai .chapter-entry .chapter-media-main {
+        left: 0;
+        right: -1px;
+        top: 0;
+        bottom: 0;
+      }
+      .project-geisai .chapter-entry .chapter-media-alt {
+        left: -7vw;
+        bottom: 4vh;
+        width: min(28vw, 360px);
+      }
+      .project-geisai .chapter-photo-check .chapter-layout {
+        grid-template-columns: minmax(700px, 1.08fr) minmax(500px, 0.92fr);
+      }
+      .project-geisai .chapter-photo-check .chapter-media-main {
+        left: 0;
+        top: 0;
+        width: 78%;
+        height: 63%;
+      }
+      .project-geisai .chapter-photo-check .chapter-media-alt {
+        right: 4vw;
+        bottom: 5vh;
+        width: 54%;
+        height: 46%;
+      }
+      .project-geisai .chapter-transit .chapter-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: 72vh auto;
+      }
+      .project-geisai .chapter-transit .chapter-visual {
+        min-height: 72vh;
+      }
+      .project-geisai .chapter-transit .chapter-content {
+        margin-left: max(280px, 24vw);
+        padding: 34px 0 90px;
+      }
+      .project-geisai .chapter-transit .chapter-media-main {
+        left: 24vw;
+        top: 0;
+        width: calc(76vw - 20px);
+        height: 54%;
+      }
+      .project-geisai .chapter-transit .chapter-media-alt {
+        left: 0;
+        bottom: 0;
+        width: 62vw;
+        height: 48%;
+      }
+      .project-geisai .chapter-evidence .chapter-layout {
+        grid-template-columns: minmax(500px, 0.84fr) minmax(720px, 1.16fr);
+      }
+      .project-geisai .chapter-evidence .chapter-visual {
+        padding: 0;
+        grid-template-columns: 1.08fr 0.72fr;
+        gap: 20px;
+        background: transparent;
+      }
+      .project-geisai .chapter-evidence .chapter-media-main {
+        min-height: 78vh;
+        align-self: start;
+      }
+      .project-geisai .chapter-evidence .chapter-media-alt {
+        min-height: 46vh;
+        align-self: end;
+      }
+      .project-geisai .chapter-archive .chapter-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: 74vh auto;
+      }
+      .project-geisai .chapter-archive .chapter-visual {
+        min-height: 74vh;
+      }
+      .project-geisai .chapter-archive .chapter-content {
+        width: min(560px, 48vw);
+        margin-right: 8vw;
+        padding: 34px 0 92px;
+      }
+      .project-geisai .chapter-archive .chapter-media-main {
+        left: 0;
+        top: 0;
+        width: 68vw;
+        height: 72vh;
+      }
+      .project-geisai .chapter-archive .chapter-media-alt {
+        right: 0;
+        bottom: 0;
+        width: 48vw;
+        height: 42vh;
+      }
+      .project-geisai .chapter-media-main,
+      .project-geisai .chapter-media-alt {
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: #050505;
+        border-radius: 18px;
+      }
+      .project-geisai .chapter-media-main {
+        width: min(43vw, 620px);
+        height: 96vh;
+      }
+      .project-geisai .chapter-media-alt {
+        width: min(31vw, 440px);
+        height: 68vh;
+      }
+      .project-geisai .chapter-entry .chapter-layout,
+      .project-geisai .chapter-evidence .chapter-layout {
+        grid-template-columns: minmax(380px, 0.42fr) minmax(860px, 1.58fr);
+      }
+      .project-geisai .chapter-photo-check .chapter-layout {
+        grid-template-columns: minmax(860px, 1.58fr) minmax(380px, 0.42fr);
+      }
+      .project-geisai .chapter-entry .chapter-media-main,
+      .project-geisai .chapter-evidence .chapter-media-main {
+        left: auto;
+        right: 3vw;
+        top: 2vh;
+        bottom: auto;
+      }
+      .project-geisai .chapter-entry .chapter-media-alt,
+      .project-geisai .chapter-evidence .chapter-media-alt {
+        left: 33vw;
+        right: auto;
+        bottom: 0;
+      }
+      .project-geisai .chapter-photo-check .chapter-media-main {
+        left: 3vw;
+        right: auto;
+        top: 2vh;
+      }
+      .project-geisai .chapter-photo-check .chapter-media-alt {
+        left: auto;
+        right: 26vw;
+        bottom: 0;
+      }
+      .project-geisai .chapter-transit .chapter-media-main {
+        left: 42vw;
+        top: 2vh;
+        width: min(43vw, 620px);
+        height: 96vh;
+      }
+      .project-geisai .chapter-transit .chapter-media-alt {
+        left: 7vw;
+        bottom: 0;
+        width: min(32vw, 460px);
+        height: 70vh;
+      }
+      .project-geisai .chapter-archive .chapter-media-main {
+        left: 8vw;
+        top: 2vh;
+        width: min(43vw, 620px);
+        height: 96vh;
+      }
+      .project-geisai .chapter-archive .chapter-media-alt {
+        left: auto;
+        right: 6vw;
+        bottom: 0;
+        width: min(32vw, 460px);
+        height: 70vh;
+      }
+      .story-route-map {
+        position: relative;
+        min-height: 760px;
+        margin-top: 42px;
+        border: 1px solid rgba(232,228,218,0.14);
+        border-radius: 8px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 18% 14%, rgba(139,30,30,0.18), transparent 18%),
+          linear-gradient(rgba(232,228,218,0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(232,228,218,0.045) 1px, transparent 1px),
+          linear-gradient(rgba(5,5,5,0.62), rgba(5,5,5,0.9)),
+          url('${caseAssets.alley}') center / cover no-repeat;
+        background-size: auto, 48px 48px, 48px 48px, auto, cover;
+        filter: grayscale(100%) contrast(1.08);
+      }
+      .story-route-map::before {
+        content: "JINGAN  →  FUZHOU RD  →  BUND ARCHIVE";
+        position: absolute;
+        left: 22px;
+        top: 18px;
+        color: rgba(232,228,218,0.46);
+        font: 800 11px/1 var(--mono);
+        letter-spacing: 0.12em;
+        z-index: 2;
+      }
+      .story-route-svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        overflow: visible;
+      }
+      .story-route-shadow,
+      .story-route-path {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .story-route-shadow { stroke: rgba(139,30,30,0.58); stroke-width: 8; opacity: 0.45; filter: blur(5px); }
+      .story-route-path {
+        stroke: rgba(232,228,218,0.95);
+        stroke-width: 3;
+        stroke-dasharray: var(--route-length, 1400);
+        stroke-dashoffset: calc(var(--route-length, 1400) * (1 - var(--route-progress, 0)));
+        transition: stroke-dashoffset 80ms linear;
+      }
+      .story-route-node {
+        position: absolute;
+        left: var(--x);
+        top: var(--y);
+        z-index: 3;
+        width: 230px;
+        min-height: 164px;
+        transform: translate(-50%, -50%);
+        padding: 14px;
+        border: 1px solid rgba(232,228,218,0.16);
+        background: rgba(5,5,5,0.84);
+        color: #fff;
+        transition: border-color 180ms ease, background 180ms ease, transform 180ms ease, opacity 180ms ease;
+      }
+      .story-route-node::before {
+        content: "";
+        position: absolute;
+        left: -7px;
+        top: -7px;
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: #555;
+        border: 1px solid rgba(232,228,218,0.7);
+      }
+      .story-route-node.is-passed::before { background: #e8e4da; }
+      .story-route-node.is-active {
+        border-color: rgba(232,228,218,0.76);
+        background: rgba(5,5,5,0.94);
+        transform: translate(-50%, -54%);
+      }
+      .story-route-node.is-active::before { background: #8b1e1e; box-shadow: 0 0 0 5px rgba(139,30,30,0.24); }
+      .story-route-node span { color: #8b1e1e; font: 900 12px/1 var(--mono); }
+      .story-route-node strong { display: block; margin: 9px 0 5px; font-size: 18px; line-height: 1.2; }
+      .story-route-node em { display: block; color: rgba(232,228,218,0.5); font: 800 10px/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; font-style: normal; }
+      .story-route-node p { margin: 10px 0 12px; color: rgba(232,228,218,0.64); font-size: 12px; line-height: 1.45; }
+      .story-route-node small { color: rgba(232,228,218,0.8); font: 900 11px/1 var(--mono); letter-spacing: 0.06em; }
+      .story-chapter-strip { grid-template-columns: repeat(5, minmax(240px, 1fr)); overflow-x: auto; padding-bottom: 14px; }
+      .story-chapter-card { min-width: 260px; min-height: 560px; }
+      .story-chapter-image { height: 170px; margin: -16px -16px 18px; background-size: cover; background-position: center; filter: grayscale(100%) contrast(1.2); opacity: 0.82; }
+      .story-chapter-card ul { display: grid; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
+      .story-chapter-card li { border-top: 1px solid rgba(232,228,218,0.12); padding-top: 8px; color: rgba(232,228,218,0.66); font-size: 12px; line-height: 1.4; }
+      .story-board {
+        min-height: 560px;
+        background:
+          linear-gradient(rgba(5,5,5,0.72), rgba(5,5,5,0.86)),
+          url('${caseAssets.diary}') center / cover no-repeat;
+        filter: grayscale(100%) contrast(1.06);
+      }
+      .story-paper-grid { position: relative; width: 100%; height: 100%; min-height: 560px; }
+      .story-paper { position: absolute; width: 240px; min-height: 150px; padding: 16px; background: #e8e4da; color: #050505; transform: rotate(var(--r)); }
+      .story-paper strong { display: block; margin-bottom: 12px; font-size: 18px; }
+      .story-paper span { color: rgba(5,5,5,0.66); font-size: 13px; line-height: 1.45; }
+      .story-paper:nth-child(1) { left: 6%; top: 10%; --r: -3deg; }
+      .story-paper:nth-child(2) { left: 38%; top: 8%; --r: 2deg; }
+      .story-paper:nth-child(3) { left: 66%; top: 22%; --r: -2deg; }
+      .story-paper:nth-child(4) { left: 18%; top: 56%; --r: 3deg; }
+      .story-paper:nth-child(5) { left: 55%; top: 58%; --r: -1deg; }
+      .story-clue { width: 100%; color: rgba(232,228,218,0.54); font: inherit; text-align: left; }
+      .story-clue:hover { color: rgba(232,228,218,0.86); }
+      .story-clue strong { font-family: var(--mono); font-size: 13px; }
+      .story-cta { color: inherit; text-align: left; cursor: pointer; }
+      @media (max-width: 900px) {
+        .project-geisai .hero-title { font-size: clamp(42px, 12vw, 72px); }
+        .case-duo, .story-chapter-strip { grid-template-columns: 1fr; }
+        .chapter-walk { min-height: auto; padding: 12px; }
+        .chapter-layout { min-height: auto; grid-template-columns: 1fr; gap: 12px; }
+        .chapter-content,
+        .chapter-photo-check .chapter-content,
+        .chapter-transit .chapter-content,
+        .chapter-archive .chapter-content {
+          order: 2;
+          width: auto;
+          min-height: 520px;
+          margin: 0;
+          padding: 74px 18px 34px 78px;
+        }
+        .chapter-visual,
+        .chapter-transit .chapter-visual,
+        .chapter-archive .chapter-visual {
+          order: 1;
+          min-height: 62vh;
+        }
+        .chapter-entry .chapter-media-main,
+        .chapter-photo-check .chapter-media-main,
+        .chapter-transit .chapter-media-main,
+        .chapter-archive .chapter-media-main {
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 72%;
+          transform: none;
+        }
+        .chapter-entry .chapter-media-alt,
+        .chapter-photo-check .chapter-media-alt,
+        .chapter-transit .chapter-media-alt,
+        .chapter-archive .chapter-media-alt {
+          left: 12px;
+          right: auto;
+          bottom: 12px;
+          width: 58%;
+          height: 34%;
+          transform: none;
+        }
+        .chapter-evidence .chapter-visual { grid-template-columns: 1fr; min-height: auto; }
+        .chapter-evidence .chapter-media-main,
+        .chapter-evidence .chapter-media-alt { min-height: 42vh; }
+        .project-geisai .chapter-media-main,
+        .project-geisai .chapter-entry .chapter-media-main,
+        .project-geisai .chapter-photo-check .chapter-media-main,
+        .project-geisai .chapter-transit .chapter-media-main,
+        .project-geisai .chapter-evidence .chapter-media-main,
+        .project-geisai .chapter-archive .chapter-media-main {
+          left: 50%;
+          right: auto;
+          top: 0;
+          width: min(96vw, 520px);
+          height: 82vh;
+          transform: translateX(-50%);
+        }
+        .project-geisai .chapter-media-alt,
+        .project-geisai .chapter-entry .chapter-media-alt,
+        .project-geisai .chapter-photo-check .chapter-media-alt,
+        .project-geisai .chapter-transit .chapter-media-alt,
+        .project-geisai .chapter-evidence .chapter-media-alt,
+        .project-geisai .chapter-archive .chapter-media-alt {
+          display: none;
+        }
+        .chapter-route-card,
+        .chapter-photo-check .chapter-route-card,
+        .chapter-transit .chapter-route-card,
+        .chapter-evidence .chapter-route-card,
+        .chapter-archive .chapter-route-card {
+          left: auto;
+          right: 12px;
+          top: auto;
+          bottom: 12px;
+          width: min(58%, 240px);
+        }
+        .chapter-route-line,
+        .chapter-photo-check .chapter-route-line { left: 8px; right: auto; width: 54px; }
+        .chapter-route-line::before, .chapter-route-line span { left: 26px; }
+        .story-route-map { min-height: auto; padding: 72px 16px 16px; display: grid; gap: 14px; }
+        .story-route-svg { display: none; }
+        .story-route-node { position: relative; left: auto; top: auto; width: 100%; min-height: auto; transform: none; }
+        .story-route-node.is-active { transform: none; }
+        .story-board, .story-paper-grid { min-height: auto; }
+        .story-paper-grid { display: grid; gap: 12px; padding: 16px; }
+        .story-paper { position: relative; left: auto !important; top: auto !important; width: 100%; transform: none; }
+      }
       @keyframes sigilIdle { 0%,100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.035) rotate(1.2deg); } }
       .hero-title { position: absolute; left: 9vw; top: 588px; z-index: 5; max-width: 860px; color: #fff; font-family: var(--display); font-size: clamp(96px, 10.8vw, 172px); line-height: 0.82; text-transform: uppercase; letter-spacing: 0; transition: opacity 0.8s ease 0.12s, transform 1s cubic-bezier(.2,.8,.2,1) 0.12s; will-change: transform; }
       .hero-index { position: absolute; left: 14px; top: 684px; z-index: 5; color: #fff; font: 600 12px/1 var(--mono); transition: opacity 0.8s ease 0.18s, transform 0.9s cubic-bezier(.2,.8,.2,1) 0.18s; }
@@ -756,6 +1790,114 @@ function renderDetail() {
       .section-kicker { color: rgba(255,255,255,0.46); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
       .article h2 { margin: 22px 0 44px; color: #fff; font-family: var(--display); font-size: clamp(76px, 8.6vw, 132px); line-height: 0.82; letter-spacing: 0; text-transform: uppercase; }
       .article p { margin: 0 0 24px; color: rgba(255,255,255,0.42); font-size: 15px; line-height: 1.55; letter-spacing: 0.02em; }
+      .project-geisai .content {
+        position: relative;
+        z-index: 12;
+        width: 100%;
+        max-width: none;
+        padding-left: 0;
+        padding-right: 0;
+        background: #000;
+      }
+      .project-geisai .story-article {
+        margin-left: max(280px, 24vw);
+        max-width: 760px;
+      }
+      .project-geisai #about-copy {
+        min-height: 54vh;
+        padding-top: 72px;
+      }
+      .project-geisai .case-intro-article {
+        display: grid;
+        grid-template-columns: minmax(320px, 0.5fr) minmax(760px, 1.5fr);
+        gap: 24px;
+        align-items: center;
+        max-width: none;
+        margin-right: 20px;
+      }
+      .case-intro-copy {
+        max-width: 680px;
+      }
+      .case-intro-visuals {
+        position: relative;
+        min-height: 94vh;
+      }
+      .case-intro-photo {
+        position: absolute;
+        background: var(--intro-image) center / contain no-repeat #050505;
+        border-radius: 18px;
+        box-shadow: 0 26px 90px rgba(0,0,0,0.54);
+      }
+      .case-intro-photo-primary {
+        right: 26vw;
+        top: 0;
+        width: min(38vw, 540px);
+        height: 92vh;
+      }
+      .case-intro-photo-secondary {
+        right: 2vw;
+        bottom: 2vh;
+        width: min(32vw, 430px);
+        height: 72vh;
+      }
+      .project-geisai .chapter-walk {
+        width: calc(100vw - 40px);
+        max-width: none;
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-top: 10vh;
+        padding: 0;
+        border: 0;
+        background: #000;
+      }
+      .project-geisai .chapter-layout {
+        min-height: 104vh;
+        gap: 0;
+      }
+      .project-geisai .chapter-content {
+        border: 0;
+        background: transparent;
+        justify-content: flex-end;
+        padding: 84px 34px 126px 150px;
+      }
+      .project-geisai .chapter-content h2 {
+        max-width: 480px;
+        margin-bottom: 22px;
+      }
+      .project-geisai .chapter-meta span {
+        border: 0;
+        background: rgba(255,255,255,0.08);
+        border-radius: 8px;
+      }
+      .project-geisai .chapter-task-panel {
+        border: 0;
+        background: transparent;
+        padding: 0;
+      }
+      .project-geisai .chapter-task-panel span {
+        border-top-color: rgba(232,228,218,0.16);
+      }
+      .project-geisai .chapter-clue-strip em {
+        border: 0;
+        border-radius: 8px;
+        background: rgba(232,228,218,0.08);
+      }
+      .project-geisai .chapter-visual {
+        border: 0;
+        background: transparent;
+        min-height: 104vh;
+      }
+      .project-geisai .chapter-media {
+        border: 0;
+        border-radius: 10px;
+        filter: saturate(1.2) contrast(1.06) brightness(1.12);
+        box-shadow: 0 34px 110px rgba(0,0,0,0.58);
+      }
+      .project-geisai .chapter-route-card {
+        border: 0;
+        border-radius: 8px;
+        background: rgba(10,10,10,0.82);
+      }
       .event-strip, .entry-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 34px; }
       .event-card, .entry { min-height: 220px; border-radius: 8px; padding: 16px; background: rgba(255,255,255,0.045); color: #fff; opacity: 0; transform: translate3d(0,34px,0); transition: opacity 0.75s ease, transform 0.75s cubic-bezier(.2,.8,.2,1), background 0.25s ease; }
       .event-card.in-view, .entry.in-view { opacity: 1; transform: translate3d(0,0,0); }
@@ -896,6 +2038,57 @@ function renderDetail() {
         .archive-card { left: 20px; right: 20px; bottom: 80px; grid-template-columns: 110px 1fr; }
         .media-block { min-height: 460px; }
         .article { margin-left: 0; padding-left: 20px; padding-right: 20px; }
+        .project-geisai .content { padding-left: 0; padding-right: 0; }
+        .project-geisai .story-article {
+          margin-left: 0;
+          max-width: none;
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+        .project-geisai .case-intro-article {
+          grid-template-columns: 1fr;
+          gap: 28px;
+          margin-right: 0;
+        }
+        .case-intro-visuals {
+          min-height: 86vh;
+        }
+        .case-intro-photo-primary {
+          left: 0;
+          right: auto;
+          width: min(76vw, 360px);
+          height: 72vh;
+        }
+        .case-intro-photo-secondary {
+          right: 0;
+          width: min(54vw, 260px);
+          height: 48vh;
+        }
+        .project-geisai .chapter-walk {
+          width: 100%;
+          margin-left: 0;
+          margin-right: 0;
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+        .project-geisai .chapter-layout,
+        .project-geisai .chapter-entry .chapter-layout,
+        .project-geisai .chapter-photo-check .chapter-layout,
+        .project-geisai .chapter-transit .chapter-layout,
+        .project-geisai .chapter-evidence .chapter-layout,
+        .project-geisai .chapter-archive .chapter-layout {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto;
+          min-height: auto;
+        }
+        .project-geisai .chapter-content,
+        .project-geisai .chapter-photo-check .chapter-content,
+        .project-geisai .chapter-transit .chapter-content,
+        .project-geisai .chapter-archive .chapter-content {
+          width: auto;
+          margin: 0;
+          padding: 74px 18px 34px 78px;
+        }
         .event-strip, .entry-row, .entity-row { grid-template-columns: 1fr; }
         .handoff-ring { top: 18vh; width: 82vw; }
         .handoff-title { font-size: 45vw; bottom: 6vh; }
@@ -928,12 +2121,7 @@ function renderDetail() {
       </section>
       <section class="media-block" aria-label="World layer media preview"><div class="play">Play</div></section>
       <main class="content">
-        <article class="article" id="about-copy"><span class="section-kicker">[ABOUT]</span><h2>${project.headline}</h2><p>${project.about}</p><p>The system treats every campaign as a city behavior. Citizens enter through checkpoints, events expand through participation, and story fragments become infrastructure that can be replayed, modified, and inherited by future layers.</p></article>
-        <article class="article" id="live-events"><span class="section-kicker">[LIVE EVENTS]</span><h2>IP events are products, not announcements</h2><div class="event-strip">${events.map(event => `<div class="event-card"><span><em>${event[1]}</em><em>${event[2]}</em></span><h3>${event[0]}</h3><p>${event[3]}</p></div>`).join('')}</div></article>
-        <article class="article" id="city-entities"><span class="section-kicker">[CITY ENTITIES]</span><h2>Persistent agents operate inside the city system</h2><div class="entity-list">${entities.map(entity => `<div class="entity-row"><strong>${entity[0]}</strong><span>${entity[1]}</span><span>${entity[2]}</span></div>`).join('')}</div></article>
-        <article class="article" id="narrative-map"><span class="section-kicker">[NARRATIVE MAP]</span><h2>Story routes operate as city infrastructure</h2><div class="archive-image"><div class="map-nodes"><div class="node" style="left:12%;top:52%;">Reality Entry</div><div class="node" style="left:36%;top:36%;">City Events</div><div class="node" style="left:61%;top:22%;">Night Zone</div><div class="node" style="left:68%;top:54%;">Theater Zone</div><div class="node" style="left:86%;top:38%;">Data Core</div><div class="node" style="left:52%;top:78%;">Hidden Layer</div></div></div></article>
-        <article class="article" id="participation"><span class="section-kicker">[PARTICIPATION]</span><h2>This city is not watched. It is entered.</h2><p>You are not a user. You are a system node. Join live events, create a city narrative node, or become a persistent entity in the World / IP Layer.</p><div class="entry-row"><div class="entry"><h3>Join Event</h3><p>Participate in live city events.</p></div><div class="entry"><h3>Create Event</h3><p>Generate your own city narrative node.</p></div><div class="entry"><h3>Become Entity</h3><p>Join as a persistent character.</p></div></div></article>
-        <article class="article" id="related-archives"><span class="section-kicker">[RELATED ARCHIVES]</span><h2>Additional city records remain partially indexed</h2><p>Recovered fragments, inactive event nodes, and future city expansions are staged here as a living archive for the next system release.</p></article>
+        ${project.id === 'geisai' ? renderCaseStoryArticles() : renderDefaultProjectArticles(project)}
       </main>
       <section class="next-scroll" aria-label="Scroll for next archive"><div class="next-scroll__label">Scroll for ${nextProject.title}</div></section>
       <div class="handoff" aria-hidden="true">
@@ -962,6 +2150,9 @@ function renderDetail() {
   const nextScroll = document.querySelector('.next-scroll');
   const handoff = document.querySelector('.handoff');
   const handoffRing = document.querySelector('.handoff-ring');
+  const routeMap = document.querySelector('[data-route-map]');
+  const routePath = document.querySelector('[data-route-path]');
+  const routeNodes = Array.from(document.querySelectorAll('[data-route-node]'));
   const handoffFaces = {
     left: document.querySelector('.handoff-card.left'),
     front: document.querySelector('.handoff-card.front'),
@@ -970,6 +2161,11 @@ function renderDetail() {
   let handoffStarted = false;
 
   requestAnimationFrame(() => setTimeout(() => document.body.classList.add('loaded'), 540));
+  requestAnimationFrame(() => {
+    if (!routePath) return;
+    const length = routePath.getTotalLength();
+    routePath.style.setProperty('--route-length', length);
+  });
 
   function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
   function setActiveNav(id) {
@@ -1023,6 +2219,16 @@ function renderDetail() {
     heroIndex.style.transform = `translate3d(0, ${p * -170}px, 0)`;
     heroIndex.style.opacity = String(clamp(1 - p * 1.6, 0, 1));
     sideNav.style.transform = `translate3d(0, ${clamp(1440 - y, 96, 990)}px, 0)`;
+    if (routeMap && routePath) {
+      const rect = routeMap.getBoundingClientRect();
+      const progress = clamp((window.innerHeight * 0.78 - rect.top) / (rect.height + window.innerHeight * 0.18), 0, 1);
+      routeMap.style.setProperty('--route-progress', progress.toFixed(4));
+      routeNodes.forEach((node, index) => {
+        const nodeProgress = routeNodes.length <= 1 ? 1 : index / (routeNodes.length - 1);
+        node.classList.toggle('is-passed', progress > nodeProgress + 0.08);
+        node.classList.toggle('is-active', Math.abs(progress - nodeProgress) <= 0.12);
+      });
+    }
     updateActiveNav();
     ticking = false;
   }

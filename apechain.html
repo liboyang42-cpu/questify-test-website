@@ -89,8 +89,9 @@
       display: flex; align-items: center; justify-content: center;
       gap: 48px;
     }
-    .Header-nav button {
+    .Header-nav button, .Header-nav a {
       background: none; border: none; color: #fff; cursor: pointer;
+      text-decoration: none;
       opacity: 0.6; transition: opacity 0.3s;
       font-family: 'DM Sans', system-ui, sans-serif;
       font-size: 16px; font-weight: 700;
@@ -476,10 +477,10 @@
         </svg>
       </a>
       <nav class="Header-nav">
-        <button>Explore</button>
-        <button>Learn</button>
-        <button>Build</button>
-        <button>Bridge</button>
+        <a href="./apechain-home.html" aria-current="page">探索</a>
+        <a href="./ip.html">IP</a>
+        <a href="./build.html">构建</a>
+        <a href="./about.html">联系我们</a>
       </nav>
     </div>
   </header>
@@ -543,8 +544,9 @@
     display: flex; align-items: center; justify-content: center;
     gap: 48px;
   }
-  .Header-nav button {
+  .Header-nav button, .Header-nav a {
     background: none; border: none; color: #fff; cursor: pointer;
+    text-decoration: none;
     opacity: 0.6; transition: opacity 0.3s;
     font-family: 'Bebas Neue', 'Oswald', sans-serif;
     font-size: 26px; font-weight: 500;
