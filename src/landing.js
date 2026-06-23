@@ -1,5 +1,5 @@
 import { setupBloomEnvironment } from './bloomEnvironment.js';
-import { DiceGame } from './demo/dice-game/DiceGame.js';
+import { DiceGame } from './games/d20/index.js';
 
 
 const modeContent = {
