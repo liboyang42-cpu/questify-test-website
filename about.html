@@ -69,6 +69,16 @@
   .submit{grid-column:1/-1;justify-self:start;font-family:var(--display);letter-spacing:.2em;font-size:18px;color:#02110f;background:var(--accent);border:0;border-radius:100px;padding:14px 40px;cursor:pointer;transition:transform .2s}
   .submit:hover{transform:translateY(-2px)}
   .note{grid-column:1/-1;color:var(--mut);font-size:13px;margin-top:4px}
+  .field-label{display:block;color:var(--mut);font-size:13px;letter-spacing:.06em;margin-bottom:7px}
+  .field-cell.full{grid-column:1/-1}
+  .field.field--error{border-color:#ff5a5a}
+  .field-err{color:#ff7a7a;font-size:12px;margin-top:6px;min-height:14px}
+  .consent{grid-column:1/-1;display:flex;align-items:flex-start;gap:10px;color:var(--mut);font-size:13px;line-height:1.7;cursor:pointer}
+  .consent input{margin-top:3px;flex:none;width:16px;height:16px;accent-color:var(--accent)}
+  .consent a{color:var(--fg);text-decoration:underline}
+  .form-status{grid-column:1/-1;font-size:14px;min-height:20px;margin-top:4px}
+  .form-status.ok{color:var(--accent)}
+  .form-status.err{color:#ff7a7a}
 
   footer{position:relative;z-index:2;text-align:center;padding:60px 0 50px;color:var(--mut);font-size:13px;letter-spacing:.06em;border-top:1px solid var(--line);margin-top:40px}
 
@@ -122,18 +132,39 @@
       <p class="sec-label">CONTACT · 联系我们</p>
       <h2 class="sec-title">合作 · 报名 · 咨询</h2>
       <p class="sec-sub">留下联系方式,我们会尽快回到你。</p>
-      <form class="contact" onsubmit="return false">
-        <select class="field" aria-label="类型">
-          <option>合作咨询</option>
-          <option>俱乐部报名</option>
-          <option>IP 合作</option>
-          <option>其他咨询</option>
-        </select>
-        <input class="field" placeholder="你的称呼">
-        <input class="field full" placeholder="联系方式(手机 / 微信 / 邮箱)">
-        <textarea class="field full" placeholder="想聊点什么?"></textarea>
+      <form class="contact" id="leadForm" novalidate>
+        <div class="field-cell full">
+          <label class="field-label" for="lf-type">咨询类型</label>
+          <select class="field" id="lf-type" name="type" required>
+            <option value="">请选择</option>
+            <option>合作咨询</option>
+            <option>俱乐部报名</option>
+            <option>IP 合作</option>
+            <option>其他咨询</option>
+          </select>
+          <p class="field-err" id="err-type"></p>
+        </div>
+        <div class="field-cell">
+          <label class="field-label" for="lf-name">你的称呼 *</label>
+          <input class="field" id="lf-name" name="name" required autocomplete="name" placeholder="如何称呼你" maxlength="40">
+          <p class="field-err" id="err-name"></p>
+        </div>
+        <div class="field-cell">
+          <label class="field-label" for="lf-contact">联系方式 *</label>
+          <input class="field" id="lf-contact" name="contact" required placeholder="手机 / 微信 / 邮箱" maxlength="80">
+          <p class="field-err" id="err-contact"></p>
+        </div>
+        <div class="field-cell full">
+          <label class="field-label" for="lf-msg">需求说明</label>
+          <textarea class="field" id="lf-msg" name="message" placeholder="想聊点什么?" maxlength="800"></textarea>
+        </div>
+        <label class="consent" for="lf-consent">
+          <input type="checkbox" id="lf-consent" name="consent" required>
+          <span>我已阅读并同意 <a href="/privacy.html">隐私政策</a>,允许城瘾使用我提供的信息与我联系。</span>
+        </label>
         <button class="submit" type="submit">提交</button>
-        <p class="note">* 表单为占位 UI,后续接入 Strapi 留资接口(POST /api/leads),提交后推送企业微信。</p>
+        <p class="form-status" id="lf-status" role="status" aria-live="polite"></p>
+        <p class="note">在线留资提交功能开发中(即将接入)。如需即时沟通,欢迎通过上方介绍中的渠道联系我们。</p>
       </form>
     </div>
   </section>
@@ -147,6 +178,35 @@
   init();tick();addEventListener('resize',init)
 })();
 </script>
+  <script>
+  // 联系表单:客户端校验 + 诚实状态(留资后端 M5 接入前不做欺骗性提交)
+  (function(){
+    var form=document.getElementById('leadForm'); if(!form) return;
+    var status=document.getElementById('lf-status');
+    function setErr(id,msg){
+      var el=document.getElementById('lf-'+id), err=document.getElementById('err-'+id);
+      if(el) el.classList.toggle('field--error',!!msg);
+      if(err) err.textContent=msg||'';
+    }
+    form.addEventListener('submit',function(e){
+      e.preventDefault();
+      status.className='form-status'; status.textContent='';
+      var ok=true;
+      var type=document.getElementById('lf-type').value.trim();
+      var name=document.getElementById('lf-name').value.trim();
+      var contact=document.getElementById('lf-contact').value.trim();
+      var consent=document.getElementById('lf-consent').checked;
+      setErr('type', type?'':'请选择咨询类型'); if(!type) ok=false;
+      setErr('name', name?'':'请填写称呼'); if(!name) ok=false;
+      setErr('contact', contact?'':'请填写联系方式'); if(!contact) ok=false;
+      if(!consent){ ok=false; status.className='form-status err'; status.textContent='请先阅读并同意隐私政策。'; }
+      if(!ok){ if(consent){ status.className='form-status err'; status.textContent='请完善必填信息。'; } return; }
+      // 校验通过:诚实告知在线提交尚未开放(不声称已发送)
+      status.className='form-status ok';
+      status.textContent='✓ 信息校验通过。在线留资提交功能即将开放,届时将第一时间处理你的需求。';
+    });
+  })();
+  </script>
   <script src="/site-shell.js" defer></script>
 </body>
 </html>
