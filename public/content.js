@@ -55,7 +55,7 @@ window.__siteContent = {
     ]
   },
   apechain: {
-    pageTitle: '城瘾',
+    pageTitle: '城瘾 · 把城市变成一场真人解谜游戏',
 
     header: {
       homeTitle: 'Home',
