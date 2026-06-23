@@ -19,3 +19,29 @@ videos/
 .ms-playwright/
 .codex-backups/
 .claude/
+
+# ── M0 仓库治理:截图/参考抓取/测试证据/备份(只忽略根层级,不误伤 public/assets 生产素材)──
+/*.png
+/*.PNG
+/*.jpg
+/*.jpeg
+# 无扩展名的 Playwright 快照(均为 2400x1410 PNG)
+atlab-*
+final-*
+initial
+reader-test-*
+current-*
+debug-*
+live-*
+# 审计/工作/恢复/产物目录
+audit-shots/
+work/
+recovery/
+artifacts/
+# 测试脚本与一次性抓取脚本
+*.spec.js
+capture-reference.mjs
+# 交接文档(归 vault,不入仓库)
+交接总结_*.md
+# 参考原图(仅 cropped/ 进生产,全尺寸原图不入库)
+public/assets/case-citywalk-ref/IMG_*.PNG
