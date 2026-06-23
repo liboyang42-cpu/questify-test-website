@@ -36,18 +36,9 @@
   .back a{color:var(--mut);text-decoration:none;font-size:13px;letter-spacing:.08em;border:1px solid var(--line);border-radius:100px;padding:8px 20px}
   .back a:hover{color:#fff}
 </style>
+  <link rel="stylesheet" href="/site-shell.css" />
 </head>
 <body>
-<header class="site-header">
-  <a class="site-logo" href="./index.html">城瘾</a>
-  <nav class="site-nav">
-    <a href="./index.html">探索</a>
-    <a href="./ip.html">IP</a>
-    <a href="./build.html">构建</a>
-    <a href="./about.html">联系我们</a>
-  </nav>
-</header>
-
 <main class="stage">
   <p class="eyebrow">GAME · 判定</p>
   <h1>d20 判定</h1>
@@ -61,5 +52,6 @@
   import { mount } from './src/games/d20/index.js';
   mount(document.getElementById('dice'));
 </script>
+  <script src="/site-shell.js" defer></script>
 </body>
 </html>

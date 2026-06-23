@@ -74,21 +74,12 @@
 
   @media(max-width:720px){.contact{grid-template-columns:1fr}.site-logo{font-size:20px}}
 </style>
+  <link rel="stylesheet" href="/site-shell.css" />
 </head>
 <body>
 <div class="cosmos"></div>
 <div class="earth"></div>
 <canvas id="space"></canvas>
-
-<header class="site-header">
-  <a class="site-logo" href="./index.html">城瘾</a>
-  <nav class="site-nav">
-    <a href="./index.html">探索</a>
-    <a href="./ip.html">IP</a>
-    <a href="./build.html">构建</a>
-    <a href="./about.html" aria-current="page">联系我们</a>
-  </nav>
-</header>
 
 <section class="hero">
   <p class="eyebrow">ABOUT · 关于我们</p>
@@ -148,8 +139,6 @@
   </section>
 </div>
 
-<footer>城瘾 Questify · AI 城市游戏操作系统 · 上海启动中</footer>
-
 <script>
 (function(){
   var c=document.getElementById('space'),x=c.getContext('2d'),w,h,stars;
@@ -158,5 +147,6 @@
   init();tick();addEventListener('resize',init)
 })();
 </script>
+  <script src="/site-shell.js" defer></script>
 </body>
 </html>

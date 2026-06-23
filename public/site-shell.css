@@ -1,0 +1,72 @@
+/* 城瘾官网共享站壳 Header / Footer —— 单一事实源(site-shell.js 注入)
+   自包含样式,scoped 在 .cy-* 下,不依赖各页 CSS 变量,避免冲突。 */
+
+.cy-header{
+  position:fixed; top:0; left:0; width:100%; height:64px; z-index:1000;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 32px; box-sizing:border-box;
+  background:rgba(8,8,11,.6); backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  font-family:"HarmonyOS Sans SC",-apple-system,"PingFang SC",sans-serif;
+}
+.cy-header__logo{
+  font-size:21px; font-weight:500; color:#fff; text-decoration:none;
+  letter-spacing:.14em; line-height:1;
+}
+.cy-nav{display:flex; gap:34px; align-items:center;}
+.cy-nav a{
+  color:rgba(255,255,255,.6); text-decoration:none; font-size:14px;
+  letter-spacing:.08em; transition:color .2s;
+}
+.cy-nav a:hover,.cy-nav a[aria-current="page"]{color:#fff;}
+.cy-burger{display:none; background:none; border:0; cursor:pointer; padding:8px; }
+.cy-burger span{display:block; width:22px; height:2px; background:#fff; margin:4px 0; transition:.25s;}
+
+@media(max-width:720px){
+  .cy-header{padding:0 18px; height:56px;}
+  .cy-burger{display:block;}
+  .cy-nav{
+    position:fixed; top:56px; left:0; width:100%;
+    flex-direction:column; gap:0; align-items:stretch;
+    background:rgba(8,8,11,.97); backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(255,255,255,.08);
+    transform:translateY(-120%); transition:transform .3s; pointer-events:none;
+  }
+  .cy-nav[data-open="true"]{transform:translateY(0); pointer-events:auto;}
+  .cy-nav a{padding:18px 22px; border-top:1px solid rgba(255,255,255,.06); font-size:16px;}
+  .cy-burger[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+  .cy-burger[aria-expanded="true"] span:nth-child(2){opacity:0;}
+  .cy-burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+}
+
+/* ── Footer ── */
+.cy-footer{
+  background:#08080b; border-top:1px solid rgba(255,255,255,.08);
+  color:rgba(255,255,255,.55); padding:56px 32px 32px;
+  font-family:"HarmonyOS Sans SC",-apple-system,"PingFang SC",sans-serif;
+}
+.cy-footer__top{
+  max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap;
+  gap:40px; justify-content:space-between; align-items:flex-start;
+}
+.cy-footer__brand{font-size:30px; font-weight:500; color:#fff; letter-spacing:.16em;}
+.cy-footer__tag{margin-top:10px; font-size:13px; color:rgba(255,255,255,.45); max-width:280px; line-height:1.7;}
+.cy-footer__cols{display:flex; gap:64px; flex-wrap:wrap;}
+.cy-footer__col h4{color:rgba(255,255,255,.85); font-size:13px; font-weight:500; letter-spacing:.1em; margin:0 0 14px;}
+.cy-footer__col a,.cy-footer__col span{
+  display:block; color:rgba(255,255,255,.5); text-decoration:none;
+  font-size:13px; line-height:2.2; transition:color .2s;
+}
+.cy-footer__col a:hover{color:#fff;}
+.cy-footer__bottom{
+  max-width:1200px; margin:40px auto 0; padding-top:24px;
+  border-top:1px solid rgba(255,255,255,.07);
+  display:flex; flex-wrap:wrap; gap:10px 20px; justify-content:space-between;
+  font-size:12px; color:rgba(255,255,255,.4);
+}
+.cy-footer__bottom a{color:rgba(255,255,255,.5); text-decoration:none;}
+.cy-footer__bottom a:hover{color:#fff;}
+@media(max-width:720px){
+  .cy-footer{padding:40px 18px 28px;}
+  .cy-footer__cols{gap:36px;}
+}
