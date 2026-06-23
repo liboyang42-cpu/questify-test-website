@@ -70,3 +70,11 @@
   .cy-footer{padding:40px 18px 28px;}
   .cy-footer__cols{gap:36px;}
 }
+
+/* 尊重减少动画偏好(M2-22):全站关闭非必要过渡/动画 */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; scroll-behavior:auto !important;
+  }
+}

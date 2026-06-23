@@ -53,7 +53,7 @@
           '<div class="cy-footer__col"><h4>合作</h4>' +
             '<a href="/about.html">联系我们</a><a href="/build.html">商家 / 俱乐部</a></div>' +
           '<div class="cy-footer__col"><h4>法律</h4>' +
-            '<a href="/privacy">隐私政策</a><a href="/terms">用户协议</a></div>' +
+            '<a href="/privacy.html">隐私政策</a><a href="/terms.html">用户协议</a></div>' +
         '</div>' +
       '</div>' +
       '<div class="cy-footer__bottom">' +
