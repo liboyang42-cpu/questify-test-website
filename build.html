@@ -1,4 +1,70 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>构建 · 城瘾</title></head><body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>构建 · 城瘾</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#070708; --bg2:#0d0d0f; --fg:#f6f6f7; --mut:rgba(246,246,247,.5);
+    --red:#ff2233; --line:rgba(255,255,255,.1);
+    --display:"Bebas Neue","Oswald",-apple-system,sans-serif;
+    --cn:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);font-family:var(--cn);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+  /* header */
+  .site-header{position:fixed;top:0;left:0;width:100%;height:68px;z-index:99;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(7,7,8,.55);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .site-logo{font-weight:800;font-size:19px;color:#fff;text-decoration:none;letter-spacing:.12em}
+  .site-nav{display:flex;gap:30px}
+  .site-nav a{color:var(--mut);text-decoration:none;font-size:14px;letter-spacing:.1em;transition:color .2s}
+  .site-nav a:hover,.site-nav a[aria-current=page]{color:#fff}
+
+  /* hero */
+  .hero{position:relative;min-height:92vh;display:flex;flex-direction:column;justify-content:center;padding:120px 7vw 60px;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 80% -10%,rgba(255,34,51,.22),transparent 50%),radial-gradient(80% 60% at 0% 110%,rgba(40,40,60,.5),transparent 60%);pointer-events:none}
+  .eyebrow{position:relative;font-family:var(--display);font-size:clamp(15px,1.4vw,20px);letter-spacing:.4em;color:var(--red);margin-bottom:24px}
+  .hero h1{position:relative;font-weight:800;font-size:clamp(48px,9vw,128px);line-height:.92;letter-spacing:-.01em}
+  .hero h1 .red{color:var(--red)}
+  .hero p{position:relative;margin-top:32px;max-width:560px;color:var(--mut);font-size:clamp(15px,1.5vw,19px);line-height:1.7}
+  .scrolldown{position:relative;margin-top:64px;font-family:var(--display);font-size:14px;letter-spacing:.4em;color:var(--mut)}
+
+  /* roles */
+  .roles{position:relative}
+  .role{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:stretch;border-top:1px solid var(--line);min-height:74vh}
+  .role-text{padding:9vh 7vw;display:flex;flex-direction:column;justify-content:center}
+  .role-index{font-family:var(--display);font-size:clamp(60px,9vw,150px);line-height:.8;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.22);margin-bottom:18px}
+  .role-en{font-family:var(--display);font-size:clamp(16px,1.6vw,22px);letter-spacing:.32em;color:var(--red);margin-bottom:8px}
+  .role-cn{font-weight:800;font-size:clamp(40px,5vw,72px);line-height:1;margin-bottom:26px}
+  .role-desc{color:var(--mut);font-size:clamp(15px,1.4vw,18px);line-height:1.8;max-width:460px}
+  .role-tags{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px}
+  .role-tags span{font-size:13px;letter-spacing:.06em;color:var(--fg);border:1px solid var(--line);border-radius:100px;padding:7px 16px;background:rgba(255,255,255,.03)}
+  .role-visual{position:relative;overflow:hidden;border-left:1px solid var(--line)}
+  .role:nth-child(1) .role-visual{background:radial-gradient(circle at 50% 40%,rgba(255,34,51,.4),transparent 55%),linear-gradient(160deg,#1a0608,#070708)}
+  .role:nth-child(2) .role-visual{background:radial-gradient(circle at 50% 45%,rgba(10,132,255,.4),transparent 55%),linear-gradient(160deg,#05101f,#070708)}
+  .role:nth-child(3) .role-visual{background:radial-gradient(circle at 50% 45%,rgba(48,209,88,.34),transparent 55%),linear-gradient(160deg,#06160c,#070708)}
+  .role-visual .glyph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:clamp(80px,16vw,240px);letter-spacing:.05em;color:rgba(255,255,255,.06)}
+  .role:nth-child(even) .role-visual{order:-1;border-left:0;border-right:1px solid var(--line)}
+
+  /* cta */
+  .cta{border-top:1px solid var(--line);padding:14vh 7vw;text-align:center;background:radial-gradient(80% 120% at 50% 0%,rgba(255,34,51,.16),transparent 60%)}
+  .cta h2{font-weight:800;font-size:clamp(34px,5vw,64px);line-height:1.05;margin-bottom:30px}
+  .cta a{display:inline-block;font-family:var(--display);letter-spacing:.2em;font-size:20px;color:#fff;text-decoration:none;border:1px solid var(--red);background:var(--red);padding:16px 42px;border-radius:100px;transition:transform .2s}
+  .cta a:hover{transform:translateY(-3px)}
+
+  @media(max-width:860px){
+    .site-nav{gap:18px}
+    .role,.role:nth-child(even){grid-template-columns:1fr}
+    .role-visual,.role:nth-child(even) .role-visual{order:0;border:0;border-top:1px solid var(--line);min-height:38vh}
+  }
+</style>
+</head>
+<body>
 <header class="site-header">
   <a class="site-logo" href="./apechain-home.html">城瘾</a>
   <nav class="site-nav">
@@ -8,31 +74,52 @@
     <a href="./about.html">联系我们</a>
   </nav>
 </header>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:#050506;color:#f5f5f7;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
-  .site-header{position:fixed;top:0;left:0;width:100%;height:72px;z-index:99;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(5,5,6,.6);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08)}
-  .site-logo{font-weight:700;font-size:20px;color:#fff;text-decoration:none;letter-spacing:.1em}
-  .site-nav{display:flex;gap:32px}
-  .site-nav a{color:rgba(245,245,247,.62);text-decoration:none;font-size:15px;letter-spacing:.08em;transition:color .2s}
-  .site-nav a:hover,.site-nav a[aria-current="page"]{color:#fff}
-  .page-wrap{max-width:1080px;margin:0 auto;padding:160px 40px 120px}
-  .page-eyebrow{color:#0a84ff;font-size:13px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px}
-  .page-title{font-size:clamp(40px,6vw,72px);line-height:1.05;margin-bottom:24px}
-  .page-sub{color:rgba(245,245,247,.6);font-size:18px;max-width:600px;margin-bottom:64px}
-  .role-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
-  .role-card{border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:32px;background:rgba(22,23,26,.5)}
-  .role-card h3{font-size:24px;margin-bottom:12px}
-  .role-card p{color:rgba(245,245,247,.55);font-size:15px}
-</style>
-<main class="page-wrap">
-  <p class="page-eyebrow">BUILD</p>
-  <h1 class="page-title">三种角色,共建一座可玩的城市。</h1>
-  <p class="page-sub">商家、玩家、俱乐部各自如何参与城瘾的城市事件系统。(占位,后续按 RTFKT about 风格重做)</p>
-  <div class="role-grid">
-    <div class="role-card"><h3>商家</h3><p>把门店变成城市事件节点,而不是广告位。</p></div>
-    <div class="role-card"><h3>玩家</h3><p>带着目的进入城市,完成任务、推进剧情、获得奖励。</p></div>
-    <div class="role-card"><h3>俱乐部</h3><p>以旅游团/兴趣组的形式组队探索城市。</p></div>
-  </div>
-</main>
-</body></html>
+
+<section class="hero">
+  <p class="eyebrow">BUILD · 构建</p>
+  <h1>三种角色,<br>共建一座<span class="red">可玩</span>的城市。</h1>
+  <p>城瘾不是一个广告位,而是一套城市事件系统。商家、玩家、俱乐部各自进入,共同让街区运转起来。</p>
+  <p class="scrolldown">SCROLL ↓</p>
+</section>
+
+<div class="roles">
+  <section class="role">
+    <div class="role-text">
+      <div class="role-index">01</div>
+      <p class="role-en">MERCHANT</p>
+      <h2 class="role-cn">商家</h2>
+      <p class="role-desc">把门店变成城市事件的节点,而不是被刷过的广告。提供线索、奖励、验证动作或隐藏玩法,让玩家带着目的到达你的空间。</p>
+      <div class="role-tags"><span>事件节点</span><span>到店任务</span><span>奖励核销</span><span>客流数据</span></div>
+    </div>
+    <div class="role-visual"><div class="glyph">M</div></div>
+  </section>
+
+  <section class="role">
+    <div class="role-text">
+      <div class="role-index">02</div>
+      <p class="role-en">PLAYER</p>
+      <h2 class="role-cn">玩家</h2>
+      <p class="role-desc">带着目的进入城市,完成任务、推进剧情、获得奖励。一个人可以玩,一群人更好玩——组队、竞速、对抗、冲榜。</p>
+      <div class="role-tags"><span>城市任务</span><span>剧情解锁</span><span>组队挑战</span><span>成长路径</span></div>
+    </div>
+    <div class="role-visual"><div class="glyph">P</div></div>
+  </section>
+
+  <section class="role">
+    <div class="role-text">
+      <div class="role-index">03</div>
+      <p class="role-en">CLUB</p>
+      <h2 class="role-cn">俱乐部</h2>
+      <p class="role-desc">以旅游团、兴趣组的形式组织起来,把一次出门变成一场有主题的城市探索。俱乐部既是组织者,也是城市事件的共建方。</p>
+      <div class="role-tags"><span>旅游团</span><span>主题组局</span><span>共建事件</span><span>社群运营</span></div>
+    </div>
+    <div class="role-visual"><div class="glyph">C</div></div>
+  </section>
+</div>
+
+<section class="cta">
+  <h2>想让你的角色进入这座城市?</h2>
+  <a href="./about.html">联系我们 →</a>
+</section>
+</body>
+</html>
