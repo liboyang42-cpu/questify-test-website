@@ -461,6 +461,7 @@
       transform: translateY(0);
     }
   </style>
+  <link rel="stylesheet" href="/site-shell.css" />
 </head>
 <body>
 
@@ -557,38 +558,6 @@
     .mobile-logo { display: none !important; }
   }
 </style>
-
-<header class="Header" id="mainHeader">
-  <div class="Header-bg-gradient"></div>
-
-  <!-- Hamburger (mobile) -->
-  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-colors duration-300">
-      <line x1="2" y1="24" x2="30" y2="24" stroke="currentColor" stroke-width="2"></line>
-      <line x1="2" y1="16" x2="30" y2="16" stroke="currentColor" stroke-width="2"></line>
-      <line x1="2" y1="8" x2="30" y2="8" stroke="currentColor" stroke-width="2"></line>
-    </svg>
-  </button>
-
-  <!-- Mobile Logo -->
-  <a title="Home" class="mobile-logo" href="/" style="display:none;">
-    <span style="font-family:var(--display,'Bebas Neue',sans-serif);font-size:26px;font-weight:800;letter-spacing:.18em;color:#fff;line-height:1;">城瘾</span>
-  </a>
-
-  <div class="Header-inner">
-    <!-- Desktop Logo -->
-    <a class="Header-logo mobile-hidden" href="/" title="Home">
-      <span style="font-family:var(--display,'Bebas Neue',sans-serif);font-size:26px;font-weight:800;letter-spacing:.18em;color:#fff;line-height:1;">城瘾</span>
-    </a>
-
-    <nav class="Header-nav">
-      <a href="./index.html" aria-current="page">探索</a>
-      <a href="./ip.html">IP</a>
-      <a href="./build.html">构建</a>
-      <a href="./about.html">联系我们</a>
-    </nav>
-  </div>
-</header>
 
 <script>
 (function() {
@@ -698,23 +667,7 @@
   </main>
 
   <!-- ===== Footer ===== -->
-  <footer class="Footer">
-    <picture class="Footer-bg">
-      <source media="(min-width:985px)" srcset="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='400'%3E%3Crect width='1440' height='400' fill='%23000'/%3E%3C/svg%3E" />
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='400'%3E%3Crect width='1440' height='400' fill='%23000'/%3E%3C/svg%3E" alt="" />
-    </picture>
-    <div class="Footer-inner">
-      <div class="Footer-col">
-        <h4>城瘾</h4>
-      </div>
-    </div>
-    <div class="Footer-bottom">
-      <div class="Footer-bottom-inner">
-        <span>&copy; 2026 城瘾</span>
-      </div>
-    </div>
-  </footer>
-</div>
+  </div>
 
 <script>
 // ─── App Data ────────────────────────────────────────────────
@@ -910,5 +863,6 @@ renderFilters();
 renderGrid();
 </script>
 
+  <script src="/site-shell.js" defer></script>
 </body>
 </html>

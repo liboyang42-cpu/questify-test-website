@@ -1565,44 +1565,13 @@
       .desktop-only { display: block; }
     }
   </style>
+  <link rel="stylesheet" href="/site-shell.css" />
 </head>
 <body>
 
 <div class="page-wrap">
 
   <!-- ===== HEADER ===== -->
-  <header class="Header" id="mainHeader">
-    <div class="Header-bg-gradient"></div>
-
-    <!-- Hamburger (mobile) -->
-    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-colors duration-300">
-        <line x1="2" y1="24" x2="30" y2="24" stroke="currentColor" stroke-width="2"></line>
-        <line x1="2" y1="16" x2="30" y2="16" stroke="currentColor" stroke-width="2"></line>
-        <line x1="2" y1="8" x2="30" y2="8" stroke="currentColor" stroke-width="2"></line>
-      </svg>
-    </button>
-
-    <!-- Mobile Logo -->
-    <a title="Home" class="mobile-logo" href="/" style="display:none;">
-      <span style="font-family:var(--display,'Bebas Neue',sans-serif);font-size:26px;font-weight:800;letter-spacing:.18em;color:#fff;line-height:1;">城瘾</span>
-    </a>
-
-    <div class="Header-inner">
-      <!-- Desktop Logo -->
-      <a class="Header-logo mobile-hidden" href="/" title="Home">
-        <span style="font-family:var(--display,'Bebas Neue',sans-serif);font-size:26px;font-weight:800;letter-spacing:.18em;color:#fff;line-height:1;">城瘾</span>
-      </a>
-
-      <nav class="Header-nav">
-        <a href="./index.html" aria-current="page">探索</a>
-        <a href="./ip.html">IP</a>
-        <a href="./build.html">构建</a>
-        <a href="./about.html">联系我们</a>
-      </nav>
-    </div>
-  </header>
-
   <!-- ===== HERO SECTION ===== -->
   <div class="SectionHomepageHero" id="heroSection">
     <!-- Canvas backgrounds -->
@@ -2178,41 +2147,7 @@
   </section>
 
   <!-- ===== FOOTER ===== -->
-  <footer class="MainFooter" id="mainFooter">
-    <!-- Gradient overlay (fixes "big blue" issue) -->
-    <div class="Footer-overlay"></div>
-    <!-- Canvas -->
-    <div class="Footer-canvas">
-      <canvas id="footerCanvas" width="3024" height="1624"></canvas>
-    </div>
-    <!-- Background image -->
-    <div class="Footer-bg">
-      <picture>
-        <img src="/assets/placeholder-app.svg" alt="城瘾" />
-      </picture>
-    </div>
-
-    <div class="Footer-content">
-      <div class="Footer-brand-stage" aria-hidden="true">
-        <div class="Footer-orbit"></div>
-        <div class="Footer-orbit-outer"></div>
-        <div class="Footer-big-word">城瘾</div>
-      </div>
-
-      <div class="Footer-bottom">
-        <div class="Footer-bottom-inner">
-          <span>&copy; 2026 城瘾</span>
-          <nav aria-label="Footer legal links">
-            <a href="/terms-of-service">Terms of Service</a>
-            <span aria-hidden="true" style="margin:0 14px;">|</span>
-            <a href="/privacy-notice">Privacy Notice</a>
-          </nav>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-</div><!-- page-wrap end -->
+  </div><!-- page-wrap end -->
 
 <script src="/assets/vendor/three.r128.min.js"></script>
 <script>
@@ -2223,6 +2158,7 @@
 // ===== 1. Header Scroll Behavior =====
 (function() {
   const header = document.getElementById('mainHeader');
+  if (!header) return;
   let lastScrollY = 0;
   let ticking = false;
 
@@ -2890,5 +2826,6 @@
   .d20-cta svg{color:#ff2233}
   @media(max-width:600px){.d20-cta span{display:none}.d20-cta{padding:12px}}
 </style>
+  <script src="/site-shell.js" defer></script>
 </body>
 </html>
