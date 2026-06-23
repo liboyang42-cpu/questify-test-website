@@ -1566,6 +1566,7 @@
     }
   </style>
   <link rel="stylesheet" href="/site-shell.css" />
+  <script src="/webgl-check.js"></script>
 </head>
 <body>
 
@@ -2292,6 +2293,8 @@
   const heroSection = document.getElementById('heroSection');
 
   if (!renderCanvas || !window.THREE) return;
+  // WebGL 不支持:跳过 3D 初始化,保留 hero 文案与 CTA(M2-24)
+  if (window.cyWebGLSupported && !window.cyWebGLSupported()) return;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);

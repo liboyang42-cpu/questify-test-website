@@ -10,6 +10,19 @@ import { DiceGame } from './DiceGame.js';
  * @returns {DiceGame} 实例,带 .destroy()
  */
 export function mount(container) {
+  // WebGL 不支持:显示静态降级卡片,不创建 WebGL 渲染器(M2-24)
+  if (typeof window !== 'undefined' && window.cyWebGLSupported && !window.cyWebGLSupported()) {
+    if (container && getComputedStyle(container).position === 'static') {
+      container.style.position = 'relative';
+    }
+    if (window.cyShowWebGLFallback) {
+      window.cyShowWebGLFallback(container, {
+        title: 'd20 需要 3D 渲染(WebGL)',
+        text: '你的浏览器或设备暂不支持 WebGL,无法运行 d20 掷骰演示。',
+      });
+    }
+    return null;
+  }
   return new DiceGame(container);
 }
 

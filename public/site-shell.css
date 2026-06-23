@@ -71,6 +71,16 @@
   .cy-footer__cols{gap:36px;}
 }
 
+/* WebGL 静态降级卡片(M2-24) */
+.cy-webgl-fallback{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  padding:24px; text-align:center; pointer-events:none; z-index:2;
+  font-family:"HarmonyOS Sans SC",-apple-system,"PingFang SC",sans-serif;
+}
+.cy-webgl-fallback__inner{max-width:420px;}
+.cy-webgl-fallback__t{color:#fff; font-size:17px; font-weight:500; margin:0 0 10px; letter-spacing:.04em;}
+.cy-webgl-fallback__d{color:rgba(255,255,255,.55); font-size:14px; line-height:1.8; margin:0;}
+
 /* 尊重减少动画偏好(M2-22):全站关闭非必要过渡/动画 */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{
