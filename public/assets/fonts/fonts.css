@@ -1,0 +1,57 @@
+/* 城瘾官网自托管字体:HarmonyOS Sans SC(免费商用,见 HarmonyOS-Sans-LICENSE.txt)
+   子集:GB2312 常用字 + 站点字符 + ASCII/标点(每字重 ~0.9MB woff2)
+   字重角色:标题 Medium(500) / 正文 Regular(400) / 小标签 Light(300)
+   实现:用别名把页面原有字体名重定向到 HarmonyOS,零选择器改动、全自托管。 */
+
+/* 真实品牌字族(供新 CSS / 基础 body 使用) */
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("/assets/fonts/HarmonyOS_Sans_SC_Light.woff2") format("woff2");
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("/assets/fonts/HarmonyOS_Sans_SC_Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("/assets/fonts/HarmonyOS_Sans_SC_Medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+
+/* 别名:标题类(Bebas Neue / Oswald)→ HarmonyOS Medium */
+@font-face {
+  font-family: "Bebas Neue";
+  src: url("/assets/fonts/HarmonyOS_Sans_SC_Medium.woff2") format("woff2");
+  font-weight: 1 1000; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Oswald";
+  src: url("/assets/fonts/HarmonyOS_Sans_SC_Medium.woff2") format("woff2");
+  font-weight: 1 1000; font-style: normal; font-display: swap;
+}
+
+/* 别名:正文(DM Sans / Inter)→ HarmonyOS Regular */
+@font-face {
+  font-family: "DM Sans";
+  src: url("/assets/fonts/HarmonyOS_Sans_SC_Regular.woff2") format("woff2");
+  font-weight: 1 1000; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("/assets/fonts/HarmonyOS_Sans_SC_Regular.woff2") format("woff2");
+  font-weight: 1 1000; font-style: normal; font-display: swap;
+}
+
+/* 别名:小标签(DM Mono)→ HarmonyOS Light */
+@font-face {
+  font-family: "DM Mono";
+  src: url("/assets/fonts/HarmonyOS_Sans_SC_Light.woff2") format("woff2");
+  font-weight: 1 1000; font-style: normal; font-display: swap;
+}
+
+/* 兜底:未显式指定字体的文本走 HarmonyOS,中文回退系统字体 */
+html, body, button, input, textarea, select {
+  font-family: "HarmonyOS Sans SC", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
