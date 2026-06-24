@@ -8,6 +8,8 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="theme-color" content="#0b0b0f" />
+  <!-- 留资 API 基地址:留空则本地 dev 自动指向 localhost:1337;生产填后端域名 -->
+  <meta name="cy-api-base" content="" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="城瘾" />
   <meta property="og:title" content="联系我们 · 城瘾" />
@@ -179,31 +181,67 @@
 })();
 </script>
   <script>
-  // 联系表单:客户端校验 + 诚实状态(留资后端 M5 接入前不做欺骗性提交)
+  // 联系表单:客户端校验 + 提交到留资 API(M6-08)
   (function(){
     var form=document.getElementById('leadForm'); if(!form) return;
     var status=document.getElementById('lf-status');
+    var submitBtn=form.querySelector('.submit');
+    // API base:本地 dev 指向本地 Strapi;生产由 <meta name="cy-api-base"> 配置(域名确定后填)
+    var meta=document.querySelector('meta[name="cy-api-base"]');
+    var API_BASE=(meta&&meta.content.trim())||
+      ((location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:1337':'');
+    var TYPE_MAP={'合作咨询':'consult','俱乐部报名':'join','IP 合作':'cooperation','其他咨询':'other'};
+    var submitting=false, idemKey=null;
+
     function setErr(id,msg){
       var el=document.getElementById('lf-'+id), err=document.getElementById('err-'+id);
       if(el) el.classList.toggle('field--error',!!msg);
       if(err) err.textContent=msg||'';
     }
+    function setStatus(cls,msg){ status.className='form-status'+(cls?' '+cls:''); status.textContent=msg; }
+    function setBusy(b){ submitting=b; submitBtn.disabled=b; submitBtn.textContent=b?'提交中…':'提交'; }
+    function rid(){ try{return crypto.randomUUID();}catch(e){return 'k'+Date.now()+Math.random().toString(36).slice(2);} }
+
     form.addEventListener('submit',function(e){
       e.preventDefault();
-      status.className='form-status'; status.textContent='';
-      var ok=true;
-      var type=document.getElementById('lf-type').value.trim();
+      if(submitting) return;
+      setStatus('','');
+      var typeLabel=document.getElementById('lf-type').value.trim();
       var name=document.getElementById('lf-name').value.trim();
       var contact=document.getElementById('lf-contact').value.trim();
+      var message=document.getElementById('lf-msg').value.trim();
       var consent=document.getElementById('lf-consent').checked;
-      setErr('type', type?'':'请选择咨询类型'); if(!type) ok=false;
+      var ok=true;
+      setErr('type', typeLabel?'':'请选择咨询类型'); if(!typeLabel) ok=false;
       setErr('name', name?'':'请填写称呼'); if(!name) ok=false;
       setErr('contact', contact?'':'请填写联系方式'); if(!contact) ok=false;
-      if(!consent){ ok=false; status.className='form-status err'; status.textContent='请先阅读并同意隐私政策。'; }
-      if(!ok){ if(consent){ status.className='form-status err'; status.textContent='请完善必填信息。'; } return; }
-      // 校验通过:诚实告知在线提交尚未开放(不声称已发送)
-      status.className='form-status ok';
-      status.textContent='✓ 信息校验通过。在线留资提交功能即将开放,届时将第一时间处理你的需求。';
+      if(!consent){ ok=false; setStatus('err','请先阅读并同意隐私政策。'); }
+      if(!ok){ if(consent) setStatus('err','请完善必填信息。'); return; }
+
+      if(!idemKey) idemKey=rid(); // 同一次提交复用,防重复点击建多条
+      var payload={
+        type: TYPE_MAP[typeLabel]||'other',
+        name: name, contact: contact, message: message,
+        consent: true, sourcePage: location.pathname, idempotencyKey: idemKey
+      };
+      setBusy(true); setStatus('','正在提交…');
+      fetch(API_BASE+'/api/public/v1/leads',{
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+      }).then(function(res){
+        return res.json().catch(function(){return {};}).then(function(body){return {status:res.status,body:body};});
+      }).then(function(r){
+        setBusy(false);
+        if(r.status===201||r.status===200){
+          var reqId=(r.body&&r.body.data&&r.body.data.requestId)||'';
+          setStatus('ok','✓ 已收到你的信息,我们会尽快联系你。'+(reqId?'(受理号 '+reqId+')':''));
+          form.reset(); idemKey=null;
+        } else if(r.status===400){ setStatus('err','请检查填写信息是否完整有效。'); }
+        else if(r.status===429){ setStatus('err','提交过于频繁,请稍后再试。'); }
+        else { setStatus('err','提交失败,请稍后重试。'); }
+      }).catch(function(){
+        setBusy(false);
+        setStatus('err','网络异常,提交未成功;你填写的内容已保留,请稍后重试。');
+      });
     });
   })();
   </script>
