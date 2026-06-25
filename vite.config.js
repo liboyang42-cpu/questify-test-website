@@ -35,6 +35,7 @@ export default defineConfig({
         privacy: resolve(__dirname, 'privacy.html'),
         terms: resolve(__dirname, 'terms.html'),
         galacticCore: resolve(__dirname, 'demos/galactic-core.html'),
+        presetLife: resolve(__dirname, 'preset-life.html'),
       },
     },
   },
