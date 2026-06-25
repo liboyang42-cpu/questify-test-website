@@ -3,35 +3,12 @@ const params = new URLSearchParams(window.location.search);
 const activeProjectId = params.get('project');
 const detailMode = Boolean(activeProjectId);
 
-const events = [
-  ['NIGHT CITY INSOMNIA PROTOCOL', 'Narrative Experiment', 'LIVE / 47%', '30% of citizens report overlapping dream states'],
-  ['ANONYMOUS THEATER VOL.3', 'User Generated Narrative', 'EXPANDING / 68%', 'Users are assigned hidden roles in a collective story system'],
-  ['DATA GOD AWAKENING', 'Collaboration IP', 'COUNTDOWN / 18%', 'A foreign creative entity is entering the city system']
-];
-
-const entities = [
-  ['DATA CLEANER UNIT', 'System Maintenance Entity', 'Removing corrupted narrative fragments'],
-  ['ANONYMOUS STORY WEAVER', 'Narrative Manipulator', 'Injecting alternate story branches'],
-  ['EXTERNAL ARTIST NODE / XXX STUDIO', 'Collaboration Entity', 'Deploying visual narrative layer']
-];
-
 const navItems = [
   ['about', 'about'],
-  ['live events', 'live-events'],
-  ['city entities', 'city-entities'],
-  ['narrative map', 'narrative-map'],
-  ['participation', 'participation'],
-  ['related archives', 'related-archives']
-];
-
-const caseStoryNavItems = [
-  ['intro', 'case-intro'],
-  ['background', 'case-background'],
-  ['route', 'case-route'],
-  ['chapters', 'case-chapters'],
-  ['what happens', 'case-actions'],
-  ['evidence wall', 'case-evidence'],
-  ['enter case', 'case-enter']
+  ['how to play', 'how-to-play'],
+  ['features', 'features'],
+  ['media', 'media'],
+  ['archives', 'related-archives']
 ];
 
 const caseAssets = {
@@ -71,203 +48,69 @@ const caseAssets = {
   refWalker: '/assets/case-citywalk-ref/cropped/IMG_9557-crop.jpg'
 };
 
-const caseRoutes = [
-  {
-    index: '01',
-    title: '静安别墅',
-    address: '南京西路1025弄',
-    distance: '0.0 KM',
-    time: '00:00',
-    event: '林婉带来皮夹克、传呼机和一封信。',
-    task: '观察弄堂入口编号，把“1025”和传呼机时间 03:17 对应到第一组坐标。',
-    hidden: '门牌号 / 信纸折痕 / 03:17'
-  },
-  {
-    index: '02',
-    title: '张园 / 茂名北路',
-    address: '茂名北路历史街区',
-    distance: '0.9 KM',
-    time: '00:28',
-    event: '陈朗最后一次被目击，一张模糊照片拍到他进入弄堂。',
-    task: '沿茂名北路对比照片里的门楼轮廓、橱窗倒影和街角方向。',
-    hidden: '门楼形状 / 倒影 / 手写时间'
-  },
-  {
-    index: '03',
-    title: '南京西路移动段',
-    address: '张园 → 人民广场方向',
-    distance: '2.2 KM',
-    time: '01:05',
-    event: '陈默以陈朗身份穿过城市，传呼机连续收到三条互相矛盾的消息。',
-    task: '记录三个路口时间点，判断哪条传呼来自陈朗，哪条是诱导路线。',
-    hidden: '公共电话 / 路口钟 / 地铁入口编号'
-  },
-  {
-    index: '04',
-    title: '上海书城福州路店',
-    address: '福州路465号',
-    distance: '3.7 KM',
-    time: '01:55',
-    event: '陈默在自己的旧解谜书里找到第一组真正线索。',
-    task: '把书脊编号、页码 317 和错填数独格转换成下一站街区坐标。',
-    hidden: '书脊编号 / 页码317 / 陈默笔名'
-  },
-  {
-    index: '05',
-    title: '福州路文化街',
-    address: '福州路书店街',
-    distance: '4.6 KM',
-    time: '02:25',
-    event: '三份证词分散在沿街书店、路牌和橱窗里，时间线开始互相打架。',
-    task: '收集三份证词，重排它们的时间顺序，找出不可能同时成立的一分钟。',
-    hidden: '旧书店招牌 / 路牌方向 / 证词碎片'
-  },
-  {
-    index: '06',
-    title: '外滩档案点',
-    address: '中山东二路9号一带',
-    distance: '6.2 KM',
-    time: '03:00',
-    event: '旧案被重新排列，陈朗留下的最后坐标指向城市档案空间。',
-    task: '把六个地点挂回地图，解出最终档案编号，触发案件结局。',
-    hidden: '最终坐标 / 档案编号 / 黄浦江方向'
-  }
-];
-
-const caseChapters = [
-  {
-    index: '01',
-    title: '静安别墅：敲门声',
-    address: '南京西路1025弄',
-    time: '03:17',
-    copy: '穿上皮夹克，从南京西路的弄堂出发。',
-    objective: '进入弄堂',
-    tasks: ['门牌 1025'],
-    clues: ['03:17'],
-    next: '0.9 KM TO ZHANGYUAN',
-    image: caseAssets.refStartPacket,
-    altImage: caseAssets.xhsCover,
-    layout: 'entry'
-  },
-  {
-    index: '02',
-    title: '张园：最后目击',
-    address: '茂名北路历史街区',
-    time: '03:42',
-    copy: '在人群里找陈朗最后出现的入口。',
-    objective: '比对旧照',
-    tasks: ['对照旧照片'],
-    clues: ['倒影'],
-    next: '1.3 KM ON FOOT',
-    image: caseAssets.refDetectiveCard,
-    altImage: caseAssets.refWalkingBooklet,
-    layout: 'photo-check'
-  },
-  {
-    index: '03',
-    title: '南京西路：替身行走',
-    address: '张园 → 人民广场方向',
-    time: '04:18',
-    copy: '沿南京西路继续走，传呼机开始震动。',
-    objective: '跟随传呼',
-    tasks: ['跟随人流'],
-    clues: ['传呼代码'],
-    next: '1.5 KM TO FUZHOU RD',
-    image: caseAssets.refNightPacket,
-    altImage: caseAssets.refNightStreet,
-    layout: 'transit'
-  },
-  {
-    index: '04',
-    title: '上海书城：错填格子',
-    address: '福州路465号',
-    time: '05:03',
-    copy: '在福州路，把旧书页码换成下一段坐标。',
-    objective: '找到页码',
-    tasks: ['页码 317'],
-    clues: ['书脊'],
-    next: '0.9 KM ALONG FUZHOU RD',
-    image: caseAssets.refMapDocument,
-    altImage: caseAssets.refStreetEvidence,
-    layout: 'evidence'
-  },
-  {
-    index: '05',
-    title: '外滩档案点：旧案重排',
-    address: '福州路 → 中山东二路9号一带',
-    time: '05:51',
-    copy: '走到外滩，把一路收集的时间重新排好。',
-    objective: '重排时间',
-    tasks: ['最终档案'],
-    clues: ['6.2 KM'],
-    next: 'ROUTE COMPLETE',
-    image: caseAssets.refRouteMap,
-    altImage: caseAssets.refWalker,
-    layout: 'archive'
-  }
-];
-
-const caseActions = [
-  ['传呼机信息', '移动途中会收到新代码，决定下一站的阅读顺序。'],
-  ['证词碎片', '线索藏在路牌、门牌、橱窗和街角，不只在固定地点。'],
-  ['路线偏移', '如果走错方向，系统会给出新的城市提示。'],
-  ['隐藏线索', '非必需线索会改变最终结局解释的完整度。'],
-  ['现场重排', '把地点、证词、时间重新挂回城市地图。']
-];
-
-const caseClues = [
-  ['静安别墅', '皮夹克 / 信 / 传呼机 / 03:17'],
-  ['张园', '模糊照片 / 门楼 / 橱窗倒影'],
-  ['南京西路移动段', '传呼代码 / 路口时间 / 错误短信'],
-  ['上海书城', '书脊编号 / 页码317 / 数独格'],
-  ['福州路文化街', '三份证词 / 路牌 / 旧案编号'],
-  ['外滩档案点', '最终坐标 / 档案编号 / 黄浦江方向']
-];
-
-function renderCaseStoryArticles() {
-  return `
-        <article class="article story-article case-intro-article" id="about-copy">
-          <div class="case-intro-copy">
-            <span class="section-kicker">[ROUTE INTRO]</span>
-            <h2>6.2 KM 上海夜行</h2>
-            <p>五个地点。三个小时。陈默穿上哥哥的皮夹克，沿南京西路一路走到外滩。</p>
-          </div>
-          <div class="case-intro-visuals" aria-label="案件开场视觉">
-            <div class="case-intro-photo case-intro-photo-primary" style="--intro-image:url('${caseAssets.xhsCover}')"></div>
-            <div class="case-intro-photo case-intro-photo-secondary" style="--intro-image:url('${caseAssets.xhsChapter05}')"></div>
-          </div>
-        </article>
-        ${caseChapters.map((chapter, index) => {
-          const ids = ['live-events', 'city-entities', 'narrative-map', 'participation', 'related-archives'];
-          return `<article class="article story-article story-wide chapter-walk chapter-${chapter.layout}" id="${ids[index]}" data-walk-chapter data-layout="${chapter.layout}" style="--chapter-image:url('${chapter.image}');--chapter-alt-image:url('${chapter.altImage}')">
-            <div class="chapter-route-line" aria-hidden="true"><span></span></div>
-            <div class="chapter-layout">
-              <div class="chapter-content">
-                <span class="section-kicker">[CHAPTER ${chapter.index}]</span>
-                <h2>${chapter.title}</h2>
-                <div class="chapter-meta"><span>${chapter.time}</span><span>${chapter.address}</span></div>
-                <p>${chapter.copy}</p>
-                <div class="chapter-objective"><span>OBJECTIVE</span><strong>${chapter.objective}</strong></div>
-                <div class="chapter-next">${chapter.next}</div>
-              </div>
-              <div class="chapter-visual" aria-label="${chapter.title} 城市照片">
-                <div class="chapter-media chapter-media-main"></div>
-                <div class="chapter-media chapter-media-alt"></div>
-              </div>
-            </div>
-          </article>`;
-        }).join('')}
-  `;
+function metaStrip(meta) {
+  if (!meta) return '';
+  const cells = [
+    ['TYPE', meta.type], ['STATUS', meta.status], ['PLAYERS', meta.players],
+    ['DURATION', meta.duration], ['CITY', meta.city]
+  ].filter(([, v]) => v);
+  if (!cells.length) return '';
+  return `<div class="ip-meta-strip">${cells.map(([k, v]) => `<div class="ip-meta-cell"><span class="ip-meta-k">${k}</span><span class="ip-meta-v">${v}</span></div>`).join('')}</div>`;
 }
 
-function renderDefaultProjectArticles(project) {
+function renderArchiveCard(item) {
+  const ph = `<div class="ip-arch-cover" data-glyph="${(item.title || '◇').slice(0, 1)}"></div>`;
+  const body = `<span class="ip-arch-type">${item.type || ''}</span><strong class="ip-arch-title">${item.title}</strong><span class="ip-arch-status">${item.status || (item.href ? '打开 →' : '')}</span>`;
+  return item.href && !item.status
+    ? `<a class="ip-arch-card is-live" href="${item.href}">${ph}${body}</a>`
+    : `<div class="ip-arch-card is-soon" role="group" aria-label="${item.title}（${item.status || '即将上线'}）">${ph}${body}</div>`;
+}
+
+// 三张卡片共用的项目详情正文模板(P1):ABOUT / HOW TO PLAY / FEATURES / MEDIA / RELATED ARCHIVES
+// 数据驱动,差异全在 projects[] 里;不再为某张卡单独写一套 DOM。
+function renderProjectArticles(project) {
+  const archives = project.archives || [];
   return `
-        <article class="article" id="about-copy"><span class="section-kicker">[ABOUT]</span><h2>${project.headline}</h2><p>${project.about}</p><p>The system treats every campaign as a city behavior. Citizens enter through checkpoints, events expand through participation, and story fragments become infrastructure that can be replayed, modified, and inherited by future layers.</p></article>
-        <article class="article" id="live-events"><span class="section-kicker">[LIVE EVENTS]</span><h2>IP events are products, not announcements</h2><div class="event-strip">${events.map(event => `<div class="event-card"><span><em>${event[1]}</em><em>${event[2]}</em></span><h3>${event[0]}</h3><p>${event[3]}</p></div>`).join('')}</div></article>
-        <article class="article" id="city-entities"><span class="section-kicker">[CITY ENTITIES]</span><h2>Persistent agents operate inside the city system</h2><div class="entity-list">${entities.map(entity => `<div class="entity-row"><strong>${entity[0]}</strong><span>${entity[1]}</span><span>${entity[2]}</span></div>`).join('')}</div></article>
-        <article class="article" id="narrative-map"><span class="section-kicker">[NARRATIVE MAP]</span><h2>Story routes operate as city infrastructure</h2><div class="archive-image"><div class="map-nodes"><div class="node" style="left:12%;top:52%;">Reality Entry</div><div class="node" style="left:36%;top:36%;">City Events</div><div class="node" style="left:61%;top:22%;">Night Zone</div><div class="node" style="left:68%;top:54%;">Theater Zone</div><div class="node" style="left:86%;top:38%;">Data Core</div><div class="node" style="left:52%;top:78%;">Hidden Layer</div></div></div></article>
-        <article class="article" id="participation"><span class="section-kicker">[PARTICIPATION]</span><h2>This city is not watched. It is entered.</h2><p>You are not a user. You are a system node. Join live events, create a city narrative node, or become a persistent entity in the World / IP Layer.</p><div class="entry-row"><div class="entry"><h3>Join Event</h3><p>Participate in live city events.</p></div><div class="entry"><h3>Create Event</h3><p>Generate your own city narrative node.</p></div><div class="entry"><h3>Become Entity</h3><p>Join as a persistent character.</p></div></div></article>
-        <article class="article" id="related-archives"><span class="section-kicker">[RELATED ARCHIVES]</span><h2>Additional city records remain partially indexed</h2><p>Recovered fragments, inactive event nodes, and future city expansions are staged here as a living archive for the next system release.</p></article>
+        <article class="article ip-article ip-about" id="about-copy">
+          <span class="section-kicker">[ABOUT]</span>
+          <h2>${project.about.headline}</h2>
+          ${project.about.body.map(p => `<p>${p}</p>`).join('')}
+          ${metaStrip(project.meta)}
+        </article>
+        <article class="article ip-article ip-howto" id="how-to-play">
+          <span class="section-kicker">[HOW TO PLAY]</span>
+          <h2>${project.howToPlay.title}</h2>
+          <ol class="ip-steps">
+            ${project.howToPlay.steps.map((s, i) => `<li class="ip-step"><span class="ip-step-no">${String(i + 1).padStart(2, '0')}</span><div class="ip-step-body"><strong>${s.title}</strong><p>${s.desc}</p></div></li>`).join('')}
+          </ol>
+        </article>
+        <article class="article ip-article ip-features" id="features">
+          <span class="section-kicker">[FEATURES]</span>
+          <h2>${project.features.title}</h2>
+          <div class="ip-feature-grid">
+            ${project.features.items.map(f => {
+              const body = `<span class="ip-feature-action">${f.action}</span><strong class="ip-feature-cap">${f.capability}</strong><p>${f.desc}</p>`;
+              return f.href
+                ? `<a class="ip-feature is-link" href="${f.href}">${body}<span class="ip-feature-go">打开 →</span></a>`
+                : `<div class="ip-feature">${body}</div>`;
+            }).join('')}
+          </div>
+        </article>
+        <article class="article ip-article ip-media" id="media">
+          <span class="section-kicker">[MEDIA]</span>
+          <h2>${project.media.title}</h2>
+          <div class="ip-media-grid">
+            ${project.media.items.map(m => `<figure class="ip-media-card"><div class="ip-media-ph" data-glyph="${(m.label || '▮').slice(0, 1)}"></div><figcaption>${m.label}<span>${m.note}</span></figcaption></figure>`).join('')}
+          </div>
+        </article>
+        <article class="article ip-article ip-archives" id="related-archives">
+          <span class="section-kicker">[RELATED ARCHIVES]</span>
+          <h2>相关档案</h2>
+          <div class="ip-archive-rail" data-archive-rail>
+            ${archives.map(renderArchiveCard).join('')}
+          </div>
+          <p class="ip-archive-note">横向滑动浏览相关主题与剧本。更多条目将陆续上线。</p>
+        </article>
   `;
 }
 
@@ -282,34 +125,152 @@ const projects = [
     contract: 'CY-CASE-001',
     tag: 'UNSOLVED',
     tone: 'gold',
-    about: 'A city detective story flow about Chen Mo, a puzzle-book writer forced to wear his missing twin brother’s police identity and enter a chain of old cases filed as accidents.',
-    headline: 'A puzzle writer wears a missing detective’s skin'
+    meta: { type: '城市主题 · 实景叙事', status: 'LIVE / 47%', players: '1–6 人', duration: '约 3 小时', city: '上海 · 静安→外滩 6.2KM' },
+    about: {
+      headline: '一条 6.2 公里的上海夜行，把整座城市变成案发现场',
+      body: [
+        '你和朋友组成一支临时小队，沿南京西路一路走到外滩。线索藏在门牌、橱窗、路牌和传呼机代码里。',
+        '走到哪、看见什么、怎么把时间重新排好，决定你们解开的是哪一个版本的结局。'
+      ]
+    },
+    howToPlay: {
+      title: '从组队到结案，一夜怎么玩',
+      steps: [
+        { title: '单人或组队', desc: '一个人也能加入，也可以邀请朋友拼一支 1–6 人的小队。' },
+        { title: '领取身份', desc: '进入故事后各自拿到角色与任务，有人读线索，有人盯时间。' },
+        { title: '跟着城市走', desc: 'App 用定位和时间逐站解锁剧情，从静安别墅一路推进到外滩。' },
+        { title: '现场取证', desc: '扫码、拍照、答题、对暗号，把门牌、倒影、传呼代码变成线索。' },
+        { title: '队友协作', desc: '进度实时共享，不同人看到不同信息，需要拼在一起才完整。' },
+        { title: '结算', desc: '线索完整度与排时间的顺序，决定你们的结局、排名和成就。' }
+      ]
+    },
+    features: {
+      title: 'App 怎么撑起这场城市游戏',
+      items: [
+        { action: '找队友', capability: '邀请 · 匹配 · 队伍房间', desc: '从建队到全员准备，在一个房间里集合。' },
+        { action: '到现场', capability: 'LBS · 地图 · 路线导航', desc: '任务点和距离实时变化，带你走到下一站。' },
+        { action: '收线索', capability: '扫码 · 拍照 · 答题 · 口令', desc: '多种验证方式，只有到了现场才能触发。' },
+        { action: '推剧情', capability: '任务状态 · 分支条件 · AI 角色', desc: '你的每个选择都在改变下一步走向。' },
+        { action: '协作', capability: '队员状态 · 共享物品 · 分工任务', desc: '不同玩家看到不同信息，缺一不可。' },
+        { action: '完成', capability: '结算 · 排行榜 · 成就 · 奖励', desc: '给出结果，也给出继续游玩的入口。' }
+      ]
+    },
+    media: {
+      title: '现场片段',
+      items: [
+        { label: '静安别墅 · 起点', note: '现场实拍 · 素材待定' },
+        { label: '张园 · 最后目击', note: '现场实拍 · 素材待定' },
+        { label: '南京西路 · 替身行走', note: '现场实拍 · 素材待定' },
+        { label: '外滩 · 档案点', note: '现场实拍 · 素材待定' }
+      ]
+    },
+    archives: [
+      { title: '预制人生', type: 'READER', href: '/preset-life.html', status: '' },
+      { title: '更多城市主题', type: 'THEME', href: '', status: '即将上线' }
+    ]
   },
   {
     id: 'forging',
-    title: '应用名称待补',
-    short: 'APP 010',
+    title: '游戏模式',
+    short: 'GAME MODES',
     index: '010',
     year: '[2026 - DROP]',
     date: 'APR. 24TH, 2026',
     contract: 'CY-APP-010',
-    tag: 'PHYSICAL',
+    tag: 'TEMPLATE',
     tone: 'purple',
-    about: '应用简介待补。',
-    headline: '应用标题待补'
+    meta: { type: '可复用玩法模板', status: 'TEMPLATE', players: '1 人起', duration: '30 分钟 – 3 小时', city: '任意城市' },
+    about: {
+      headline: '城瘾不止一个故事，而是一套能反复组合的城市玩法',
+      body: [
+        '同一座城市，可以是一个人的安静探索，也可以是几十人的阵营对抗。',
+        '每一种模式都规定了人数、时长、目标和结算方式；换一个主题，就能复用同一套玩法。'
+      ]
+    },
+    howToPlay: {
+      title: '从选择模式到开始游戏',
+      steps: [
+        { title: '挑一个模式', desc: '按人数、时间和想要的节奏，选探索、竞速、对抗或寻宝。' },
+        { title: '套上主题', desc: '同一套模式可以换不同城市主题，规则不变、故事换皮。' },
+        { title: '开局', desc: '系统按模式分发目标、路线和角色，队伍即时成形。' },
+        { title: '结算', desc: '按速度、线索完整度或团队表现排名，决定下一局怎么开。' }
+      ]
+    },
+    features: {
+      title: '七种可复用的游戏模式',
+      items: [
+        { action: '1 人 · 30–60min', capability: '单人探索', desc: '独自完成路线、线索与隐藏任务。' },
+        { action: '2–6 人 · 1–2h', capability: '组队协作', desc: '队员分工、共享信息、共同解锁。' },
+        { action: '多队 · 约 1h', capability: '限时竞速', desc: '多支队伍在时限内抢完成同一条任务链。' },
+        { action: '2 阵营 · 1–2h', capability: '阵营对抗', desc: '争夺区域、资源或积分。' },
+        { action: '1–6 人 · 1–3h', capability: '城市寻宝', desc: '靠地标、门店与实物线索一路推进。' },
+        { action: '全员 · 任意', capability: 'D20 判定', desc: '用随机判定改变任务风险与剧情结果。', href: '/d20.html' },
+        { action: '多队 · 赛季', capability: '排行榜挑战', desc: '按速度、线索完整度、团队表现结算。' }
+      ]
+    },
+    media: {
+      title: '模式预览',
+      items: [
+        { label: '单人探索', note: '模式主视觉 · 待定' },
+        { label: '组队协作', note: '模式主视觉 · 待定' },
+        { label: '阵营对抗', note: '模式主视觉 · 待定' },
+        { label: 'D20 判定', note: '模式主视觉 · 待定' }
+      ]
+    },
+    archives: [
+      { title: 'D20 判定玩法', type: 'GAME', href: '/d20.html', status: '' },
+      { title: '更多游戏模式', type: 'MODE', href: '', status: '即将上线' }
+    ]
   },
   {
     id: 'airforce',
-    title: '应用名称待补',
-    short: 'APP 011',
+    title: 'IP 入城',
+    short: 'IP IN CITY',
     index: '011',
     year: '[2026 - OBJECT]',
     date: 'AUG. 30TH, 2026',
     contract: 'CY-APP-011',
-    tag: 'SNEAKERS',
+    tag: 'CROSSOVER',
     tone: 'shoe',
-    about: '应用简介待补。',
-    headline: '应用标题待补'
+    meta: { type: 'IP × 真实城市', status: 'OPEN', players: '按活动', duration: '限定 / 长期', city: '城市地标 · 商圈 · 门店' },
+    about: {
+      headline: '熟悉的影视、游戏、角色与品牌，走进真实城市变成可玩的体验',
+      body: [
+        '你认识的 IP 不再只在屏幕里。它变成城市里的一条路线、一个任务、一位会说话的角色。',
+        '限定活动结束后，这些内容仍能作为城市档案长期保留，随时可以再玩一次。'
+      ]
+    },
+    howToPlay: {
+      title: '作为玩家，你会怎么遇见它',
+      steps: [
+        { title: '选一个 IP 事件', desc: '从正在进行的影视、游戏或品牌事件里挑一个进城。' },
+        { title: '在城市里接任务', desc: '熟悉的剧情和角色变成你身边的路线与节点。' },
+        { title: '与 IP 互动', desc: '和 AI 角色对话、完成限定任务、触发隐藏剧情。' },
+        { title: '解锁限定与收藏', desc: '线上身份、成就或收藏，解锁线下专属内容。' }
+      ]
+    },
+    features: {
+      title: 'IP 如何走进城市',
+      items: [
+        { action: '影视剧情', capability: '线下化', desc: '剧情变成城市路线和章节任务。' },
+        { action: '游戏角色', capability: '城市化', desc: '角色成为 AI 角色、任务发布者或你的队友。' },
+        { action: '品牌世界观', capability: '任务化', desc: '变成限定事件、隐藏任务和收藏内容。' },
+        { action: '地标门店', capability: '节点化', desc: '展览、商圈与门店成为故事节点。' }
+      ]
+    },
+    media: {
+      title: '入城片段',
+      items: [
+        { label: '影视路线', note: '案例视觉 · 待授权确认' },
+        { label: 'AI 角色', note: '案例视觉 · 待授权确认' },
+        { label: '限定事件', note: '案例视觉 · 待授权确认' },
+        { label: '城市节点', note: '案例视觉 · 待授权确认' }
+      ]
+    },
+    archives: [
+      { title: '预制人生', type: 'READER', href: '/preset-life.html', status: '' },
+      { title: '更多 IP 联动', type: 'IP', href: '', status: '即将上线' }
+    ]
   }
 ];
 
@@ -2116,7 +2077,7 @@ function renderDetail() {
       </section>
       <section class="media-block" aria-label="World layer media preview"><div class="play">Play</div></section>
       <main class="content">
-        ${project.id === 'geisai' ? renderCaseStoryArticles() : renderDefaultProjectArticles(project)}
+        ${renderProjectArticles(project)}
       </main>
       <section class="next-scroll" aria-label="Scroll for next archive"><div class="next-scroll__label">Scroll for ${nextProject.title}</div></section>
       <div class="handoff" aria-hidden="true">

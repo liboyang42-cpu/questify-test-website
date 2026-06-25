@@ -1,0 +1,60 @@
+/* IP 详情页 · 三卡共用模板模块样式(P1) — 独立文件,勿并入 main.css(主页面不引 main.css)
+   只服务 ip.html 详情正文(ABOUT / HOW TO PLAY / FEATURES / MEDIA / RELATED ARCHIVES)。
+   横向档案 rail 在 P1 是基础滚动版,P2 增强拖拽/键盘/按钮/序号(见 archive-rail.css)。 */
+
+.ip-article { position: relative; }
+.ip-article h2 { max-width: 18em; }
+
+/* 项目元数据条(项目首屏补充信息) */
+.ip-meta-strip { display: flex; flex-wrap: wrap; gap: 14px 28px; margin-top: 28px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.14); }
+.ip-meta-cell { display: flex; flex-direction: column; gap: 4px; }
+.ip-meta-k { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.42); }
+.ip-meta-v { font-size: 15px; color: rgba(255,255,255,.92); }
+
+/* HOW TO PLAY 步骤序列 */
+.ip-steps { list-style: none; margin: 28px 0 0; padding: 0; }
+.ip-step { display: flex; gap: 20px; padding: 22px 0; border-top: 1px solid rgba(255,255,255,.1); }
+.ip-step:first-child { border-top: 0; }
+.ip-step-no { font-size: 13px; letter-spacing: .12em; color: rgba(255,255,255,.4); min-width: 34px; padding-top: 3px; }
+.ip-step-body strong { display: block; font-size: 18px; margin-bottom: 6px; color: #fff; }
+.ip-step-body p { margin: 0; color: rgba(255,255,255,.66); max-width: 42em; }
+
+/* FEATURES 网格(App 能力 / 游戏模式 / IP 融入方式,数据驱动) */
+.ip-feature-grid { margin-top: 28px; display: grid; grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); gap: 14px; }
+.ip-feature { display: block; padding: 20px; border: 1px solid rgba(255,255,255,.14); border-radius: 14px; background: rgba(255,255,255,.02); text-decoration: none; color: inherit; transition: border-color .25s, transform .25s, background .25s; }
+.ip-feature.is-link:hover { border-color: rgba(255,255,255,.5); transform: translateY(-3px); background: rgba(255,255,255,.05); }
+.ip-feature-action { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.46); margin-bottom: 10px; }
+.ip-feature-cap { display: block; font-size: 18px; color: #fff; margin-bottom: 8px; }
+.ip-feature p { margin: 0; font-size: 14px; color: rgba(255,255,255,.66); }
+.ip-feature-go { display: inline-block; margin-top: 12px; font-size: 12px; letter-spacing: .1em; color: rgba(255,255,255,.8); }
+
+/* MEDIA 占位(诚实空位,不造假图) */
+.ip-media-grid { margin-top: 28px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.ip-media-card { margin: 0; }
+.ip-media-ph { aspect-ratio: 4 / 3; border-radius: 14px; border: 1px solid rgba(255,255,255,.12); background: linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.01)); display: flex; align-items: center; justify-content: center; position: relative; }
+.ip-media-ph::after { content: attr(data-glyph); font-size: 34px; color: rgba(255,255,255,.18); }
+.ip-media-ph::before { content: '素材待定'; position: absolute; bottom: 10px; right: 12px; font-size: 10px; letter-spacing: .12em; color: rgba(255,255,255,.3); }
+.ip-media-card figcaption { margin-top: 10px; font-size: 14px; color: rgba(255,255,255,.9); display: flex; flex-direction: column; gap: 3px; }
+.ip-media-card figcaption span { font-size: 12px; color: rgba(255,255,255,.45); }
+
+/* RELATED ARCHIVES 横向轨道(P1 基础滚动版) */
+.ip-archive-rail { margin-top: 26px; display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
+.ip-arch-card { scroll-snap-align: start; flex: 0 0 248px; display: flex; flex-direction: column; padding: 0 0 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,.14); overflow: hidden; text-decoration: none; color: inherit; background: rgba(255,255,255,.02); transition: border-color .25s, transform .25s; }
+.ip-arch-card.is-live:hover { border-color: rgba(255,255,255,.55); transform: translateY(-3px); }
+.ip-arch-card.is-soon { opacity: .62; }
+.ip-arch-cover { aspect-ratio: 3 / 2; background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.01)); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+.ip-arch-cover::after { content: attr(data-glyph); font-size: 40px; color: rgba(255,255,255,.2); }
+.ip-arch-type { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.42); padding: 0 16px; }
+.ip-arch-title { font-size: 17px; color: #fff; padding: 6px 16px 0; }
+.ip-arch-status { font-size: 12px; color: rgba(255,255,255,.55); padding: 8px 16px 0; }
+.ip-archive-note { margin-top: 14px; font-size: 13px; color: rgba(255,255,255,.45); }
+
+@media (max-width: 680px) {
+  .ip-feature-grid, .ip-media-grid { grid-template-columns: 1fr 1fr; }
+  .ip-arch-card { flex-basis: 78vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ip-feature, .ip-arch-card { transition: none; }
+  .ip-feature.is-link:hover, .ip-arch-card.is-live:hover { transform: none; }
+}
