@@ -66,6 +66,84 @@ function renderArchiveCard(item) {
     : `<div class="ip-arch-card is-soon" role="group" aria-label="${item.title}（${item.status || '即将上线'}）">${ph}${body}</div>`;
 }
 
+// 横向档案 rail 交互(P2):左右按钮 / 鼠标拖拽 / 键盘 ← → / 序号计数。
+// 触控交给原生横向滚动(不阻塞页面纵向滚动);鼠标才走拖拽。
+function setupArchiveRail() {
+  const rail = document.querySelector('[data-archive-rail]');
+  if (!rail) return;
+  const cards = Array.from(rail.children);
+  if (!cards.length) return;
+  const ctrl = document.querySelector('[data-rail-ctrl]');
+  const prevBtn = document.querySelector('[data-rail-prev]');
+  const nextBtn = document.querySelector('[data-rail-next]');
+  const countEl = document.querySelector('[data-rail-count]');
+  const total = cards.length;
+  const pad = n => String(n).padStart(2, '0');
+
+  function step() {
+    const a = cards[0].getBoundingClientRect();
+    const b = cards[1] ? cards[1].getBoundingClientRect() : null;
+    return b ? (b.left - a.left) : (a.width + 16);
+  }
+  function currentIndex() {
+    const railLeft = rail.getBoundingClientRect().left;
+    let idx = 0, best = Infinity;
+    cards.forEach((c, i) => {
+      const d = Math.abs(c.getBoundingClientRect().left - railLeft);
+      if (d < best) { best = d; idx = i; }
+    });
+    return idx;
+  }
+  function refresh() {
+    const max = rail.scrollWidth - rail.clientWidth - 1;
+    // 内容能放下时(无溢出)直接隐藏控件,避免出现一排禁用按钮
+    if (ctrl) ctrl.hidden = total <= 1 || max <= 1;
+    if (countEl) countEl.textContent = `${pad(currentIndex() + 1)} / ${pad(total)}`;
+    if (prevBtn) prevBtn.disabled = rail.scrollLeft <= 1;
+    if (nextBtn) nextBtn.disabled = rail.scrollLeft >= max;
+  }
+  function scrollByStep(dir) {
+    rail.scrollBy({ left: dir * step(), behavior: 'smooth' });
+  }
+
+  prevBtn?.addEventListener('click', () => scrollByStep(-1));
+  nextBtn?.addEventListener('click', () => scrollByStep(1));
+  rail.addEventListener('scroll', () => requestAnimationFrame(refresh), { passive: true });
+  window.addEventListener('resize', () => requestAnimationFrame(refresh), { passive: true });
+  rail.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); scrollByStep(1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); scrollByStep(-1); }
+  });
+
+  let dragging = false, startX = 0, startScroll = 0, moved = 0;
+  rail.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    dragging = true; moved = 0; startX = e.clientX; startScroll = rail.scrollLeft;
+    rail.classList.add('is-dragging');
+    rail.setPointerCapture(e.pointerId);
+  });
+  rail.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    moved = Math.max(moved, Math.abs(dx));
+    rail.scrollLeft = startScroll - dx;
+  });
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    rail.classList.remove('is-dragging');
+    try { rail.releasePointerCapture(e.pointerId); } catch (_) { /* noop */ }
+  }
+  rail.addEventListener('pointerup', endDrag);
+  rail.addEventListener('pointercancel', endDrag);
+  // 拖拽超过阈值时吞掉随后的点击,避免误触发卡片链接
+  rail.addEventListener('click', (e) => {
+    if (moved > 6) { e.preventDefault(); e.stopPropagation(); moved = 0; }
+  }, true);
+
+  refresh();
+}
+
 // 三张卡片共用的项目详情正文模板(P1):ABOUT / HOW TO PLAY / FEATURES / MEDIA / RELATED ARCHIVES
 // 数据驱动,差异全在 projects[] 里;不再为某张卡单独写一套 DOM。
 function renderProjectArticles(project) {
@@ -104,12 +182,19 @@ function renderProjectArticles(project) {
           </div>
         </article>
         <article class="article ip-article ip-archives" id="related-archives">
-          <span class="section-kicker">[RELATED ARCHIVES]</span>
+          <div class="ip-rail-head">
+            <span class="section-kicker">[RELATED ARCHIVES]</span>
+            <div class="ip-rail-ctrl" data-rail-ctrl ${archives.length > 1 ? '' : 'hidden'}>
+              <button type="button" class="ip-rail-btn" data-rail-prev aria-label="上一个档案">‹</button>
+              <span class="ip-rail-count" data-rail-count>01 / ${String(archives.length).padStart(2, '0')}</span>
+              <button type="button" class="ip-rail-btn" data-rail-next aria-label="下一个档案">›</button>
+            </div>
+          </div>
           <h2>相关档案</h2>
-          <div class="ip-archive-rail" data-archive-rail>
+          <div class="ip-archive-rail" data-archive-rail tabindex="0" role="group" aria-label="相关档案,可横向滑动、拖拽或用左右方向键浏览">
             ${archives.map(renderArchiveCard).join('')}
           </div>
-          <p class="ip-archive-note">横向滑动浏览相关主题与剧本。更多条目将陆续上线。</p>
+          <p class="ip-archive-note">横向滑动 · 拖拽 · ← → 浏览相关主题与剧本。更多条目将陆续上线。</p>
         </article>
   `;
 }
@@ -2203,6 +2288,8 @@ function renderDetail() {
     });
   }, { threshold: 0.18 });
   document.querySelectorAll('.article, .archive-image, .event-card, .entity-row, .entry').forEach(el => revealObserver.observe(el));
+
+  setupArchiveRail();
 
   const handoffObserver = new IntersectionObserver((entries) => {
     if (entries.some(entry => entry.isIntersecting)) startNextHandoff();
