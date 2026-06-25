@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>联系我们 · 城瘾</title>
-  <meta name="description" content="联系城瘾——关于我们、俱乐部与 IP 合作。城市是我们的游戏主板。" />
+  <meta name="description" content="联系城瘾——合作、加入与咨询入口。城市是我们的游戏主板。" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="theme-color" content="#0b0b0f" />
@@ -13,7 +13,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="城瘾" />
   <meta property="og:title" content="联系我们 · 城瘾" />
-  <meta property="og:description" content="联系城瘾——关于我们、俱乐部与 IP 合作。城市是我们的游戏主板。" />
+  <meta property="og:description" content="联系城瘾——合作、加入与咨询入口。城市是我们的游戏主板。" />
   <link rel="stylesheet" href="/assets/fonts/fonts.css" />
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
@@ -26,16 +26,17 @@
   html{scroll-behavior:smooth}
   body{background:#020308;color:var(--fg);font-family:var(--cn);-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
 
-  /* cosmic background */
-  #space{position:fixed;inset:0;z-index:0;display:block}
+  /* cosmic background — 真实旋转晨昏线地球(bloomEnvironment.js);.cosmos 为无 WebGL 时兜底 */
   .cosmos{position:fixed;inset:0;z-index:-1;background:
     radial-gradient(60% 50% at 50% 64%,rgba(33,120,108,.5),transparent 60%),
     radial-gradient(40% 30% at 78% 12%,rgba(40,80,160,.35),transparent 60%),
     linear-gradient(180deg,#020308,#03060f 50%,#020308)}
-  .earth{position:fixed;left:50%;top:62%;transform:translate(-50%,-50%);z-index:0;width:min(46vw,520px);aspect-ratio:1;border-radius:50%;
-    background:radial-gradient(circle at 38% 34%,#2bd3c0,#0a6f86 38%,#06324a 64%,#02101c 86%);
-    box-shadow:0 0 120px 30px rgba(43,211,192,.28),inset -28px -22px 80px rgba(0,0,0,.7);opacity:.92}
-  .earth::after{content:"";position:absolute;inset:-6%;border-radius:50%;border:1px solid rgba(91,224,200,.35);box-shadow:0 0 60px rgba(91,224,200,.25)}
+  .bloom-bg{position:fixed;inset:0;z-index:0;display:block;width:100%;height:100%;pointer-events:none;
+    filter:saturate(1.02) contrast(1.02)}
+  /* 可读性遮罩:压暗四周与顶底,保证 hero 文字和玻璃表单清晰 */
+  .bloom-veil{position:fixed;inset:0;z-index:1;pointer-events:none;background:
+    radial-gradient(120% 80% at 50% 38%,transparent 42%,rgba(2,3,8,.55) 100%),
+    linear-gradient(180deg,rgba(2,3,8,.45),transparent 22%,transparent 68%,rgba(2,3,8,.6))}
 
   /* header — pill nav (activetheory 味) */
   .site-header{position:fixed;top:22px;left:0;width:100%;z-index:99;display:flex;align-items:center;justify-content:space-between;padding:0 32px}
@@ -84,101 +85,102 @@
 
   footer{position:relative;z-index:2;text-align:center;padding:60px 0 50px;color:var(--mut);font-size:13px;letter-spacing:.06em;border-top:1px solid var(--line);margin-top:40px}
 
+  /* 单屏联系页(P8):左品牌 / 右表单,桌面收敛到一个主视口 */
+  .contact-screen{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:128px 32px 48px;min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr;gap:52px;align-items:center}
+  .contact-screen .hero{min-height:0;display:block;text-align:left;align-items:flex-start}
+  .contact-screen .hero h1{font-weight:800;font-size:clamp(40px,6vw,84px);line-height:1.02;margin-top:6px}
+  .contact-screen .hero .contact-lead{margin-top:22px;max-width:460px}
+  .contact-screen .hero .contact-meta{margin-top:26px;font-size:13px;letter-spacing:.08em}
+  .contact-card{padding:34px}
+
+  @media(max-width:860px){
+    .contact-screen{grid-template-columns:1fr;min-height:auto;padding:104px 22px 40px;gap:28px}
+    .contact-screen .hero h1{font-size:clamp(36px,11vw,60px)}
+  }
   @media(max-width:720px){.contact{grid-template-columns:1fr}.site-logo{font-size:20px}}
 </style>
   <link rel="stylesheet" href="/site-shell.css" />
 </head>
 <body>
 <div class="cosmos"></div>
-<div class="earth"></div>
-<canvas id="space"></canvas>
+<canvas class="bloom-bg" id="bloom"></canvas>
+<div class="bloom-veil"></div>
 
-<section class="hero">
-  <p class="eyebrow">ABOUT · 关于我们</p>
-  <h1>城市是我们的<br>游戏主板。</h1>
-  <p>城瘾把真实城市变成可参与的游戏系统。无论你想加入俱乐部、带来 IP,还是和我们合作——这里能找到我们。</p>
-  <p class="scroll">SCROLL ↓</p>
-</section>
-
-<div class="wrap">
-  <section class="block">
-    <p class="sec-label">CLUB · 俱乐部</p>
-    <h2 class="sec-title">可加入的城市探索俱乐部</h2>
-    <p class="sec-sub">以旅游团、兴趣组的形式组队,把一次出门变成一场有主题的城市游戏。</p>
-    <div class="grid">
-      <div class="glass card"><h4>城市夜游团</h4><p>夜晚的街区副本,解谜 + 打卡 + 现场互动。</p></div>
-      <div class="glass card"><h4>剧情侦探局</h4><p>跟着剧情线索走完一条城市档案线。</p></div>
-      <div class="glass card"><h4>商圈探索团</h4><p>主题商圈副本,边玩边发现门店。</p></div>
-    </div>
+<main class="contact-screen">
+  <section class="hero contact-intro">
+    <p class="eyebrow">CONTACT · 联系我们</p>
+    <h1>联系我们</h1>
+    <p class="contact-lead">城瘾把真实城市变成可参与的游戏系统。想合作、加入俱乐部,或把你的 IP 带进城市——这里能找到我们。</p>
+    <p class="contact-meta">城瘾 Questify · AI 城市游戏操作系统 · 现已在上海启动</p>
   </section>
 
-  <section class="block">
-    <p class="sec-label">IP · 内容</p>
-    <h2 class="sec-title">合作的游戏 / 影视 IP</h2>
-    <p class="sec-sub">把影视剧、游戏 IP 融入线下城市事件,成为城市基础设施的一部分。</p>
-    <div class="grid">
-      <div class="glass card"><h4>剧情 IP 融入</h4><p>把故事节点铺进真实街区。</p></div>
-      <div class="glass card"><h4>游戏 IP 联动</h4><p>线上玩法延伸到线下场景。</p></div>
-      <div class="glass card"><h4>共建事件</h4><p>与 IP 方共同策划城市级活动。</p></div>
-    </div>
-  </section>
+  <div class="glass contact-card" id="contact">
+    <p class="sec-label">CONTACT · 留下联系方式</p>
+    <h2 class="sec-title">合作 · 加入 · 咨询</h2>
+    <p class="sec-sub">留下联系方式,我们会尽快回到你。</p>
+    <form class="contact" id="leadForm" novalidate>
+      <div class="field-cell full">
+        <label class="field-label" for="lf-type">咨询类型</label>
+        <select class="field" id="lf-type" name="type" required>
+          <option value="">请选择</option>
+          <option>合作咨询</option>
+          <option>俱乐部合作</option>
+          <option>商家合作</option>
+          <option>其他咨询</option>
+        </select>
+        <p class="field-err" id="err-type"></p>
+      </div>
+      <div class="field-cell">
+        <label class="field-label" for="lf-name">你的称呼 *</label>
+        <input class="field" id="lf-name" name="name" required autocomplete="name" placeholder="如何称呼你" maxlength="40">
+        <p class="field-err" id="err-name"></p>
+      </div>
+      <div class="field-cell">
+        <label class="field-label" for="lf-contact">联系方式 *</label>
+        <input class="field" id="lf-contact" name="contact" required placeholder="手机 / 微信 / 邮箱" maxlength="80">
+        <p class="field-err" id="err-contact"></p>
+      </div>
+      <div class="field-cell full">
+        <label class="field-label" for="lf-msg">需求说明</label>
+        <textarea class="field" id="lf-msg" name="message" placeholder="想聊点什么?" maxlength="800"></textarea>
+      </div>
+      <label class="consent" for="lf-consent">
+        <input type="checkbox" id="lf-consent" name="consent" required>
+        <span>我已阅读并同意 <a href="/privacy.html">隐私政策</a>,允许城瘾使用我提供的信息与我联系。</span>
+      </label>
+      <button class="submit" type="submit">提交</button>
+      <p class="form-status" id="lf-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</main>
 
-  <section class="block">
-    <p class="sec-label">ABOUT · 我们</p>
-    <h2 class="sec-title">关于城瘾</h2>
-    <p class="sec-sub">城瘾(Questify)是一套 AI 城市游戏操作系统,把街区、商户、路线和玩家连接成动态任务网络。当前在上海启动。</p>
-  </section>
+<script type="module">
+  // 真实旋转晨昏线地球(复用落地页 bloomEnvironment):自动旋转 + 晨昏线 + 云层 + 城市夜光 + 大气层
+  import { setupBloomEnvironment } from './src/bloomEnvironment.js';
+  import { gsap } from 'gsap';
 
-  <section class="block" id="contact">
-    <div class="glass">
-      <p class="sec-label">CONTACT · 联系我们</p>
-      <h2 class="sec-title">合作 · 报名 · 咨询</h2>
-      <p class="sec-sub">留下联系方式,我们会尽快回到你。</p>
-      <form class="contact" id="leadForm" novalidate>
-        <div class="field-cell full">
-          <label class="field-label" for="lf-type">咨询类型</label>
-          <select class="field" id="lf-type" name="type" required>
-            <option value="">请选择</option>
-            <option>合作咨询</option>
-            <option>俱乐部报名</option>
-            <option>IP 合作</option>
-            <option>其他咨询</option>
-          </select>
-          <p class="field-err" id="err-type"></p>
-        </div>
-        <div class="field-cell">
-          <label class="field-label" for="lf-name">你的称呼 *</label>
-          <input class="field" id="lf-name" name="name" required autocomplete="name" placeholder="如何称呼你" maxlength="40">
-          <p class="field-err" id="err-name"></p>
-        </div>
-        <div class="field-cell">
-          <label class="field-label" for="lf-contact">联系方式 *</label>
-          <input class="field" id="lf-contact" name="contact" required placeholder="手机 / 微信 / 邮箱" maxlength="80">
-          <p class="field-err" id="err-contact"></p>
-        </div>
-        <div class="field-cell full">
-          <label class="field-label" for="lf-msg">需求说明</label>
-          <textarea class="field" id="lf-msg" name="message" placeholder="想聊点什么?" maxlength="800"></textarea>
-        </div>
-        <label class="consent" for="lf-consent">
-          <input type="checkbox" id="lf-consent" name="consent" required>
-          <span>我已阅读并同意 <a href="/privacy.html">隐私政策</a>,允许城瘾使用我提供的信息与我联系。</span>
-        </label>
-        <button class="submit" type="submit">提交</button>
-        <p class="form-status" id="lf-status" role="status" aria-live="polite"></p>
-        <p class="note">在线留资提交功能开发中(即将接入)。如需即时沟通,欢迎通过上方介绍中的渠道联系我们。</p>
-      </form>
-    </div>
-  </section>
-</div>
+  const canvas = document.getElementById('bloom');
+  const env = setupBloomEnvironment(canvas); // 无 WebGL 时静默返回,.cosmos 渐变兜底
+  env?.resume(); // 启动绘制循环(落地页由 scheduler 触发,本页直接启动)
 
-<script>
-(function(){
-  var c=document.getElementById('space'),x=c.getContext('2d'),w,h,stars;
-  function init(){w=c.width=innerWidth;h=c.height=innerHeight;stars=Array.from({length:Math.min(220,Math.round(w*h/9000))},function(){return{x:Math.random()*w,y:Math.random()*h,z:Math.random()*1+.3,t:Math.random()*6.28}})}
-  function tick(){x.clearRect(0,0,w,h);for(var i=0;i<stars.length;i++){var s=stars[i];s.t+=.02;var a=.25+Math.abs(Math.sin(s.t))*.6*s.z;x.beginPath();x.fillStyle='rgba(180,235,225,'+a+')';x.arc(s.x,s.y,s.z*1.1,0,6.28);x.fill();s.y+=s.z*.06;if(s.y>h)s.y=0}requestAnimationFrame(tick)}
-  init();tick();addEventListener('resize',init)
-})();
+  // 进场动画(gsap):地球淡入推近 → hero 文案依次浮现;尊重 prefers-reduced-motion
+  const heroBits = ['.hero .eyebrow', '.hero h1', '.hero p', '.hero .scroll'];
+  gsap.matchMedia().add({
+    motion: '(prefers-reduced-motion: no-preference)',
+    reduce: '(prefers-reduced-motion: reduce)'
+  }, (ctx) => {
+    if (ctx.conditions.reduce) {
+      gsap.set([canvas, '.bloom-veil', ...heroBits], { autoAlpha: 1, clearProps: 'transform' });
+      return;
+    }
+    gsap.set(canvas, { autoAlpha: 0, scale: 1.06, transformOrigin: '50% 55%' });
+    gsap.set('.bloom-veil', { autoAlpha: 0 });
+    gsap.set(heroBits, { autoAlpha: 0, y: 24 });
+    gsap.timeline({ defaults: { ease: 'power3.out' } })
+      .to(canvas, { autoAlpha: 1, scale: 1, duration: 1.6, ease: 'power2.out' })
+      .to('.bloom-veil', { autoAlpha: 1, duration: 1.2 }, 0.1)
+      .to(heroBits, { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.12 }, 0.5);
+  });
 </script>
   <script>
   // 联系表单:客户端校验 + 提交到留资 API(M6-08)
@@ -190,7 +192,7 @@
     var meta=document.querySelector('meta[name="cy-api-base"]');
     var API_BASE=(meta&&meta.content.trim())||
       ((location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:1337':'');
-    var TYPE_MAP={'合作咨询':'consult','俱乐部报名':'join','IP 合作':'cooperation','其他咨询':'other'};
+    var TYPE_MAP={'合作咨询':'consult','俱乐部合作':'join','商家合作':'cooperation','其他咨询':'other'};
     var submitting=false, idemKey=null;
 
     function setErr(id,msg){
