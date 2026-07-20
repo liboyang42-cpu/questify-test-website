@@ -55,10 +55,10 @@ window.__siteContent = {
     ]
   },
   apechain: {
-    pageTitle: 'APECHAIN',
+    pageTitle: '城瘾 | 精选主题活动',
 
     header: {
-      homeTitle: 'Home',
+      homeTitle: '城瘾首页',
       mobileMenuLabel: 'Open menu',
       nav: ['探索', 'IP', '构建', '联系我们'],
       navStyle: {
@@ -72,11 +72,11 @@ window.__siteContent = {
           'text-transform': 'uppercase'
         }
       },
-      sideButtons: ['Share', 'Twitter / X', 'Discord']
+      sideButtons: ['分享城瘾', '小红书', '微信社群']
     },
 
     hero: {
-      name: 'LBS任务链引擎',
+      name: '上海夜行侦探局',
       nameStyle: {
         selector: '.Hero-app-name h2 span',
         css: {
@@ -93,7 +93,7 @@ window.__siteContent = {
           }
         }
       },
-      category: '剧情插件',
+      category: '主题活动',
       categoryStyle: {
         selector: '.Hero-hot-badge .font-sans',
         css: {
@@ -117,7 +117,7 @@ window.__siteContent = {
           'text-transform': 'uppercase'
         }
       },
-      description: 'Web3-enabled virtual worlds on ApeChain',
+      description: '3 小时夜行路线，沿静安到外滩收集线索、到点解锁、协作结案。',
       descriptionStyle: {
         selector: '.Hero-description p span',
         css: {
@@ -129,7 +129,7 @@ window.__siteContent = {
           'text-transform': 'uppercase'
         }
       },
-      button: '部署',
+      button: '查看活动',
       buttonStyle: {
         selector: '.UIBtn',
         css: {
@@ -141,7 +141,7 @@ window.__siteContent = {
           'text-transform': 'uppercase'
         }
       },
-      seeAll: '查看所有应用',
+      seeAll: '查看全部活动',
       seeAllStyle: {
         selector: '.UILink',
         css: {
@@ -157,57 +157,57 @@ window.__siteContent = {
 
     appsData: [
       {
-        name: 'LBS任务链引擎',
-        category: '剧情插件',
-        description: 'Web3-enabled virtual worlds on ApeChain',
-        image: 'https://images.ctfassets.net/opj3ybl4k7mx/7Cn10d3ErtqfrG6H7EFGg8/1942238297ed97ef14f5e9f1049389f7/apeChain-thumbnail-608x336-Otherside.jpg',
-        thumb: 'https://images.ctfassets.net/opj3ybl4k7mx/2J6KKq5u2F9zIl5L9maX9g/ab97e1bd1e38cbb58718e991ee123583/apeChain-hero-960x960-Otherside.jpg',
-        link: '/apps/otherside',
+        name: '上海夜行侦探局',
+        category: '可报名 · 3小时',
+        description: '静安到外滩的夜行侦探路线。收集线索、到点解锁、协作结案。',
+        image: '/assets/case-detective/shanghai-native-quarter.jpg',
+        thumb: '/assets/case-detective/detective-diary-page.jpg',
+        link: '/ip.html?project=geisai',
         color: '#A281FF'
       },
       {
-        name: 'D20判定',
-        category: '游戏',
-        description: 'A club full of builders',
-        image: 'https://images.ctfassets.net/opj3ybl4k7mx/48OMy3cRzsdFbNYR8el1Zk/b2a2036389810b0ac2e3c6dff023d3fb/apeChain-thumbnail-608x336-MadeByApes.jpg',
-        thumb: 'https://images.ctfassets.net/opj3ybl4k7mx/15yPALJilSS9qb07GSF8Zs/9bccadf42723734f55ec2a0b5d3f6fe7/apeChain-feature-608x960-MadeByApes.jpg',
-        link: '/apps/made-by-apes',
+        name: '南京路城市寻踪',
+        category: 'Citywalk · 90分钟',
+        description: '用路线、照片和隐藏点位重新打开南京路，适合首次体验城瘾。',
+        image: '/assets/case-citywalk/nanjing-road-pedestrians.jpg',
+        thumb: '/assets/case-citywalk/nanjing-pedestrian-evening.jpg',
+        link: '/ip.html',
         color: '#EB8280'
       },
       {
-        name: ' NPC对话引导',
-        category: 'AI插件',
-        description: 'NFT marketplace',
-        image: 'https://images.ctfassets.net/opj3ybl4k7mx/1sIW0LN0KGP4fhqHJpaIbH/88bac67f63a64d4d6db478bc08f5b734/608x336_opensea.jpg',
-        thumb: 'https://images.ctfassets.net/opj3ybl4k7mx/7iFJe0Q1aX5fKc1d8epQaE/39743450485b7dd498b312c0efa990b9/960x960_opensea.jpg',
-        link: '/apps/opensea',
+        name: '书店线索局',
+        category: '门店节点 · 45分钟',
+        description: '书店、纸条、暗号和拍照核验组成一条轻量剧情任务。',
+        image: '/assets/case-game/chapter-04-bookshop-clue.jpg',
+        thumb: '/assets/case-game/chapter-02-photo-check.jpg',
+        link: '/build.html#merchant',
         color: '#EBBF9A'
       },
       {
-        name: '数据分析',
-        category: '商户插件',
-        description: 'Decentralized Parlay Platform on ApeChain',
-        image: 'https://images.ctfassets.net/opj3ybl4k7mx/4RY933fgr5bhgvPho9Sl98/a27e42b0db63cc884c2bd355d95b840b/608x336-clutch.jpg',
-        thumb: 'https://images.ctfassets.net/opj3ybl4k7mx/4YlMJVGA2312YhmLtu4bGQ/a6144db6461b8e317e9722dd50ffc43e/960x960-clutch.jpg',
-        link: '/apps/clutch-market',
+        name: '外滩黄昏任务线',
+        category: '限时路线 · 黄昏',
+        description: '从人民广场走到外滩，在光线变化里完成拍照、定位和章节解锁。',
+        image: '/assets/case-citywalk/bund-walk.jpg',
+        thumb: '/assets/case-citywalk/peoples-square-night.jpg',
+        link: '/ip.html',
         color: '#89D0FF'
       },
       {
-        name: 'AR互动',
-        category: '交互插件',
-        description: 'AR互动 is a RWA platform built for the EVM, with support for ApeChain',
-        image: 'https://images.ctfassets.net/opj3ybl4k7mx/606Ce7C4Bg7OEG0qjKb7W0/5c8d49fc02d156228b5d5e3c8b85de9f/Banner.png',
-        thumb: 'https://images.ctfassets.net/opj3ybl4k7mx/606Ce7C4Bg7OEG0qjKb7W0/5c8d49fc02d156228b5d5e3c8b85de9f/Banner.png',
-        link: '/apps/slab-cash',
+        name: '商圈隐藏菜单',
+        category: '商家联动 · 内测',
+        description: '多家门店成为任务节点，扫码核销后解锁隐藏权益和下一站。',
+        image: '/assets/case-citywalk/nanjing-side-street.jpg',
+        thumb: '/assets/case-citywalk/fuzhou-henan-road.jpg',
+        link: '/build.html#merchant',
         color: '#0054FA'
       },
       {
-        name: '收集图鉴',
-        category: '成就激励',
-        description: 'Build the future of web3 on ApeChain',
-        image: 'https://images.ctfassets.net/opj3ybl4k7mx/7Cn10d3ErtqfrG6H7EFGg8/1942238297ed97ef14f5e9f1049389f7/apeChain-thumbnail-608x336-Otherside.jpg',
-        thumb: 'https://images.ctfassets.net/opj3ybl4k7mx/2J6KKq5u2F9zIl5L9maX9g/ab97e1bd1e38cbb58718e991ee123583/apeChain-hero-960x960-Otherside.jpg',
-        link: '/apps/成就激励',
+        name: '小红书城市章节',
+        category: '内容活动 · 复访',
+        description: '把一次路线沉淀成章节封面、攻略笔记和城市足迹图鉴。',
+        image: '/assets/case-xhs/xhs-cover.jpg',
+        thumb: '/assets/case-xhs/xhs-chapter-03.jpg',
+        link: '/ip.html?project=airforce',
         color: '#00A7FA'
       }
     ],
@@ -251,10 +251,10 @@ window.__siteContent = {
           }
         }
       },
-      launch: 'Launch',
-      about: 'What\'s this',
+      launch: '立即查看',
+      about: '了解玩法',
       featured: {
-        name: 'Clutch Markets',
+        name: '商圈隐藏菜单',
         nameStyle: {
           selector: '.Spotlight-featured-card .card-text h3',
           css: {
@@ -271,7 +271,7 @@ window.__siteContent = {
             }
           }
         },
-        description: 'Decentralized parlay platform on ApeChain.',
+        description: '门店任务、扫码核销和隐藏权益组成的线下主题活动。',
         descriptionStyle: {
           selector: '.Spotlight-featured-card .card-text p',
           css: {
@@ -287,7 +287,7 @@ window.__siteContent = {
     },
 
     appsSection: {
-      title: 'ApeChain Apps',
+      title: '主题活动',
       titleStyle: {
         selector: '.SectionGridCarousel .section-title h2',
         css: {
@@ -304,8 +304,8 @@ window.__siteContent = {
           }
         }
       },
-      seeAll: 'See All Apps',
-      browseAll: 'Browse All Apps',
+      seeAll: '查看全部活动',
+      browseAll: '浏览活动库',
       cardCategoryStyle: {
         selector: '.pill',
         css: {
@@ -346,39 +346,39 @@ window.__siteContent = {
         }
       },
       cards: [
-        { name: 'LBS任务引擎', category: '剧情插件', description: 'Web3-enabled virtual worlds on ApeChain' },
-        { name: 'D20判定', category: '游戏', description: 'A club full of builders' },
-        { name: 'NPC对话引导', category: 'AI插件', description: 'NFT marketplace' },
-        { name: '数据分析', category: '商户插件', description: 'Decentralized Parlay Platform on ApeChain' },
-        { name: 'AR互动', category: '交互插件', description: 'ApeChain dashboard and 成就激励 tools' },
-        { name: '收集图鉴', category: '成就激励', description: 'Decentralized exchange' },
-        { name: 'Ape Portal', category: 'Infrastructure', description: 'Get on ApeChain' },
-        { name: 'Blever', category: 'AI插件', description: 'An NFT launchpad for ApeChain' },
-        { name: 'Ape Express', category: '交互插件', description: 'Fast and simple bridge by ApeChain' },
-        { name: 'Etherscan', category: 'Infrastructure', description: 'Block explorer infrastructure' },
-        { name: 'Gains', category: '交互插件', description: 'Trade perpetuals on ApeChain' },
-        { name: 'OpenOcean', category: '交互插件', description: 'DEX aggregator' },
-        { name: 'Cyan', category: 'AI插件', description: 'Buy now, pay later for NFTs' },
-        { name: 'Magic Eden', category: 'AI插件', description: 'NFT marketplace on ApeChain' },
-        { name: 'Mintpad', category: 'AI插件', description: 'Launch your NFT on ApeChain' },
-        { name: 'Ormi', category: 'Infrastructure', description: 'Unified Web3 data layer' }
+        { name: '上海夜行侦探局', category: '侦探路线', description: '静安到外滩，3 小时线索协作与结案。', image: '/assets/case-detective/shanghai-native-quarter.jpg', link: '/ip.html?project=geisai' },
+        { name: '南京路城市寻踪', category: 'Citywalk', description: '用隐藏点位重新打开南京路。', image: '/assets/case-citywalk/nanjing-road-pedestrians.jpg', link: '/ip.html' },
+        { name: '书店线索局', category: '门店任务', description: '书店纸条、暗号和拍照核验。', image: '/assets/case-game/chapter-04-bookshop-clue.jpg', link: '/build.html#merchant' },
+        { name: '外滩黄昏任务线', category: '限时路线', description: '黄昏出发，沿途完成章节解锁。', image: '/assets/case-citywalk/bund-walk.jpg', link: '/ip.html' },
+        { name: '商圈隐藏菜单', category: '商家联动', description: '多门店扫码核销，解锁隐藏权益。', image: '/assets/case-citywalk/nanjing-side-street.jpg', link: '/build.html#merchant' },
+        { name: '小红书城市章节', category: '内容复访', description: '路线结束后沉淀攻略和章节封面。', image: '/assets/case-xhs/xhs-cover.jpg', link: '/ip.html?project=airforce' },
+        { name: '人民广场速通', category: '竞速挑战', description: '限时完成节点，结算速度与完整度。', image: '/assets/case-citywalk/peoples-square-night.jpg', link: '/ip.html' },
+        { name: '张园暗号夜', category: '夜游剧情', description: '到点获得口令，错过时间进入支线。', image: '/assets/case-game/chapter-01-lane-walk.jpg', link: '/ip.html?project=forging' },
+        { name: '咖啡店接头点', category: '到店任务', description: '门店成为剧情交接与奖励核销点。', image: '/assets/case-citywalk/fuzhou-henan-road.jpg', link: '/build.html#merchant' },
+        { name: '城市图鉴日', category: '收集活动', description: '完成路线后点亮地点、徽章和回忆。', image: '/assets/case-xhs/xhs-chapter-03.jpg', link: '/ip.html' },
+        { name: '主理人试跑局', category: '俱乐部活动', description: '小队试跑路线，现场调整任务节奏。', image: '/assets/case-citywalk/shanghai-crosswalk-people.jpg', link: '/build.html#club' },
+        { name: '老街证物袋', category: '线索收集', description: '纸本证物与 App 节点同步推进。', image: '/assets/case-detective/detective-diary-page.jpg', link: '/ip.html?project=geisai' },
+        { name: '夜市阵营战', category: '组队对抗', description: '不同队伍争夺节点和隐藏积分。', image: '/assets/case-citywalk/shanghai-night-street.jpg', link: '/ip.html?project=forging' },
+        { name: '周末城市盲盒', category: '随机事件', description: '报名后才揭晓路线主题和第一站。', image: '/assets/case-citywalk-ref/cropped/IMG_9554-crop.jpg', link: '/ip.html' },
+        { name: '品牌联名路线', category: '联名活动', description: '把品牌内容做成可抵达的城市章节。', image: '/assets/case-xhs/xhs-chapter-01.jpg', link: '/build.html' },
+        { name: '毕业季足迹线', category: '纪念路线', description: '用地图和任务保存一段城市记忆。', image: '/assets/case-citywalk-ref/cropped/IMG_9547-crop.jpg', link: '/ip.html?project=airforce' }
       ]
     },
 
     discover: {
       labels: [
-        '游戏',
-        'AI插件',
-        '交互插件',
-        '游戏',
-        'AI插件',
-        '交互插件',
-        'Gaming',
-        'Infrastructure',
-        'Social',
-        'Gaming',
-        'Infrastructure',
-        'Social'
+        '主题活动',
+        '城市任务',
+        '侦探路线',
+        '门店节点',
+        '组队挑战',
+        '内容章节',
+        '活动报名',
+        '商家联动',
+        '俱乐部局',
+        '路线图鉴',
+        '隐藏权益',
+        '城市复访'
       ],
       labelStyle: {
         selector: '.Discover-label',
@@ -402,7 +402,7 @@ window.__siteContent = {
     },
 
     footer: {
-      brand: 'APECHAIN',
+      brand: '城瘾',
       brandStyle: {
         selector: '.Footer-big-word',
         css: {
@@ -414,8 +414,8 @@ window.__siteContent = {
           'text-transform': 'uppercase'
         }
       },
-      copyright: '© 2026 Ape Foundation',
-      legal: ['Terms of Service', 'Privacy Notice'],
+      copyright: '© 2026 城瘾',
+      legal: ['服务条款', '隐私政策'],
       legalStyle: {
         selector: '.Footer-bottom-inner',
         css: {
@@ -451,16 +451,16 @@ window.__siteContent = {
       },
       columns: [
         {
-          title: 'Build on ApeChain',
-          links: ['Docs', 'Mainnet Hub', 'Testnet Hub', 'Block Explorer', 'Ape Portal']
+          title: '玩家入口',
+          links: ['主题活动', '城市路线', '活动报名', '路线图鉴']
         },
         {
-          title: 'ApeCoin',
-          links: ['Discord', 'Twitter / X', 'Otherside Calendar']
+          title: '合作入口',
+          links: ['商家联动', '俱乐部局', '品牌联名', '主理人试跑']
         },
         {
-          title: 'ApeChain',
-          links: ['Bridge', 'Relay Bridge', 'The Blueprint', 'Telegram', 'Twitter / X', 'Brand Kit']
+          title: '内容资产',
+          links: ['侦探路线', '城市章节', '小红书封面', '隐藏权益']
         }
       ]
     }
@@ -601,6 +601,8 @@ window.__siteContent = {
       if (content.header.sideButtons[index] != null) button.setAttribute('aria-label', content.header.sideButtons[index]);
     });
     setText('.Hero-hot-badge .font-manuka', content.hero.hotBadge);
+    setLabelPair('.Hero-description .UIBtn .label-inner', content.hero.button);
+    setLabelPair('.Hero-right-col .UILink .UILink-inner span', content.hero.seeAll);
 
     setHTML('.Spotlight-text h2', content.spotlight.title);
     document.querySelectorAll('.Spotlight-text .desc p').forEach(function(el, index) {
@@ -624,7 +626,11 @@ window.__siteContent = {
       setText('.AppCard-name', app.name, card);
       setText('.AppCard-desc', app.description, card);
       const img = card.querySelector('img');
-      if (img) img.setAttribute('alt', app.name);
+      if (img) {
+        if (app.image) img.setAttribute('src', app.image);
+        img.setAttribute('alt', app.name);
+      }
+      if (app.link) card.setAttribute('href', app.link);
     });
 
     document.querySelectorAll('.Discover-label').forEach(function(label, index) {
