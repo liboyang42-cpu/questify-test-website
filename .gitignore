@@ -19,6 +19,10 @@ videos/
 .ms-playwright/
 .codex-backups/
 .claude/
+.openclaw-backups/
+.openclaw-trash/
+docs/
+awesome-design-md
 
 # ── M0 仓库治理:截图/参考抓取/测试证据/备份(只忽略根层级,不误伤 public/assets 生产素材)──
 /*.png
