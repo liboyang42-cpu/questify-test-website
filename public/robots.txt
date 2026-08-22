@@ -2,5 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /demos/
 
-# 生产域名确定后(DEC-04)补充:
-# Sitemap: https://<domain>/sitemap.xml
+Sitemap: https://www.chengyinhub.com/sitemap.xml

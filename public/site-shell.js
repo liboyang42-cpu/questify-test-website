@@ -4,7 +4,6 @@
 (function () {
   var NAV = [
     { label: '探索', href: '/index.html', match: ['/', '/index.html', '/apechain.html', '/deploy.html', '/d20.html'] },
-    { label: 'IP', href: '/ip.html', match: ['/ip.html'] },
     { label: '构建', href: '/build.html', match: ['/build.html'] },
     { label: '联系我们', href: '/about.html', match: ['/about.html'] }
   ];
@@ -48,17 +47,14 @@
         '</div>' +
         '<div class="cy-footer__cols">' +
           '<div class="cy-footer__col"><h4>探索</h4>' +
-            '<a href="/index.html">首页</a><a href="/ip.html">IP 世界</a>' +
+            '<a href="/index.html">首页</a><a href="/apechain.html">产品能力</a>' +
             '<a href="/build.html">共建</a><a href="/d20.html">d20 判定</a></div>' +
           '<div class="cy-footer__col"><h4>合作</h4>' +
             '<a href="/about.html">联系我们</a><a href="/build.html">商家 / 俱乐部</a></div>' +
-          '<div class="cy-footer__col"><h4>法律</h4>' +
-            '<a href="/privacy.html">隐私政策</a><a href="/terms.html">用户协议</a></div>' +
         '</div>' +
       '</div>' +
       '<div class="cy-footer__bottom">' +
-        '<span>&copy; 2026 城瘾</span>' +
-        '<span data-cy-icp>ICP 备案信息待补</span>' +
+        '<span>&copy; 2026 城瘾 · 西安吾令文化传媒有限公司</span>' +
       '</div>';
     return footer;
   }

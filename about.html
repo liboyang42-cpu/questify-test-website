@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://www.chengyinhub.com/about.html" />
 <title>联系我们 · 城瘾</title>
   <meta name="description" content="联系城瘾——合作、加入与咨询入口。城市是我们的游戏主板。" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="theme-color" content="#0b0b0f" />
-  <!-- 留资 API 基地址:留空则本地 dev 自动指向 localhost:1337;生产填后端域名 -->
-  <meta name="cy-api-base" content="" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="城瘾" />
   <meta property="og:title" content="联系我们 · 城瘾" />
@@ -92,6 +91,15 @@
   .contact-screen .hero .contact-lead{margin-top:22px;max-width:460px}
   .contact-screen .hero .contact-meta{margin-top:26px;font-size:13px;letter-spacing:.08em}
   .contact-card{padding:34px}
+  .contact-channels{display:grid;gap:14px;margin-top:26px}
+  .contact-channel{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px 20px;
+    color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);transition:.2s}
+  .contact-channel:hover{border-color:rgba(91,224,200,.55);background:rgba(91,224,200,.08);transform:translateY(-2px)}
+  .contact-channel small{display:block;margin-bottom:5px;color:var(--mut);font-size:12px;letter-spacing:.1em}
+  .contact-channel strong{font-size:17px;font-weight:600}
+  .contact-channel span:last-child{color:var(--accent);font-size:13px;white-space:nowrap}
+  .contact-channel[href] span:last-child{font-size:20px}
+  .contact-operator{margin-top:20px;padding-top:18px;border-top:1px solid var(--line);color:var(--mut);font-size:12px;line-height:1.8}
 
   @media(max-width:860px){
     .contact-screen{grid-template-columns:1fr;min-height:auto;padding:104px 22px 40px;gap:28px}
@@ -110,47 +118,25 @@
   <section class="hero contact-intro">
     <p class="eyebrow">CONTACT · 联系我们</p>
     <h1>联系我们</h1>
-    <p class="contact-lead">城瘾把真实城市变成可参与的游戏系统。想合作、加入俱乐部,或把你的 IP 带进城市——这里能找到我们。</p>
-    <p class="contact-meta">城瘾 Questify · AI 城市游戏操作系统 · 现已在上海启动</p>
+    <p class="contact-lead">城瘾把真实城市变成可参与的探索体验。想加入俱乐部、与城市主题合作，或让你的门店成为路线节点——这里能找到我们。</p>
+    <p class="contact-meta">城市探索 · 主题活动 · 俱乐部 · 商家合作</p>
   </section>
 
   <div class="glass contact-card" id="contact">
-    <p class="sec-label">CONTACT · 留下联系方式</p>
+    <p class="sec-label">CONTACT · 官方联系渠道</p>
     <h2 class="sec-title">合作 · 加入 · 咨询</h2>
-    <p class="sec-sub">留下联系方式,我们会尽快回到你。</p>
-    <form class="contact" id="leadForm" novalidate>
-      <div class="field-cell full">
-        <label class="field-label" for="lf-type">咨询类型</label>
-        <select class="field" id="lf-type" name="type" required>
-          <option value="">请选择</option>
-          <option>合作咨询</option>
-          <option>俱乐部合作</option>
-          <option>商家合作</option>
-          <option>其他咨询</option>
-        </select>
-        <p class="field-err" id="err-type"></p>
+    <p class="sec-sub">官网暂不收集在线表单信息。你可以直接拨打客服电话，或在城瘾微信小程序内通过客服入口联系我们。</p>
+    <div class="contact-channels">
+      <a class="contact-channel" href="tel:15229020419">
+        <span><small>客服电话</small><strong>152 2902 0419</strong></span>
+        <span aria-hidden="true">→</span>
+      </a>
+      <div class="contact-channel">
+        <span><small>微信小程序</small><strong>城瘾 · 小程序内联系客服</strong></span>
+        <span>微信内搜索</span>
       </div>
-      <div class="field-cell">
-        <label class="field-label" for="lf-name">你的称呼 *</label>
-        <input class="field" id="lf-name" name="name" required autocomplete="name" placeholder="如何称呼你" maxlength="40">
-        <p class="field-err" id="err-name"></p>
-      </div>
-      <div class="field-cell">
-        <label class="field-label" for="lf-contact">联系方式 *</label>
-        <input class="field" id="lf-contact" name="contact" required placeholder="手机 / 微信 / 邮箱" maxlength="80">
-        <p class="field-err" id="err-contact"></p>
-      </div>
-      <div class="field-cell full">
-        <label class="field-label" for="lf-msg">需求说明</label>
-        <textarea class="field" id="lf-msg" name="message" placeholder="想聊点什么?" maxlength="800"></textarea>
-      </div>
-      <label class="consent" for="lf-consent">
-        <input type="checkbox" id="lf-consent" name="consent" required>
-        <span>我已阅读并同意 <a href="/privacy.html">隐私政策</a>,允许城瘾使用我提供的信息与我联系。</span>
-      </label>
-      <button class="submit" type="submit">提交</button>
-      <p class="form-status" id="lf-status" role="status" aria-live="polite"></p>
-    </form>
+    </div>
+    <p class="contact-operator">运营主体：西安吾令文化传媒有限公司<br>注册地址：陕西省西安市高新区锦业路1号绿地领海B座6层604室A043号</p>
   </div>
 </main>
 
@@ -182,71 +168,6 @@
       .to(heroBits, { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.12 }, 0.5);
   });
 </script>
-  <script>
-  // 联系表单:客户端校验 + 提交到留资 API(M6-08)
-  (function(){
-    var form=document.getElementById('leadForm'); if(!form) return;
-    var status=document.getElementById('lf-status');
-    var submitBtn=form.querySelector('.submit');
-    // API base:本地 dev 指向本地 Strapi;生产由 <meta name="cy-api-base"> 配置(域名确定后填)
-    var meta=document.querySelector('meta[name="cy-api-base"]');
-    var API_BASE=(meta&&meta.content.trim())||
-      ((location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:1337':'');
-    var TYPE_MAP={'合作咨询':'consult','俱乐部合作':'join','商家合作':'cooperation','其他咨询':'other'};
-    var submitting=false, idemKey=null;
-
-    function setErr(id,msg){
-      var el=document.getElementById('lf-'+id), err=document.getElementById('err-'+id);
-      if(el) el.classList.toggle('field--error',!!msg);
-      if(err) err.textContent=msg||'';
-    }
-    function setStatus(cls,msg){ status.className='form-status'+(cls?' '+cls:''); status.textContent=msg; }
-    function setBusy(b){ submitting=b; submitBtn.disabled=b; submitBtn.textContent=b?'提交中…':'提交'; }
-    function rid(){ try{return crypto.randomUUID();}catch(e){return 'k'+Date.now()+Math.random().toString(36).slice(2);} }
-
-    form.addEventListener('submit',function(e){
-      e.preventDefault();
-      if(submitting) return;
-      setStatus('','');
-      var typeLabel=document.getElementById('lf-type').value.trim();
-      var name=document.getElementById('lf-name').value.trim();
-      var contact=document.getElementById('lf-contact').value.trim();
-      var message=document.getElementById('lf-msg').value.trim();
-      var consent=document.getElementById('lf-consent').checked;
-      var ok=true;
-      setErr('type', typeLabel?'':'请选择咨询类型'); if(!typeLabel) ok=false;
-      setErr('name', name?'':'请填写称呼'); if(!name) ok=false;
-      setErr('contact', contact?'':'请填写联系方式'); if(!contact) ok=false;
-      if(!consent){ ok=false; setStatus('err','请先阅读并同意隐私政策。'); }
-      if(!ok){ if(consent) setStatus('err','请完善必填信息。'); return; }
-
-      if(!idemKey) idemKey=rid(); // 同一次提交复用,防重复点击建多条
-      var payload={
-        type: TYPE_MAP[typeLabel]||'other',
-        name: name, contact: contact, message: message,
-        consent: true, sourcePage: location.pathname, idempotencyKey: idemKey
-      };
-      setBusy(true); setStatus('','正在提交…');
-      fetch(API_BASE+'/api/public/v1/leads',{
-        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
-      }).then(function(res){
-        return res.json().catch(function(){return {};}).then(function(body){return {status:res.status,body:body};});
-      }).then(function(r){
-        setBusy(false);
-        if(r.status===201||r.status===200){
-          var reqId=(r.body&&r.body.data&&r.body.data.requestId)||'';
-          setStatus('ok','✓ 已收到你的信息,我们会尽快联系你。'+(reqId?'(受理号 '+reqId+')':''));
-          form.reset(); idemKey=null;
-        } else if(r.status===400){ setStatus('err','请检查填写信息是否完整有效。'); }
-        else if(r.status===429){ setStatus('err','提交过于频繁,请稍后再试。'); }
-        else { setStatus('err','提交失败,请稍后重试。'); }
-      }).catch(function(){
-        setBusy(false);
-        setStatus('err','网络异常,提交未成功;你填写的内容已保留,请稍后重试。');
-      });
-    });
-  })();
-  </script>
   <script src="/site-shell.js" defer></script>
 </body>
 </html>

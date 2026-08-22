@@ -55,7 +55,7 @@ window.__siteContent = {
     ]
   },
   apechain: {
-    pageTitle: '城瘾 | 精选主题活动',
+    pageTitle: '城瘾 | 城市探索产品能力',
 
     header: {
       homeTitle: '城瘾首页',
@@ -76,7 +76,7 @@ window.__siteContent = {
     },
 
     hero: {
-      name: '上海夜行侦探局',
+      name: '城市主题探索',
       nameStyle: {
         selector: '.Hero-app-name h2 span',
         css: {
@@ -93,7 +93,7 @@ window.__siteContent = {
           }
         }
       },
-      category: '主题活动',
+      category: '小程序核心能力',
       categoryStyle: {
         selector: '.Hero-hot-badge .font-sans',
         css: {
@@ -117,7 +117,7 @@ window.__siteContent = {
           'text-transform': 'uppercase'
         }
       },
-      description: '3 小时夜行路线，沿静安到外滩收集线索、到点解锁、协作结案。',
+      description: '围绕真实地点组织主题、章节、任务与打卡，让一次出门拥有明确目标和可记录的过程。',
       descriptionStyle: {
         selector: '.Hero-description p span',
         css: {
@@ -129,7 +129,7 @@ window.__siteContent = {
           'text-transform': 'uppercase'
         }
       },
-      button: '查看活动',
+      button: '查看产品能力',
       buttonStyle: {
         selector: '.UIBtn',
         css: {
@@ -141,7 +141,7 @@ window.__siteContent = {
           'text-transform': 'uppercase'
         }
       },
-      seeAll: '查看全部活动',
+      seeAll: '查看全部能力',
       seeAllStyle: {
         selector: '.UILink',
         css: {
@@ -157,57 +157,57 @@ window.__siteContent = {
 
     appsData: [
       {
-        name: '上海夜行侦探局',
-        category: '可报名 · 3小时',
-        description: '静安到外滩的夜行侦探路线。收集线索、到点解锁、协作结案。',
+        name: '城市主题探索',
+        category: '主题与章节',
+        description: '选择主题和章节，在真实城市中沿路线推进任务与内容。',
         image: '/assets/case-detective/shanghai-native-quarter.jpg',
         thumb: '/assets/case-detective/detective-diary-page.jpg',
-        link: '/ip.html?project=geisai',
+        link: '/apechain.html',
         color: '#A281FF'
       },
       {
-        name: '南京路城市寻踪',
-        category: 'Citywalk · 90分钟',
-        description: '用路线、照片和隐藏点位重新打开南京路，适合首次体验城瘾。',
+        name: '实时漫游',
+        category: '路线与位置',
+        description: '在地图与相机视角中查看附近地点、路线进度和当前任务。',
         image: '/assets/case-citywalk/nanjing-road-pedestrians.jpg',
         thumb: '/assets/case-citywalk/nanjing-pedestrian-evening.jpg',
-        link: '/ip.html',
+        link: '/apechain.html',
         color: '#EB8280'
       },
       {
-        name: '书店线索局',
-        category: '门店节点 · 45分钟',
-        description: '书店、纸条、暗号和拍照核验组成一条轻量剧情任务。',
+        name: '地点打卡',
+        category: '到点确认',
+        description: '到达真实地点后完成打卡、互动或内容解锁，进度由服务端结果确认。',
         image: '/assets/case-game/chapter-04-bookshop-clue.jpg',
         thumb: '/assets/case-game/chapter-02-photo-check.jpg',
-        link: '/build.html#merchant',
+        link: '/apechain.html',
         color: '#EBBF9A'
       },
       {
-        name: '外滩黄昏任务线',
-        category: '限时路线 · 黄昏',
-        description: '从人民广场走到外滩，在光线变化里完成拍照、定位和章节解锁。',
+        name: '俱乐部活动',
+        category: '同好与组织',
+        description: '加入或创建俱乐部，围绕同一主题组织成员、活动和城市路线。',
         image: '/assets/case-citywalk/bund-walk.jpg',
         thumb: '/assets/case-citywalk/peoples-square-night.jpg',
-        link: '/ip.html',
+        link: '/build.html#club',
         color: '#89D0FF'
       },
       {
-        name: '商圈隐藏菜单',
-        category: '商家联动 · 内测',
-        description: '多家门店成为任务节点，扫码核销后解锁隐藏权益和下一站。',
+        name: '商家合作节点',
+        category: '场景与合作',
+        description: '商家可以成为路线中的地点、互动或权益节点，与城市主题共同运营。',
         image: '/assets/case-citywalk/nanjing-side-street.jpg',
         thumb: '/assets/case-citywalk/fuzhou-henan-road.jpg',
         link: '/build.html#merchant',
         color: '#0054FA'
       },
       {
-        name: '小红书城市章节',
-        category: '内容活动 · 复访',
-        description: '把一次路线沉淀成章节封面、攻略笔记和城市足迹图鉴。',
+        name: '成长与徽章',
+        category: '记录与激励',
+        description: '记录探索进度、地点与徽章，让每次参与沉淀为可回看的城市足迹。',
         image: '/assets/case-xhs/xhs-cover.jpg',
         thumb: '/assets/case-xhs/xhs-chapter-03.jpg',
-        link: '/ip.html?project=airforce',
+        link: '/apechain.html',
         color: '#00A7FA'
       }
     ],
@@ -231,9 +231,9 @@ window.__siteContent = {
         }
       },
       paragraphs: [
-        '给玩家： 扫门店接任务、扫码触发剧情、拍照打卡解锁奖励。可以一个人探案解谜，也可以组队打阵营战、抢悬赏、竞速刷榜。走错路？系统推送隐藏任务。夜晚？解锁专属 AR 标记。',
-        '给商家： 发布进店小任务、配置折扣券和奖品池、生成专属 QR 码贴门口。后台看引流数据、回头客统计、活动效果。同街区商户可组建联盟，发跨店通卡，共享客流。',
-        '简单、快速、有趣的新玩法 = 重新组合插件 + 改参数，不需要从零开发。\u{1F98D}\u2728'
+        '给玩家：选择城市主题，沿真实地点推进章节、任务和打卡；可以独自探索，也可以通过俱乐部和组队能力与同伴共同参与。',
+        '给俱乐部与商家：围绕活动、地点和真实空间建立合作，让组织者、成员与城市节点进入同一条体验链路。',
+        '官网只展示当前产品范围。具体功能、开放城市、活动状态和权益，以城瘾微信小程序相应页面为准。'
       ],
       paragraphStyle: {
         selector: '.Spotlight-text .desc',
@@ -254,7 +254,7 @@ window.__siteContent = {
       launch: '立即查看',
       about: '了解玩法',
       featured: {
-        name: '商圈隐藏菜单',
+        name: '真实城市 · 可参与的主题',
         nameStyle: {
           selector: '.Spotlight-featured-card .card-text h3',
           css: {
@@ -271,7 +271,7 @@ window.__siteContent = {
             }
           }
         },
-        description: '门店任务、扫码核销和隐藏权益组成的线下主题活动。',
+        description: '把主题、路线、地点、俱乐部和商家合作组织在同一套城市探索体验中。',
         descriptionStyle: {
           selector: '.Spotlight-featured-card .card-text p',
           css: {
@@ -287,7 +287,7 @@ window.__siteContent = {
     },
 
     appsSection: {
-      title: '主题活动',
+      title: '产品能力',
       titleStyle: {
         selector: '.SectionGridCarousel .section-title h2',
         css: {
@@ -304,8 +304,8 @@ window.__siteContent = {
           }
         }
       },
-      seeAll: '查看全部活动',
-      browseAll: '浏览活动库',
+      seeAll: '查看全部能力',
+      browseAll: '浏览产品能力',
       cardCategoryStyle: {
         selector: '.pill',
         css: {
@@ -346,22 +346,18 @@ window.__siteContent = {
         }
       },
       cards: [
-        { name: '上海夜行侦探局', category: '侦探路线', description: '静安到外滩，3 小时线索协作与结案。', image: '/assets/case-detective/shanghai-native-quarter.jpg', link: '/ip.html?project=geisai' },
-        { name: '南京路城市寻踪', category: 'Citywalk', description: '用隐藏点位重新打开南京路。', image: '/assets/case-citywalk/nanjing-road-pedestrians.jpg', link: '/ip.html' },
-        { name: '书店线索局', category: '门店任务', description: '书店纸条、暗号和拍照核验。', image: '/assets/case-game/chapter-04-bookshop-clue.jpg', link: '/build.html#merchant' },
-        { name: '外滩黄昏任务线', category: '限时路线', description: '黄昏出发，沿途完成章节解锁。', image: '/assets/case-citywalk/bund-walk.jpg', link: '/ip.html' },
-        { name: '商圈隐藏菜单', category: '商家联动', description: '多门店扫码核销，解锁隐藏权益。', image: '/assets/case-citywalk/nanjing-side-street.jpg', link: '/build.html#merchant' },
-        { name: '小红书城市章节', category: '内容复访', description: '路线结束后沉淀攻略和章节封面。', image: '/assets/case-xhs/xhs-cover.jpg', link: '/ip.html?project=airforce' },
-        { name: '人民广场速通', category: '竞速挑战', description: '限时完成节点，结算速度与完整度。', image: '/assets/case-citywalk/peoples-square-night.jpg', link: '/ip.html' },
-        { name: '张园暗号夜', category: '夜游剧情', description: '到点获得口令，错过时间进入支线。', image: '/assets/case-game/chapter-01-lane-walk.jpg', link: '/ip.html?project=forging' },
-        { name: '咖啡店接头点', category: '到店任务', description: '门店成为剧情交接与奖励核销点。', image: '/assets/case-citywalk/fuzhou-henan-road.jpg', link: '/build.html#merchant' },
-        { name: '城市图鉴日', category: '收集活动', description: '完成路线后点亮地点、徽章和回忆。', image: '/assets/case-xhs/xhs-chapter-03.jpg', link: '/ip.html' },
-        { name: '主理人试跑局', category: '俱乐部活动', description: '小队试跑路线，现场调整任务节奏。', image: '/assets/case-citywalk/shanghai-crosswalk-people.jpg', link: '/build.html#club' },
-        { name: '老街证物袋', category: '线索收集', description: '纸本证物与 App 节点同步推进。', image: '/assets/case-detective/detective-diary-page.jpg', link: '/ip.html?project=geisai' },
-        { name: '夜市阵营战', category: '组队对抗', description: '不同队伍争夺节点和隐藏积分。', image: '/assets/case-citywalk/shanghai-night-street.jpg', link: '/ip.html?project=forging' },
-        { name: '周末城市盲盒', category: '随机事件', description: '报名后才揭晓路线主题和第一站。', image: '/assets/case-citywalk-ref/cropped/IMG_9554-crop.jpg', link: '/ip.html' },
-        { name: '品牌联名路线', category: '联名活动', description: '把品牌内容做成可抵达的城市章节。', image: '/assets/case-xhs/xhs-chapter-01.jpg', link: '/build.html' },
-        { name: '毕业季足迹线', category: '纪念路线', description: '用地图和任务保存一段城市记忆。', image: '/assets/case-citywalk-ref/cropped/IMG_9547-crop.jpg', link: '/ip.html?project=airforce' }
+        { name: '城市主题探索', category: '主题与章节', description: '沿真实地点推进主题、章节与任务。', image: '/assets/case-detective/shanghai-native-quarter.jpg', link: '/apechain.html' },
+        { name: '实时漫游', category: '路线与位置', description: '查看附近地点、路线进度和当前任务。', image: '/assets/case-citywalk/nanjing-road-pedestrians.jpg', link: '/apechain.html' },
+        { name: '地点打卡', category: '到点确认', description: '到达地点后完成打卡与内容解锁。', image: '/assets/case-game/chapter-02-photo-check.jpg', link: '/apechain.html' },
+        { name: '彩蛋收集', category: '探索反馈', description: '在路线中发现并收集隐藏内容。', image: '/assets/case-game/chapter-04-bookshop-clue.jpg', link: '/apechain.html' },
+        { name: '线索与提示', category: '任务辅助', description: '围绕当前进度获得线索与提示。', image: '/assets/case-detective/detective-diary-page.jpg', link: '/apechain.html' },
+        { name: '俱乐部', category: '同好组织', description: '加入或创建俱乐部并组织主题活动。', image: '/assets/case-citywalk/shanghai-crosswalk-people.jpg', link: '/build.html#club' },
+        { name: '组队协作', category: '多人参与', description: '邀请伙伴共同参与城市探索。', image: '/assets/case-citywalk/nanjing-pedestrian-evening.jpg', link: '/build.html#club' },
+        { name: '商家合作', category: '城市节点', description: '让真实商家成为主题与路线的一部分。', image: '/assets/case-citywalk/nanjing-side-street.jpg', link: '/build.html#merchant' },
+        { name: '社区内容', category: '发现与分享', description: '围绕城市、主题与活动发布内容。', image: '/assets/case-xhs/xhs-cover.jpg', link: '/apechain.html' },
+        { name: '成长等级', category: '探索记录', description: '持续记录参与和成长进度。', image: '/assets/case-xhs/xhs-chapter-03.jpg', link: '/apechain.html' },
+        { name: '徽章', category: '成就激励', description: '完成探索后获得对应的成就记录。', image: '/assets/case-xhs/xhs-chapter-05.jpg', link: '/apechain.html' },
+        { name: '优惠与奖励', category: '参与权益', description: '查看并使用活动或商家提供的权益。', image: '/assets/case-citywalk/fuzhou-henan-road.jpg', link: '/build.html#merchant' }
       ]
     },
 
@@ -603,6 +599,12 @@ window.__siteContent = {
     setText('.Hero-hot-badge .font-manuka', content.hero.hotBadge);
     setLabelPair('.Hero-description .UIBtn .label-inner', content.hero.button);
     setLabelPair('.Hero-right-col .UILink .UILink-inner span', content.hero.seeAll);
+    document.querySelectorAll('.Hero-thumb img').forEach(function(img, index) {
+      const app = content.appsData[index];
+      if (!app) return;
+      img.setAttribute('src', app.thumb || app.image);
+      img.setAttribute('alt', app.name);
+    });
 
     setHTML('.Spotlight-text h2', content.spotlight.title);
     document.querySelectorAll('.Spotlight-text .desc p').forEach(function(el, index) {
@@ -614,6 +616,17 @@ window.__siteContent = {
     setLabelPair('.Spotlight-cta .UIBtn.secondary .label-inner', content.spotlight.about);
     setText('.Spotlight-featured-card .card-text h3', content.spotlight.featured.name);
     setText('.Spotlight-featured-card .card-text p', content.spotlight.featured.description);
+    document.querySelectorAll('.Spotlight-bg-card img').forEach(function(img, index) {
+      const app = content.appsData[index % content.appsData.length];
+      if (!app) return;
+      img.setAttribute('src', app.image);
+      img.setAttribute('alt', '');
+    });
+    const spotlightImage = document.querySelector('.Spotlight-featured-card img');
+    if (spotlightImage && content.appsData[0]) {
+      spotlightImage.setAttribute('src', content.appsData[0].image);
+      spotlightImage.setAttribute('alt', content.appsData[0].name);
+    }
 
     setText('.SectionGridCarousel .section-title h2', content.appsSection.title);
     setLabelPair('.SectionGridCarousel .section-see-all .UILink-inner span', content.appsSection.seeAll);
@@ -621,7 +634,10 @@ window.__siteContent = {
 
     document.querySelectorAll('.SimpleSlider .AppCard').forEach(function(card, index) {
       const app = content.appsSection.cards[index];
-      if (!app) return;
+      if (!app) {
+        card.hidden = true;
+        return;
+      }
       setText('.pill', app.category, card);
       setText('.AppCard-name', app.name, card);
       setText('.AppCard-desc', app.description, card);
@@ -632,6 +648,10 @@ window.__siteContent = {
       }
       if (app.link) card.setAttribute('href', app.link);
     });
+    document.querySelectorAll('.SimpleSlider-group').forEach(function(group) {
+      const visibleCards = Array.from(group.querySelectorAll('.AppCard')).some(function(card) { return !card.hidden; });
+      group.hidden = !visibleCards;
+    });
 
     document.querySelectorAll('.Discover-label').forEach(function(label, index) {
       const value = content.discover.labels[index];
@@ -639,6 +659,12 @@ window.__siteContent = {
       label.querySelectorAll('.label__inner').forEach(function(el) {
         el.textContent = value;
       });
+      const image = label.querySelector('img');
+      const app = content.appsSection.cards[index % content.appsSection.cards.length];
+      if (image && app) {
+        image.setAttribute('src', app.image);
+        image.setAttribute('alt', '');
+      }
     });
 
     document.querySelectorAll('.Footer-col').forEach(function(column, columnIndex) {
@@ -667,6 +693,7 @@ window.__siteContent = {
     hydrateDataKeys();
     hydrateGalaxyHome();
     hydrateApechainHome();
+    document.documentElement.classList.add('cy-content-ready');
   }
 
   if (document.readyState === 'loading') {

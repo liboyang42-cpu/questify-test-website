@@ -3,15 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>应用生态 · 城瘾</title>
-  <meta name="description" content="城瘾应用——城市真人解谜的玩法与工具:城市传奇库、城市任务链、地标收集、徽章收集簿等。" />
+  <link rel="canonical" href="https://www.chengyinhub.com/apechain.html" />
+  <title>产品能力 · 城瘾</title>
+  <meta name="description" content="了解城瘾小程序当前产品范围：城市探索、地点打卡、俱乐部、商家合作、社区内容与成长记录。" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="theme-color" content="#0b0b0f" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="城瘾" />
-  <meta property="og:title" content="应用生态 · 城瘾" />
-  <meta property="og:description" content="城瘾应用——城市真人解谜的玩法与工具:城市传奇库、城市任务链、地标收集、徽章收集簿等。" />
+  <meta property="og:title" content="产品能力 · 城瘾" />
+  <meta property="og:description" content="了解城瘾小程序当前产品范围：城市探索、地点打卡、俱乐部、商家合作、社区内容与成长记录。" />
   <link rel="stylesheet" href="/assets/fonts/fonts.css" />
   <style>
     /* ===== Reset & Base ===== */
@@ -193,7 +194,7 @@
       transition: opacity 0.3s;
       user-select: none;
     }
-    .FilterItem:not(.active) { opacity: 0.2; }
+    .FilterItem:not(.active) { opacity: 0.52; }
     .FilterItem:hover { opacity: 1; }
     .FilterItem.active { opacity: 1; }
 
@@ -250,7 +251,7 @@
       font-size: 32px; line-height: 0.785;
       text-transform: uppercase;
       color: #fff;
-      opacity: 0.2;
+      opacity: 0.45;
       z-index: 1;
       white-space: nowrap;
     }
@@ -635,7 +636,7 @@
       <aside class="Sidebar anim-fade-up anim-delay-1">
         <!-- Search -->
         <div class="SearchBox">
-          <input type="search" placeholder="Search" aria-label="Filter apps by name" />
+          <input type="search" placeholder="搜索产品能力" aria-label="按名称筛选产品能力" />
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
             <g clip-path="url(#search-clip)">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M7.9304 9.00619C7.10698 9.59976 6.09456 9.9497 5 9.9497C2.23858 9.9497 0 7.72239 0 4.97485C0 2.22732 2.23858 0 5 0C7.76142 0 10 2.22732 10 4.97485C10 6.09489 9.62799 7.12848 9.00021 7.95997L12 10.9447L10.9393 12L7.9304 9.00619ZM8.5 4.97485C8.5 6.89813 6.933 8.45725 5 8.45725C3.067 8.45725 1.5 6.89813 1.5 4.97485C1.5 3.05158 3.067 1.49246 5 1.49246C6.933 1.49246 8.5 3.05158 8.5 4.97485Z" fill="white"/>
@@ -649,13 +650,13 @@
 
         <!-- Sort -->
         <div class="SortSection">
-          <p class="SortLabel">Sort by:</p>
+          <p class="SortLabel">排序:</p>
           <div class="SortSelect">
             <select id="sortSelect">
-              <option value="alpha-asc">Alphabetical ASC</option>
-              <option value="alpha-desc">Alphabetical DESC</option>
+              <option value="alpha-asc">名称升序</option>
+              <option value="alpha-desc">名称降序</option>
             </select>
-            <span class="SortSelect-display" id="sortDisplay">Alphabetical ASC</span>
+            <span class="SortSelect-display" id="sortDisplay">名称升序</span>
           </div>
         </div>
       </aside>
@@ -672,50 +673,29 @@
 <script>
 // ─── App Data ────────────────────────────────────────────────
 const APPS = [
-  // 游戏类
-  { title: "d20 判定", category: "游戏", desc: "城市任务里的掷骰判定 · 点击试玩", link: "d20.html", img: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='608'%20height='336'%3E%3Crect%20width='608'%20height='336'%20fill='%23120608'/%3E%3Cpolygon%20points='304%2C84%20402%2C152%20366%2C246%20242%2C246%20206%2C152'%20fill='none'%20stroke='%23ff2233'%20stroke-width='6'/%3E%3Ctext%20x='304'%20y='292'%20font-family='Arial'%20font-size='58'%20font-weight='bold'%20fill='%23ff2233'%20text-anchor='middle'%3Ed20%3C/text%3E%3C/svg%3E" },
-  { title: "城市任务链", category: "游戏", desc: "动态生成的城市探险任务与挑战", img: "/assets/placeholder-app.svg" },
-  { title: "地标收集", category: "游戏", desc: "扫码打卡城市地点解锁成就", img: "/assets/placeholder-app.svg" },
-  { title: "商户竞赛", category: "游戏", desc: "跨店铺竞速与排行榜系统", img: "/assets/placeholder-app.svg" },
-  { title: "时间竞速", category: "游戏", desc: "限时任务与动态事件触发", img: "/assets/placeholder-app.svg" },
-  { title: "阵营战争", category: "游戏", desc: "多人社交对抗与领地争夺", img: "/assets/placeholder-app.svg" },
-  { title: "解谜探案", category: "游戏", desc: "城市故事线谜题解构系统", img: "/assets/placeholder-app.svg" },
-  
-  // 剧情插件
-  { title: "AI故事引擎", category: "剧情插件", desc: "生成式叙事与动态分支剧情", img: "/assets/placeholder-app.svg" },
-  { title: "角色伴侣系统", category: "剧情插件", desc: "AI NPC全程陪伴与实时对话", img: "/assets/placeholder-app.svg" },
-  { title: "城市传奇库", category: "剧情插件", desc: "本地化品牌故事与商户背景", img: "/assets/placeholder-app.svg" },
-  { title: "历史寻踪", category: "剧情插件", desc: "地点关联的互动内容解锁", img: "/assets/placeholder-app.svg" },
-  
-  // 交互插件
-  { title: "AR扫描引擎", category: "交互插件", desc: "虚实互动的沉浸式体验", img: "/assets/placeholder-app.svg" },
-  { title: "QR即触发", category: "交互插件", desc: "门店二维码一键启动任务", img: "/assets/placeholder-app.svg" },
-  { title: "社交互动点", category: "交互插件", desc: "多人共享与协作游戏模式", img: "/assets/placeholder-app.svg" },
-  { title: "位置签到卡", category: "交互插件", desc: "持久化身份与进度保存", img: "/assets/placeholder-app.svg" },
-  { title: "即时推送系统", category: "交互插件", desc: "隐藏任务与时限事件通知", img: "/assets/placeholder-app.svg" },
-  
-  // AI插件
-  { title: "AI导游伴侣", category: "AI插件", desc: "实时路线规划与动态推荐", img: "/assets/placeholder-app.svg" },
-  { title: "任务生成器", category: "AI插件", desc: "基于用户与环境的智能生成", img: "/assets/placeholder-app.svg" },
-  { title: "对话代理", category: "AI插件", desc: "多轮交互的自然语言处理", img: "/assets/placeholder-app.svg" },
-  { title: "智能匹配器", category: "AI插件", desc: "用户偏好与商户的精准适配", img: "/assets/placeholder-app.svg" },
-  { title: "行为分析器", category: "AI插件", desc: "实时学习与系统持续优化", img: "/assets/placeholder-app.svg" },
-  
-  // 成就激励
-  { title: "徽章收集簿", category: "成就激励", desc: "完成任务解锁专属勋章", img: "/assets/placeholder-app.svg" },
-  { title: "排行榜竞技", category: "成就激励", desc: "实时排名与周期结算奖励", img: "/assets/placeholder-app.svg" },
-  { title: "等级进阶", category: "成就激励", desc: "持久化身份与角色成长体系", img: "/assets/placeholder-app.svg" },
-  { title: "奖励兑换", category: "成就激励", desc: "参与凭证与商户优惠券整合", img: "/assets/placeholder-app.svg" }
+  { title: "城市主题探索", category: "探索", desc: "围绕真实地点组织主题、章节与任务", img: "/assets/case-detective/shanghai-native-quarter.jpg" },
+  { title: "实时漫游", category: "探索", desc: "查看附近地点、路线进度和当前任务", img: "/assets/case-citywalk/nanjing-road-pedestrians.jpg" },
+  { title: "地点打卡", category: "探索", desc: "到达地点后完成打卡与内容解锁", img: "/assets/case-game/chapter-02-photo-check.jpg" },
+  { title: "彩蛋与线索", category: "探索", desc: "在路线中发现隐藏内容并获得提示", img: "/assets/case-detective/detective-diary-page.jpg" },
+  { title: "俱乐部", category: "组织", desc: "加入或创建俱乐部并组织主题活动", link: "build.html#club", img: "/assets/case-citywalk/shanghai-crosswalk-people.jpg" },
+  { title: "组队协作", category: "组织", desc: "邀请伙伴共同参与城市探索", link: "build.html#club", img: "/assets/case-citywalk/nanjing-pedestrian-evening.jpg" },
+  { title: "商家合作", category: "组织", desc: "让真实商家成为城市主题中的合作节点", link: "build.html#merchant", img: "/assets/case-citywalk/nanjing-side-street.jpg" },
+  { title: "社区内容", category: "内容", desc: "围绕城市、主题与活动发现和发布内容", img: "/assets/case-xhs/xhs-cover.jpg" },
+  { title: "AI 辅助", category: "内容", desc: "部分创作或漫游功能提供辅助，实际以页面开放为准", img: "/assets/case-game/chapter-01-lane-walk.jpg" },
+  { title: "成长等级", category: "成长", desc: "持续记录参与和成长进度", img: "/assets/case-xhs/xhs-chapter-03.jpg" },
+  { title: "徽章", category: "成长", desc: "完成探索后获得对应的成就记录", img: "/assets/case-xhs/xhs-chapter-05.jpg" },
+  { title: "优惠与奖励", category: "成长", desc: "查看并使用活动或商家提供的权益", link: "build.html#merchant", img: "/assets/case-citywalk/fuzhou-henan-road.jpg" },
+  { title: "d20 判定", category: "网页试玩", desc: "体验城市剧情中的掷骰判定", link: "d20.html", img: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='608'%20height='336'%3E%3Crect%20width='608'%20height='336'%20fill='%23120608'/%3E%3Cpolygon%20points='304%2C84%20402%2C152%20366%2C246%20242%2C246%20206%2C152'%20fill='none'%20stroke='%23ff2233'%20stroke-width='6'/%3E%3Ctext%20x='304'%20y='292'%20font-family='Arial'%20font-size='58'%20font-weight='bold'%20fill='%23ff2233'%20text-anchor='middle'%3Ed20%3C/text%3E%3C/svg%3E" }
 ];
 
 // ─── Category counts ───
 const CATEGORIES = [
   { name: "全部", key: null },
-  { name: "游戏", key: "游戏" },
-  { name: "剧情插件", key: "剧情插件" },
-  { name: "交互插件", key: "交互插件" },
-  { name: "AI插件", key: "AI插件" },
-  { name: "成就激励", key: "成就激励" }
+  { name: "探索", key: "探索" },
+  { name: "组织", key: "组织" },
+  { name: "内容", key: "内容" },
+  { name: "成长", key: "成长" },
+  { name: "网页试玩", key: "网页试玩" }
 ];
 
 function countCategory(key) {
@@ -793,8 +773,11 @@ function renderGrid() {
   }
 
   // Render
-  grid.innerHTML = filtered.map((app, i) => `
-    <div class="AppCard-wrapper"><a href="${app.link || 'deploy.html?id=' + i}" class="AppCard" style="transition-delay: ${i * 30}ms">
+  grid.innerHTML = filtered.map((app, i) => {
+    const tag = app.link ? 'a' : 'article';
+    const href = app.link ? ` href="${app.link}"` : '';
+    return `
+    <div class="AppCard-wrapper"><${tag}${href} class="AppCard" style="transition-delay: ${i * 30}ms">
       <div class="AppCard-preview">
         <img src="${app.img}" alt="${app.title}" loading="lazy" />
         <div class="AppCard-category">
@@ -821,8 +804,9 @@ function renderGrid() {
           ${app.desc ? `<div class="AppCard-desc">${app.desc}</div>` : ''}
         </div>
       </div>
-    </a></div>
-  `).join('');
+    </${tag}></div>
+  `;
+  }).join('');
 
   // Trigger scroll reveal
   observeCards();
