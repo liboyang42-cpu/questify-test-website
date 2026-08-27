@@ -1,0 +1,98 @@
+/* counter.css — 计数器游戏(城市脉冲)的界面层样式。
+   容器需有明确宽高;所有元素相对容器绝对定位,画布在最底层。 */
+
+.cc-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #f4f4f6;
+  --cc-accent: #ff2233;
+  --cc-mut: rgba(244, 244, 246, .5);
+  --cc-line: rgba(255, 255, 255, .12);
+  --cc-display: "Bebas Neue", -apple-system, sans-serif;
+}
+
+.cc-canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+
+/* ── 顶部数值区 ── */
+.cc-hud {
+  position: absolute; top: 0; left: 0; right: 0;
+  padding: 18px 20px 0;
+  display: flex; flex-direction: column; gap: 10px;
+  pointer-events: none; z-index: 2;
+}
+.cc-hud-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.cc-pulse { font-family: var(--cc-display); font-size: clamp(38px, 9vw, 60px); line-height: .9; letter-spacing: .04em; }
+.cc-pulse-unit { font-size: 13px; letter-spacing: .3em; color: var(--cc-mut); margin-left: 8px; }
+.cc-rate { font-size: 12px; letter-spacing: .12em; color: var(--cc-mut); text-align: right; white-space: nowrap; }
+.cc-rate b { color: #f4f4f6; font-weight: 600; }
+
+.cc-level { display: flex; align-items: center; gap: 10px; font-size: 12px; letter-spacing: .12em; color: var(--cc-mut); }
+.cc-level-name { color: var(--cc-accent); font-family: var(--cc-display); font-size: 17px; letter-spacing: .22em; }
+.cc-bar { flex: 1; height: 2px; background: var(--cc-line); border-radius: 2px; overflow: hidden; }
+.cc-bar span { display: block; height: 100%; width: 0; background: var(--cc-accent); transition: width .35s cubic-bezier(.2,.8,.2,1); }
+
+/* ── 中央打卡按钮(透明,视觉由画布绘制) ── */
+.cc-core {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 38%; aspect-ratio: 1; min-width: 116px; max-width: 210px;
+  border: 0; border-radius: 50%; background: transparent; padding: 0;
+  cursor: pointer; z-index: 3;
+  font-family: var(--cc-display); font-size: 15px; letter-spacing: .28em;
+  color: rgba(244, 244, 246, .82);
+  transition: transform .08s ease;
+}
+.cc-core:active { transform: translate(-50%, -50%) scale(.94); }
+.cc-core:focus-visible { outline: 2px solid var(--cc-accent); outline-offset: 6px; }
+.cc-core-combo { display: block; margin-top: 6px; font-size: 13px; letter-spacing: .2em; color: var(--cc-accent); min-height: 16px; opacity: 0; transition: opacity .18s ease; }
+.cc-core-combo[data-on="true"] { opacity: 1; }
+
+/* ── 底部升级区 ── */
+.cc-shop {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 0 14px 14px; display: flex; gap: 8px; align-items: stretch;
+  z-index: 2;
+}
+.cc-buy {
+  flex: 1; min-width: 0; text-align: left; cursor: pointer;
+  background: rgba(12, 12, 16, .62); backdrop-filter: blur(10px);
+  border: 1px solid var(--cc-line); border-radius: 12px; padding: 9px 11px;
+  color: #f4f4f6; font: inherit; transition: border-color .2s, background .2s, opacity .2s;
+}
+.cc-buy:hover:not(:disabled) { border-color: rgba(255, 34, 51, .55); background: rgba(255, 34, 51, .1); }
+.cc-buy:focus-visible { outline: 2px solid var(--cc-accent); outline-offset: 2px; }
+.cc-buy:disabled { opacity: .4; cursor: not-allowed; }
+.cc-buy-top { display: flex; width: 100%; justify-content: space-between; align-items: baseline; gap: 8px; }
+.cc-buy-name { font-size: 13px; font-weight: 600; letter-spacing: .04em; }
+.cc-buy-lv { font-family: var(--cc-display); font-size: 13px; letter-spacing: .1em; color: var(--cc-mut); }
+.cc-buy-desc { display: block; font-size: 11px; color: var(--cc-mut); margin-top: 2px; }
+.cc-buy-cost { display: block; font-size: 11px; letter-spacing: .08em; color: var(--cc-accent); margin-top: 4px; }
+
+.cc-reset {
+  align-self: flex-end; flex: 0 0 auto; cursor: pointer;
+  background: transparent; border: 1px solid var(--cc-line); border-radius: 12px;
+  color: var(--cc-mut); font: inherit; font-size: 11px; letter-spacing: .1em; padding: 9px 10px;
+  transition: color .2s, border-color .2s;
+}
+.cc-reset:hover { color: #f4f4f6; border-color: rgba(255, 255, 255, .3); }
+.cc-reset:focus-visible { outline: 2px solid var(--cc-accent); outline-offset: 2px; }
+
+/* 屏幕阅读器专用的实时播报 */
+.cc-sr {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+  .cc-shop { flex-wrap: wrap; }
+  .cc-buy { flex: 1 1 calc(50% - 4px); }
+  .cc-reset { flex: 1 1 100%; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc-core, .cc-bar span { transition: none; }
+}

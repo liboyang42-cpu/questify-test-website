@@ -3,7 +3,7 @@
    自动注入 header(body 首)与 footer(body 末),按路径高亮当前栏目。 */
 (function () {
   var NAV = [
-    { label: '探索', href: '/index.html', match: ['/', '/index.html', '/apechain.html', '/deploy.html', '/d20.html'] },
+    { label: '探索', href: '/index.html', match: ['/', '/index.html', '/apechain.html', '/deploy.html', '/d20.html', '/counter.html'] },
     { label: 'IP', href: '/ip.html', match: ['/ip.html'] },
     { label: '构建', href: '/build.html', match: ['/build.html'] },
     { label: '联系我们', href: '/about.html', match: ['/about.html'] }

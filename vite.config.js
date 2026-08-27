@@ -32,6 +32,7 @@ export default defineConfig({
         build: resolve(__dirname, 'build.html'),
         about: resolve(__dirname, 'about.html'),
         d20: resolve(__dirname, 'd20.html'),
+        counter: resolve(__dirname, 'counter.html'),
         privacy: resolve(__dirname, 'privacy.html'),
         terms: resolve(__dirname, 'terms.html'),
         galacticCore: resolve(__dirname, 'demos/galactic-core.html'),

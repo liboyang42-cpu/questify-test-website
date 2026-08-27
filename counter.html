@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>城市脉冲 · 城瘾</title>
+  <meta name="description" content="城瘾 城市脉冲——打卡计数器玩法模板:连击倍率、身份晋升与自动巡线。" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0b0b0f" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="城瘾" />
+  <meta property="og:title" content="城市脉冲 · 城瘾" />
+  <meta property="og:description" content="城瘾 城市脉冲——打卡计数器玩法模板:连击倍率、身份晋升与自动巡线。" />
+  <link rel="stylesheet" href="/assets/fonts/fonts.css" />
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--fg:#f4f4f6;--mut:rgba(244,244,246,.5);--line:rgba(255,255,255,.12);--accent:#ff2233;
+    --display:"Bebas Neue",-apple-system,sans-serif;--cn:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  body{background:#070708;color:var(--fg);font-family:var(--cn);-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+
+  .stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:96px 24px 48px;text-align:center;
+    background:radial-gradient(70% 60% at 50% 42%,rgba(255,34,51,.12),transparent 60%)}
+  .eyebrow{font-family:var(--display);letter-spacing:.4em;font-size:16px;color:var(--accent);margin-bottom:10px}
+  h1{font-weight:800;font-size:clamp(34px,5vw,60px);line-height:1;margin-bottom:6px}
+  .sub{color:var(--mut);font-size:15px;margin-bottom:28px}
+  #counter{width:min(90vw,620px);height:min(72vh,560px);min-height:460px;border:1px solid var(--line);border-radius:18px;overflow:hidden;position:relative;background:#070708}
+  .hint{margin-top:18px;font-family:var(--display);letter-spacing:.3em;font-size:14px;color:var(--mut)}
+  .rules{margin-top:14px;max-width:560px;color:var(--mut);font-size:13px;line-height:1.8;text-align:left}
+  .rules b{color:var(--fg);font-weight:600}
+  .back{margin-top:22px}
+  .back a{color:var(--mut);text-decoration:none;font-size:13px;letter-spacing:.08em;border:1px solid var(--line);border-radius:100px;padding:8px 20px}
+  .back a:hover{color:#fff}
+</style>
+  <link rel="stylesheet" href="/site-shell.css" />
+</head>
+<body>
+<main class="stage">
+  <p class="eyebrow">GAME · 计数</p>
+  <h1>城市脉冲</h1>
+  <p class="sub">每一次打卡都是一次脉冲——连击越快,城市回应越强。</p>
+  <div id="counter" aria-label="城市脉冲计数器游戏"></div>
+  <p class="hint">CLICK TO PULSE</p>
+  <div class="rules">
+    <p><b>连击</b>:0.9 秒内继续打卡可续上连击,每 4 连击 +0.5x,最高 5x。</p>
+    <p><b>晋升</b>:累计脉冲决定城市身份,从「路人」一路到「城市传奇」。</p>
+    <p><b>升级</b>:用脉冲兑换「信号增幅」(每次 +1)与「自动巡线」(每秒 +1)。</p>
+    <p><b>存档</b>:进度自动保存在本机浏览器,可随时重置。</p>
+  </div>
+  <p class="back"><a href="./apechain.html">← 返回应用列表</a></p>
+</main>
+
+<script type="module">
+  import { mount } from './src/games/counter/index.js';
+  mount(document.getElementById('counter'));
+</script>
+  <script src="/site-shell.js" defer></script>
+</body>
+</html>
