@@ -5,7 +5,9 @@
 规模：10 个构建入口页，23,846 行源码（不含 vendor 与 lockfile）
 方法：静态阅读 + `npm run build` + Chromium（Playwright）逐页运行时验证
 
-共 34 项发现，其中 11 项已实测复现（标 ✅），其余为源码分析结论（标 📖）。F01 已在非 localhost 主机上端到端复现。
+共 **39** 项发现，其中 **14** 项已实测复现（标 ✅），其余为源码分析结论（标 📖）。F01 已在非 localhost 主机上端到端复现。
+
+> 第二轮补审：首轮遗漏了四块线上代码未逐行阅读（`ip-entry.js` 详情渲染 1,390 行、`src/games/d20/*` 1,485 行、`bloomEnvironment.js` 490 行、ScriptReader 尾部与其 CSS）。已补完，新增 F35–F39，其中 F35、F36 为 P1。
 
 在线版（含实测输出与修复计划）：https://claude.ai/code/artifact/97d265a5-6842-4ad8-b3f5-350ff143c682
 
@@ -22,10 +24,10 @@
 | 等级 | 数量 |
 |---|---|
 | P0 阻断上线 | 3 |
-| P1 功能流程 | 5 |
+| P1 功能流程 | 7 |
 | P2 合规内容 | 4 |
-| P3 代码质量 | 12 |
-| P4 交互无障碍 | 10 |
+| P3 代码质量 | 14 |
+| P4 交互无障碍 | 11 |
 
 ---
 
@@ -105,6 +107,44 @@ var API_BASE=(meta&&meta.content.trim())||
 ### F08 ✅ 10 个页面里有 3 个脱离共享站壳
 `ip.html`、`deploy.html`、`preset-life.html` 都不引 `site-shell.js/css`：没有统一导航、页脚、法律链接与 ICP 位，也拿不到站壳里的全局 `prefers-reduced-motion` 规则。而 `site-shell.js` 文件头写着「单一事实源」，IP 页却自己手写了一份重复 topbar。
 **修复** 三页统一接入站壳。
+
+### F35 ✅ IP 详情页滚到 84% 处会锁死滚动并强制跳转到另一个项目
+
+`ip-entry.js:2361` 的 `startNextHandoff()` 一旦触发就不可取消：给 `body` 加 `handoff-lock` 锁住滚动 → 播 980ms 动画 → `window.location.href` 跳到下一个项目页。触发条件很松：`.next-scroll` 进入视口 42% 处，或 IntersectionObserver 的 0.34 阈值，或接近文档底部——任一满足即可。
+
+```
+实测（/ip.html?project=geisai，文档高 6663px）：
+第 14 次滚轮，scrollY=5600（约 84%）→ handoff-lock 触发，滚动被锁
+锁定后向上滚 2000px → scrollY 仍是 5600，纹丝不动
+2.5 秒后 URL 自动变为 /ip.html?project=forging
+```
+
+读者只是正常往下读，就被冻住并甩到另一篇文章上，没有任何取消方式。而且这会连锁：geisai → forging → airforce → geisai 构成一个三页循环，出口只有浏览器后退或左上角 logo。
+
+**与 F08 叠加后更糟**：`ip.html` 没有页脚，用户想找隐私政策或联系方式时的自然动作正是滚到底——而滚到底恰好会把他劫走。结果是 IP 板块里根本触达不到法律页和联系页。
+
+违反 WCAG 3.2.5（Change on Request）：未经用户请求的自动跳转。
+
+**修复** 把自动跳转改成一个显式的「下一个项目 →」链接。若要保留过场动画，也必须允许向上滚动取消，且不锁 `body`。
+
+### F36 ✅ 「联系我们」页 11.09MB，其中 9.5MB 是纯装饰贴图
+
+`about.html` 唯一的业务目标是让人填完表单，但它的首屏是：
+
+```
+实测 /about.html：11.09MB / 7 个请求
+  galaxy.jpg                    3,907KB
+  nasa-clouds-4096.jpg          2,970KB
+  nasa-blue-marble.jpg          1,840KB
+  nasa-night-lights-2012.jpg      775KB   ← 以上 4 张共 9.5MB，全部服务于背景那颗地球
+  HarmonyOS 两个字重             1,863KB
+```
+
+`bloomEnvironment.js:285-288` 无条件加载这四张 NASA 贴图。转化页比首页之外的任何页面都更不该有这种重量——用户在这里的耐心最短。
+
+另外 `about.html` 只调了 `env?.resume()`，全页没有 `pause`/`destroy` 调用：这颗地球的 WebGL 绘制循环在标签页切到后台时照跑不误（`bloomEnvironment.js` 本身是提供了 `pause`/`destroy` 的，只是没人调）。
+
+**修复** 贴图降到实际渲染尺寸并转 WebP（4096px 的云图在一颗直径不到 600px 的球上纯属浪费）；用 IntersectionObserver + `visibilitychange` 调用已有的 `pause()`；考虑把地球改为滚动到视口后再懒加载，让表单先可用。
 
 ---
 
@@ -189,6 +229,16 @@ updateCarousel = function(idx){ ... }          // ← 后打补丁
 ### F24 ✅ 工具链版本声明与实际不符
 `.nvmrc` 写 24，实际 Node 22.22；`packageManager` 写 `npm@11.12.1`，实际 npm 10.9.7（未启用 corepack，声明不生效）。
 
+### F37 📖 IP 详情页的滚动处理有两处结构问题
+`updateMotion()`（`ip-entry.js:2244`）对 `pageEl`、`cubeStage`、`mainCube`、`leftCube`、`rightCube`、`heroTitle`、`archiveCard`、`heroIndex`、`sideNav` 九个元素全部无空值保护，且在模块初始化时就直接调用一次。任一模板元素缺失即在每个滚动帧抛 TypeError。
+
+更实际的问题是 `maybeStartHandoff()` **在 rAF 节流之外**：滚动监听里 `updateMotion` 被 `ticking` 保护，`maybeStartHandoff()` 却是每个 scroll 事件同步执行，内含一次 `getBoundingClientRect()` 加一次 `document.documentElement.scrollHeight` 读取——每个滚动事件两次强制重排。
+
+另：`sideNav.style.transform` 用了 `clamp(1440 - y, 96, 990)`，三个魔数绑死在某个特定页高上，视口过高或过矮时侧栏位置就不对。
+
+### F38 📖 装饰性 WebGL 全都不响应页面可见性
+`about.html` 的地球、`index.html` 的星野与卡片环、`d20.html` 的骰子，三处 rAF 循环都没有 `visibilitychange` 处理，标签页切到后台仍持续绘制。三个模块里 `bloomEnvironment` 和 `DiceGame` 其实都实现了 `pause()`/`destroy()`，只是调用方从没用过——`src/app.js` 里的 `pagehide → scheduler.destroy()` 是对的写法，但那条路径只服务于已下线的 demo 页。
+
 ---
 
 ## P4 · 交互与无障碍
@@ -237,6 +287,11 @@ IP 首页本身只有一屏高，不构成滚动陷阱；但 `preventDefault()` 
 ### F34 ✅ 两个页面对爬虫和无 JS 用户是空白的
 `ip.html` 与 `preset-life.html` 的 `<body>` 里只有一个空 `<main>`，全部内容由 JS 注入。两页都配了完整 og:title / og:description，但正文零可爬内容。IP 是一级导航目标。另：`apechain.html` 搜索框无 label（实测 1 个无标签输入）；`deploy.html` 有 2 个只有 `title`、无可访问名的按钮/链接；搜索无结果时无空状态提示。
 
+### F39 📖 d20 只能用鼠标点击，键盘玩不了
+`DiceGame.js:114` 只在 `renderer.domElement` 上绑了 `click`。容器 `#dice` 是个 `<div>`，有 `aria-label` 但没有 `tabindex`、没有 `role="button"`、没有键盘监听。页面上写着 "CLICK TO ROLL"，键盘用户能 Tab 到的地方里没有一个能掷骰子。
+
+顺带一提，`src/games/d20/` 是全仓工程质量最好的模块：`destroy()` 里完整做了 `cancelAnimationFrame`、`removeEventListener`，以及 geometry / material / texture / renderer 的逐项 `dispose()`。这套资源释放的写法值得推广到其他 WebGL 代码。
+
 ---
 
 ## 做得好的部分
@@ -258,8 +313,25 @@ IP 首页本身只有一屏高，不构成滚动陷阱；但 `preventDefault()` 
 
 | 批次 | 内容 | 编号 | 量级 |
 |---|---|---|---|
-| **1 · 打通** | API base 走构建变量 + 静态兜底联系方式；合并三份应用目录并改用稳定 slug；实现 `?f=` 解析；搜索并入渲染管线；全局 `scroll-margin-top`；三页接入站壳 | F01 F02 F04 F05 F06 F07 F08 | 1–2 天 |
-| **2 · 减重** | 去掉 `crossOrigin` 消除重复下载；图片转 WebP + 响应式；字体 `unicode-range` 分片；three.js 去重与延迟加载；动画循环启停控制 | F03 F14 F20 | 1–2 天 |
+| **1 · 打通** | API base 走构建变量 + 静态兜底联系方式；合并三份应用目录并改用稳定 slug；实现 `?f=` 解析；搜索并入渲染管线；全局 `scroll-margin-top`；三页接入站壳；**取消 IP 详情页的强制跳转** | F01 F02 F04 F05 F06 F07 F08 **F35** | 2 天 |
+| **2 · 减重** | 去掉 `crossOrigin` 消除重复下载；图片转 WebP + 响应式；**联系页 9.5MB 贴图降尺寸并懒加载**；字体 `unicode-range` 分片；three.js 去重与延迟加载；动画循环按可见性启停 | F03 **F36** F14 F20 **F38** | 2 天 |
 | **3 · 合规** | 正式法律文本与 ICP 备案；自托管 Unsplash 素材；移除 demo 构建入口；占位内容显式标注 | F09 F10 F11 F12 | 依赖法务 |
-| **4 · 无障碍** | JS 层响应 `prefers-reduced-motion`；补 h1；筛选器改 `change`；收窄 IP 页滚轮劫持；模态框 `inert`；轮播键盘化 | F25–F34 | 1–2 天 |
-| **5 · 清理** | 删除 5,131 行无引用代码与 9 个未使用依赖；删除两份死顶栏逻辑；统一 `escapeHTML`；建立 Playwright smoke 套件 | F13 F15 F16 F21 F23 F24 | 1 天 |
+| **4 · 无障碍** | JS 层响应 `prefers-reduced-motion`；补 h1；筛选器改 `change`；收窄 IP 页滚轮劫持；模态框 `inert`；轮播与 d20 键盘化 | F25–F34 **F39** | 1–2 天 |
+| **5 · 清理** | 删除 5,131 行无引用代码与 9 个未使用依赖；删除两份死顶栏逻辑；统一 `escapeHTML`；`updateMotion` 补空值保护并把 `maybeStartHandoff` 纳入节流；建立 Playwright smoke 套件 | F13 F15 F16 F21 F23 F24 **F37** | 1 天 |
+
+---
+
+## 审查覆盖范围
+
+| 模块 | 行数 | 覆盖方式 |
+|---|---|---|
+| 10 个页面的 HTML 与内联脚本 | ~6,600 | 逐行 |
+| `public/` 站壳、content.js、webgl-check | 1,524 | 逐行 |
+| `src/ip-entry.js` | 2,395 | 逐行 |
+| `src/features/script-reader/*` | 1,506 | 逐行（CSS 抽查） |
+| `src/games/d20/*` | 1,485 | 逐行 + 冒烟测试 |
+| `src/bloomEnvironment.js` | 490 | 结构与资源生命周期 |
+| 无生产引用的代码（见 F13） | 11,440 | 仅确认无引用，未逐行审 |
+| `three.r128.min.js`、`package-lock.json` | — | 第三方，未审 |
+
+运行时验证：`npm run build` + Chromium（Playwright）——全 10 页冒烟、apechain 筛选/排序/搜索交互、deploy 详情页跳转映射、about 表单在 localhost 与非 localhost 两种主机名下提交、IP 首页移动端断点与详情页滚动劫持、reduced-motion 上下文、逐页传输体积与 a11y 快照。
