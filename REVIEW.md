@@ -5,7 +5,7 @@
 规模：10 个构建入口页，23,846 行源码（不含 vendor 与 lockfile）
 方法：静态阅读 + `npm run build` + Chromium（Playwright）逐页运行时验证
 
-共 34 项发现，其中 11 项已实测复现（标 ✅），其余为源码分析结论（标 📖）。
+共 34 项发现，其中 11 项已实测复现（标 ✅），其余为源码分析结论（标 📖）。F01 已在非 localhost 主机上端到端复现。
 
 在线版（含实测输出与修复计划）：https://claude.ai/code/artifact/97d265a5-6842-4ad8-b3f5-350ff143c682
 
@@ -41,6 +41,17 @@ var API_BASE=(meta&&meta.content.trim())||
   ((location.hostname==='localhost'||location.hostname==='127.0.0.1')
     ? 'http://localhost:1337' : '');   // ← 生产域名走这里
 ```
+
+**端到端复现**（用同一份 `npm run build` 产物，在非 localhost 主机名下访问，即走生产分支）：
+
+```
+页面 hostname     = 127.0.0.2
+解析出的 API_BASE = ""
+实际请求          = POST http://127.0.0.2:4180/api/public/v1/leads → 404
+用户看到的提示    = "提交失败,请稍后重试。"
+```
+
+仓库内没有 `api/` 目录、没有 `vercel.json`、没有任何 rewrite 配置，`vite.config.js` 也没有 proxy——本 PR 的 Vercel 预览部署是纯静态站，该端点在真实部署上同样 404。也就是说这不是一个「等域名确定后再填」的待办，而是**当前每一次部署都在生效的故障**。
 
 加重问题的是：「联系我们」页除表单外没有邮箱、微信、电话中的任何一项。表单一失败，全站归零可触达。
 
