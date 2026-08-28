@@ -52,7 +52,9 @@ capture-reference.mjs
 # 参考原图(仅 cropped/ 进生产,全尺寸原图不入库)
 public/assets/case-citywalk-ref/IMG_*.PNG
 
-# ── F23 工程化:测试/CI 产物 ──
+# ── F23 工程化:测试/CI 运行时临时目录与产物(一律不入库)──
 playwright-report/
 .playwright/
+.tmp-e2e/
+.tmp-*/
 *.tsbuildinfo
