@@ -64,6 +64,9 @@ export class DiceGame {
     `;
     container.appendChild(this.overlayEl);
 
+    /* ── 键盘可操作 + 结果播报(F39)── */
+    this._setupA11y(container);
+
     /* ── Scene ── */
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x070708);
@@ -112,6 +115,10 @@ export class DiceGame {
     /* ── Click handler ── */
     this._onClick = this._handleClick.bind(this);
     this.renderer.domElement.addEventListener('click', this._onClick);
+
+    /* ── Keyboard handler(F39):Enter / 空格 掷骰 ── */
+    this._onKeydown = this._handleKeydown.bind(this);
+    container.addEventListener('keydown', this._onKeydown);
 
     /* ── Resize ── */
     this._onResize = this._resize.bind(this);
@@ -225,12 +232,53 @@ export class DiceGame {
     this.scene.add(this.ground);
   }
 
-  /* ─── Click ─── */
+  /* ─── 无障碍(F39)─── */
+
+  /**
+   * 容器原本只是个装 canvas 的 div:没有 tabindex、没有 role、没有键盘监听,
+   * 键盘用户 Tab 不到任何能掷骰的东西。这里把容器本身变成可聚焦的按钮,
+   * 并挂一个 role="status" 的活区把结果播报出去。
+   */
+  _setupA11y(container) {
+    if (!container.hasAttribute('tabindex')) container.tabIndex = 0;
+    if (!container.hasAttribute('role')) container.setAttribute('role', 'button');
+    if (!container.hasAttribute('aria-label')) {
+      container.setAttribute('aria-label', '掷骰子:d20 判定');
+    }
+
+    // 视觉隐藏但对屏幕阅读器可见的状态区
+    this.statusEl = document.createElement('div');
+    this.statusEl.className = 'vex-dice-status';
+    this.statusEl.setAttribute('role', 'status');
+    this.statusEl.setAttribute('aria-live', 'polite');
+    this.statusEl.style.cssText =
+      'position:absolute;width:1px;height:1px;margin:-1px;padding:0;' +
+      'overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;';
+    container.appendChild(this.statusEl);
+  }
+
+  _announce(text) {
+    if (this.statusEl) this.statusEl.textContent = text;
+  }
+
+  /* ─── Click / Keyboard ─── */
 
   _handleClick(event) {
+    this._requestRoll();
+  }
+
+  _handleKeydown(event) {
+    if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
+    // 空格默认会滚动页面
+    event.preventDefault();
+    this._requestRoll();
+  }
+
+  _requestRoll() {
     if (this._camPhase === 'showing' || this._camPhase === 'returning') return;
     if (this._destroyed || this._isProcessing) return;
     this._startRoll();
+    this._announce('掷骰中');
   }
 
   /* ─── Roll cycle ─── */
@@ -288,6 +336,9 @@ export class DiceGame {
   _triggerResultEffects() {
     const result = this._lastResult;
     if (!result) return;
+
+    // 与镜头揭晓同一时刻播报结果(F39)
+    this._announce(`掷出 ${result.value} 点,${result.config.categoryLabelZh || result.config.categoryLabel}`);
 
     // Dice highlight
     this.dice.setHighlight(result.config.diceEmissive, result.config.diceEmissiveIntensity);
@@ -443,6 +494,7 @@ export class DiceGame {
     this._destroyed = true;
     if (this._animFrame) cancelAnimationFrame(this._animFrame);
     this.renderer.domElement.removeEventListener('click', this._onClick);
+    this.container.removeEventListener('keydown', this._onKeydown);
     window.removeEventListener('resize', this._onResize);
 
     this.effects.dispose();
@@ -464,7 +516,7 @@ export class DiceGame {
       this.overlayEl.style.background = 'transparent';
     }
 
-    const kids = [this.overlayEl, this.renderer.domElement];
+    const kids = [this.overlayEl, this.statusEl, this.renderer.domElement];
     for (const el of kids) {
       if (el && el.parentElement === this.container) {
         this.container.removeChild(el);

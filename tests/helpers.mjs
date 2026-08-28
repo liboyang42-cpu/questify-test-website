@@ -4,7 +4,7 @@
 import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
-import { readdirSync, statSync } from 'node:fs'
+import { readdirSync, statSync, existsSync } from 'node:fs'
 
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -49,6 +49,36 @@ export function selftestScript() {
 }
 
 export function isSelftest() { return Boolean(SELFTEST) }
+
+// ── Chromium 可执行文件定位 ───────────────────────────────────────
+// 本环境 PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers 里装的是 chromium-1194,
+// 而 playwright 1.59.1 默认找 chromium_headless_shell-1217 —— 版本对不上会直接
+// launch 失败。这里在浏览器目录里就地找一个可用的 chrome 二进制;找不到就回落到
+// playwright 默认解析(CI 上跑过 `playwright install` 的机器走这条)。
+export function chromiumExecutable() {
+  if (process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE) return process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE
+  const base = process.env.PLAYWRIGHT_BROWSERS_PATH
+  if (!base || !existsSync(base)) return undefined
+  const dirs = readdirSync(base)
+    .filter((d) => d.startsWith('chromium'))
+    // 优先完整 chromium,其次 headless shell;同名按 revision 倒序
+    .sort((a, b) => (a.startsWith('chromium-') === b.startsWith('chromium-')
+      ? b.localeCompare(a, 'en', { numeric: true })
+      : (a.startsWith('chromium-') ? -1 : 1)))
+  for (const d of dirs) {
+    for (const rel of ['chrome-linux/chrome', 'chrome-linux/chrome-headless-shell',
+      'chrome-linux64/chrome', 'chrome-headless-shell-linux64/chrome-headless-shell']) {
+      const p = resolve(base, d, rel)
+      if (existsSync(p)) return p
+    }
+  }
+  return undefined
+}
+
+export async function launchChromium(chromium) {
+  const executablePath = chromiumExecutable()
+  return chromium.launch({ executablePath, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
+}
 
 // ── 静态服务器 ───────────────────────────────────────────────────
 export async function startServer() {

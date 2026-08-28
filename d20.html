@@ -32,6 +32,9 @@
   .sub{color:var(--mut);font-size:15px;margin-bottom:28px}
   #dice{width:min(86vw,560px);height:min(64vh,520px);border:1px solid var(--line);border-radius:18px;overflow:hidden;position:relative;background:#070708}
   .hint{margin-top:18px;font-family:var(--display);letter-spacing:.3em;font-size:14px;color:var(--mut)}
+  .hint-kbd{display:block;margin-top:8px;font-family:var(--cn);letter-spacing:.04em;font-size:13px;color:var(--mut)}
+  /* F39:骰子容器现在是可聚焦的按钮,焦点得看得见 */
+  #dice:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
   .back{margin-top:22px}
   .back a{color:var(--mut);text-decoration:none;font-size:13px;letter-spacing:.08em;border:1px solid var(--line);border-radius:100px;padding:8px 20px}
   .back a:hover{color:#fff}
@@ -44,8 +47,8 @@
   <p class="eyebrow">GAME · 判定</p>
   <h1>d20 判定</h1>
   <p class="sub">城市任务里的一次掷骰——点击骰子,看命运怎么落点。</p>
-  <div id="dice" aria-label="d20 掷骰子游戏"></div>
-  <p class="hint">CLICK TO ROLL</p>
+  <div id="dice" aria-label="掷骰子:d20 判定"></div>
+  <p class="hint">CLICK TO ROLL<span class="hint-kbd">键盘:Tab 选中骰子后按 Enter 或空格</span></p>
   <p class="back"><a href="./apechain.html">← 返回应用列表</a></p>
 </main>
 

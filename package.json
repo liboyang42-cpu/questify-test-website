@@ -9,7 +9,7 @@
     "build:demos": "INCLUDE_DEMOS=1 vite build",
     "preview": "vite preview --host 0.0.0.0 --port 5186 --strictPort",
     "lint": "node lint.mjs",
-    "smoke": "node --test tests/",
+    "smoke": "node --test tests/*.test.mjs",
     "smoke:selftest": "node tests/selftest.mjs",
     "ci": "npm run lint && npm run build && npm run smoke"
   },

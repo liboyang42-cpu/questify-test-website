@@ -1,5 +1,7 @@
 node_modules/
 dist/
+# 各并行流的临时构建目录(dist-a ~ dist-f 等),几十 MB,绝不入库
+dist-*/
 .DS_Store
 *.local
 .env
@@ -49,3 +51,8 @@ capture-reference.mjs
 交接总结_*.md
 # 参考原图(仅 cropped/ 进生产,全尺寸原图不入库)
 public/assets/case-citywalk-ref/IMG_*.PNG
+
+# ── F23 工程化:测试/CI 产物 ──
+playwright-report/
+.playwright/
+*.tsbuildinfo

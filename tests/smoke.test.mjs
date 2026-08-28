@@ -6,6 +6,7 @@ import assert from 'node:assert/strict'
 import { chromium } from 'playwright'
 import {
   PAGES, BASE_URL, OUT_DIR, startServer, probe, buildOutputPages, isSelftest,
+  launchChromium,
 } from './helpers.mjs'
 
 let server
@@ -13,7 +14,7 @@ let browser
 
 before(async () => {
   server = await startServer()
-  browser = await chromium.launch()
+  browser = await launchChromium(chromium)
 }, { timeout: 120_000 })
 
 after(async () => {

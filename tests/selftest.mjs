@@ -15,7 +15,7 @@ const FAULTS = [
 
 let bad = 0
 for (const [kind, desc] of FAULTS) {
-  const r = spawnSync(process.execPath, ['--test', 'tests/'], {
+  const r = spawnSync(process.execPath, ['--test', 'tests/smoke.test.mjs'], {
     cwd: ROOT,
     env: { ...process.env, SMOKE_SELFTEST: kind },
     encoding: 'utf8',

@@ -3,12 +3,13 @@
  * No Three.js dependency.
  */
 
+// labelZh:给屏幕阅读器播报用(F39)。页面 lang="zh-CN",英文 label 会被中文语音引擎逐字母念。
 const CATEGORIES = {
-  CRITICAL_SUCCESS: { name: 'criticalSuccess', label: 'CRITICAL SUCCESS', icon: '\u{1F389}', min: 20, max: 20 },
-  GREAT_SUCCESS:    { name: 'greatSuccess',    label: 'GREAT SUCCESS',    icon: '\u{1F537}', min: 15, max: 19 },
-  SUCCESS:          { name: 'success',          label: 'SUCCESS',          icon: '✅',   min: 10, max: 14 },
-  FAILURE:          { name: 'failure',          label: 'FAILURE',          icon: '❌',   min: 2,  max: 9 },
-  CRITICAL_FAILURE: { name: 'criticalFailure',  label: 'CRITICAL FAILURE', icon: '\u{1F480}', min: 1,  max: 1 }
+  CRITICAL_SUCCESS: { name: 'criticalSuccess', label: 'CRITICAL SUCCESS', labelZh: '大成功', icon: '\u{1F389}', min: 20, max: 20 },
+  GREAT_SUCCESS:    { name: 'greatSuccess',    label: 'GREAT SUCCESS',    labelZh: '成功',   icon: '\u{1F537}', min: 15, max: 19 },
+  SUCCESS:          { name: 'success',          label: 'SUCCESS',          labelZh: '通过',   icon: '✅',   min: 10, max: 14 },
+  FAILURE:          { name: 'failure',          label: 'FAILURE',          labelZh: '失败',   icon: '❌',   min: 2,  max: 9 },
+  CRITICAL_FAILURE: { name: 'criticalFailure',  label: 'CRITICAL FAILURE', labelZh: '大失败', icon: '\u{1F480}', min: 1,  max: 1 }
 };
 
 const CATEGORY_LIST = Object.values(CATEGORIES);
@@ -137,6 +138,7 @@ function buildEffectConfig(category, intensity) {
     diceDim:       base.diceDim || false,
     cameraShake:   base.cameraShake,
     categoryLabel: category.label,
+    categoryLabelZh: category.labelZh,
     categoryIcon:  category.icon
   };
 }

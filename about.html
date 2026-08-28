@@ -206,37 +206,51 @@
 
   let env = null;
   const earthOn = shouldLoadEarth();
-  if (earthOn) {
-    // 动态 import:贴图与 WebGL 模块都只在真的要用时才进网络
+
+  // 装饰永远排在表单后面:等 load 之后的空闲时段再去取 bloomEnvironment 与那 9.3MB 贴图,
+  // 首屏(load 时刻)的传输量里因此不含任何贴图。
+  function startEarth() {
     import('./src/bloomEnvironment.js').then(({ setupBloomEnvironment }) => {
       env = setupBloomEnvironment(canvas) || null; // 无 WebGL 时静默返回,.cosmos 渐变兜底
-      env?.resume(); // 启动绘制循环(落地页由 scheduler 触发,本页直接启动)
+      if (!env) { canvas.remove(); return; }
+      env.resume(); // 启动绘制循环(落地页由 scheduler 触发,本页直接启动)
+      // 晚到的地球淡进来,避免直接怼在 .cosmos 渐变上
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        gsap.to(canvas, { autoAlpha: 1, scale: 1, duration: 1.4, ease: 'power2.out' });
+      } else {
+        gsap.set(canvas, { autoAlpha: 1, scale: 1 });
+      }
       // F36:标签页切到后台时停掉绘制循环(bloomEnvironment 早就提供了 pause,只是没人调)
       document.addEventListener('visibilitychange', () => {
         if (document.hidden) env?.pause(); else env?.resume();
       });
-    });
+    }).catch(() => canvas.remove());
+  }
+
+  if (earthOn) {
+    gsap.set(canvas, { autoAlpha: 0, scale: 1.06, transformOrigin: '50% 55%' });
+    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 200));
+    const kick = () => idle(startEarth, { timeout: 2000 });
+    if (document.readyState === 'complete') kick();
+    else window.addEventListener('load', kick, { once: true });
   } else {
     canvas.remove(); // 不加载时把空 canvas 摘掉,避免它盖在 .cosmos 上
   }
 
-  // 进场动画(gsap):地球淡入推近 → hero 文案依次浮现;尊重 prefers-reduced-motion
+  // 进场动画(gsap):hero 文案依次浮现;尊重 prefers-reduced-motion
+  // (地球的淡入交给 startEarth,因为它比首屏晚到)
   const heroBits = ['.hero .eyebrow', '.hero h1', '.hero p', '.hero .scroll'];
-  // 没加载地球时 canvas 已被摘掉,传空数组让这一轨变成空操作(gsap 接受空目标)
-  const bgBits = earthOn ? [canvas] : [];
   gsap.matchMedia().add({
     motion: '(prefers-reduced-motion: no-preference)',
     reduce: '(prefers-reduced-motion: reduce)'
   }, (ctx) => {
     if (ctx.conditions.reduce) {
-      gsap.set([...bgBits, '.bloom-veil', ...heroBits], { autoAlpha: 1, clearProps: 'transform' });
+      gsap.set(['.bloom-veil', ...heroBits], { autoAlpha: 1, clearProps: 'transform' });
       return;
     }
-    gsap.set(bgBits, { autoAlpha: 0, scale: 1.06, transformOrigin: '50% 55%' });
     gsap.set('.bloom-veil', { autoAlpha: 0 });
     gsap.set(heroBits, { autoAlpha: 0, y: 24 });
     gsap.timeline({ defaults: { ease: 'power3.out' } })
-      .to(bgBits, { autoAlpha: 1, scale: 1, duration: 1.6, ease: 'power2.out' })
       .to('.bloom-veil', { autoAlpha: 1, duration: 1.2 }, 0.1)
       .to(heroBits, { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.12 }, 0.5);
   });
