@@ -2,15 +2,34 @@ import './script-reader.css';
 
 // 预制人生阅读器组件 —— 从 src/landing.js 原样迁出,新增导出与可编程入口
 
+/* ── F21:模板拼 innerHTML 前先转义 ──────────────────────────────
+   当前数据全是 presetLifeData.js 里的硬编码常量,现在还构不成可利用的漏洞;
+   但剧本内容接 CMS / 后端是排期上的事,那时未转义的拼接就是存储型 XSS。
+   写法与 deploy.html 的 escapeHTML() 一致(& < > " ' 全转),文本位与属性位通用。 */
+function escapeHTML(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, (ch) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]
+  ));
+}
+
+/* 用在 style="...url('X')" 里的地址:先按 CSS 字符串转义反斜杠与单引号
+   (光做 HTML 转义不够 —— &#39; 在属性里会还原成 '),再交给 HTML 属性转义 */
+function escapeCssUrl(value) {
+  const css = String(value == null ? '' : value)
+    .replace(/[\\']/g, '\\$&')
+    .replace(/[\r\n]/g, '');
+  return escapeHTML(css);
+}
+
 export function scriptCaseCard(item, index) {
-  return `<article class="script-case-card" data-script-open="${index}" aria-label="剧本案例：${item.title}">
-    <video class="script-case-video" muted autoplay loop playsinline preload="metadata" src="${item.video}"></video>
+  return `<article class="script-case-card" data-script-open="${index}" aria-label="剧本案例：${escapeHTML(item.title)}">
+    <video class="script-case-video" muted autoplay loop playsinline preload="metadata" src="${escapeHTML(item.video)}"></video>
     <div class="script-case-scrim"></div>
     <div class="script-case-card-content">
-      <div class="script-case-meta"><span>${item.eyebrow}</span><span>${item.chapters.length} SCENES</span></div>
-      <h3>${item.title}</h3>
-      <p>${item.summary}</p>
-      <div class="script-case-tags">${item.tags.map((tag) => `<span>${tag}</span>`).join('')}</div>
+      <div class="script-case-meta"><span>${escapeHTML(item.eyebrow)}</span><span>${item.chapters.length} SCENES</span></div>
+      <h3>${escapeHTML(item.title)}</h3>
+      <p>${escapeHTML(item.summary)}</p>
+      <div class="script-case-tags">${item.tags.map((tag) => `<span>${escapeHTML(tag)}</span>`).join('')}</div>
       <button class="script-case-button" type="button" data-script-open-button>打开剧本</button>
     </div>
   </article>`;
@@ -19,7 +38,7 @@ export function scriptCaseCard(item, index) {
 export function scriptReaderOverlay(item) {
   const introLines = splitIntoLines(item.summary);
   const initialPreview = item.chapters[1]?.image || item.chapters[0].image;
-  return `<div class="script-reader" data-script-reader aria-hidden="true" role="dialog" aria-modal="true" aria-label="${item.title} 剧本阅读器">
+  return `<div class="script-reader" data-script-reader aria-hidden="true" role="dialog" aria-modal="true" aria-label="${escapeHTML(item.title)} 剧本阅读器">
     <div class="script-reader-shell" data-reader-shell tabindex="-1">
       <button class="script-reader-close" type="button" data-script-close aria-label="关闭剧本">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -28,14 +47,14 @@ export function scriptReaderOverlay(item) {
       <section class="reader-index" data-reader-index>
         <div class="reader-index-inner">
           <div class="reader-index-preview" data-index-preview>
-            <div class="reader-index-preview-img" data-preview-img style="background-image:url('${initialPreview}')"></div>
+            <div class="reader-index-preview-img" data-preview-img style="background-image:url('${escapeCssUrl(initialPreview)}')"></div>
           </div>
           <div class="reader-index-right">
             <div class="reader-index-top">
               <div class="reader-index-intro-wrap" data-split-intro>
                 <p class="reader-index-intro">
                   ${introLines.map((line, i) =>
-                    `<span class="reader-intro-line" style="--line-index:${i}">${line}</span>`
+                    `<span class="reader-intro-line" style="--line-index:${i}">${escapeHTML(line)}</span>`
                   ).join('')}
                 </p>
               </div>
@@ -43,9 +62,9 @@ export function scriptReaderOverlay(item) {
             <div class="reader-chapter-list" data-chapter-list>
               ${item.chapters.map((ch, i) => `
                 <button class="reader-chapter-btn" type="button" data-chapter-open="${i}">
-                  <span class="reader-chapter-num">${ch.num}</span>
-                  <span class="reader-chapter-name">${ch.title}</span>
-                  <span class="reader-chapter-desc">${ch.pull}</span>
+                  <span class="reader-chapter-num">${escapeHTML(ch.num)}</span>
+                  <span class="reader-chapter-name">${escapeHTML(ch.title)}</span>
+                  <span class="reader-chapter-desc">${escapeHTML(ch.pull)}</span>
                 </button>
               `).join('')}
             </div>
@@ -70,20 +89,20 @@ export function scriptScene(chapter, index) {
   const reversed = index % 2 === 1;
   return `<section class="script-scene${reversed ? ' scene-reversed' : ''}" data-script-scene data-chapter-index="${index}">
     <div class="scene-image-viewport">
-      <div class="scene-image" style="--chapter-img:url('${chapter.image}')"></div>
+      <div class="scene-image" style="--chapter-img:url('${escapeCssUrl(chapter.image)}')"></div>
     </div>
     <div class="scene-content${reversed ? ' scene-content-left' : ' scene-content-right'}">
       <div class="scene-content-inner">
         <div class="scene-thumb" aria-hidden="true">
-          <div class="scene-thumb-image" style="background-image:url('${chapter.image}')"></div>
+          <div class="scene-thumb-image" style="background-image:url('${escapeCssUrl(chapter.image)}')"></div>
         </div>
         <div class="scene-header" data-scene-header>
-          <span class="scene-number" data-scene-num>${chapter.num}</span>
+          <span class="scene-number" data-scene-num>${escapeHTML(chapter.num)}</span>
           <h2 class="scene-title" data-scene-title>${liquidText(chapter.title)}</h2>
         </div>
         <div class="scene-body" data-scene-body hidden>
           <div class="scene-body-inner">
-            ${chapter.body.map(p => `<p>${p}</p>`).join('')}
+            ${chapter.body.map(p => `<p>${escapeHTML(p)}</p>`).join('')}
           </div>
         </div>
       </div>
@@ -93,7 +112,7 @@ export function scriptScene(chapter, index) {
 }
 
 export function liquidText(text) {
-  return [...text].map((char, i) => `<span class="title-char" style="--char-index:${i}">${char}</span>`).join('');
+  return [...String(text ?? '')].map((char, i) => `<span class="title-char" style="--char-index:${i}">${escapeHTML(char)}</span>`).join('');
 }
 
 export function setupScriptReader(root, item, options = {}) {
@@ -403,13 +422,13 @@ export function setupScriptReader(root, item, options = {}) {
       const ch = item.chapters[idx];
       if (!ch) return;
       btn.addEventListener('mouseenter', () => {
-        previewImg.style.backgroundImage = `url('${ch.image}')`;
+        previewImg.style.backgroundImage = `url('${escapeCssUrl(ch.image)}')`;
       });
     });
     const list = reader.querySelector('[data-chapter-list]');
     if (list) {
       list.addEventListener('mouseleave', () => {
-        previewImg.style.backgroundImage = `url('${item.chapters[1]?.image || item.chapters[0].image}')`;
+        previewImg.style.backgroundImage = `url('${escapeCssUrl(item.chapters[1]?.image || item.chapters[0].image)}')`;
       });
     }
   }
