@@ -245,7 +245,9 @@ body.script-reader-open { overflow: hidden !important; }
 }
 
 /* F08:阅读器铺满视口(z-index 80),站壳顶栏 z-index 1000 会盖在上面,打开期间收起 */
-body.script-reader-open .cy-header { display: none; }
+/* 顶栏的收起改由站壳的 cyShell.setChromeHidden() 负责(见 ScriptReader.js)。
+   原来这里直接写 `body.script-reader-open .cy-header{display:none}` —— 页面反向
+   引用站壳的内部类名,方向是反的:站壳一改类名这里就无声失效。 */
 
 /* ── Close button ── */
 

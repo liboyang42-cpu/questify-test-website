@@ -649,20 +649,6 @@ window.__siteContent = {
     },
 
     discover: {
-      labels: [
-        '主题活动',
-        '城市任务',
-        '侦探路线',
-        '门店节点',
-        '组队挑战',
-        '内容章节',
-        '活动报名',
-        '商家联动',
-        '俱乐部局',
-        '路线图鉴',
-        '隐藏权益',
-        '城市复访'
-      ],
       labelStyle: {
         selector: '.Discover-label',
         css: {
@@ -916,13 +902,12 @@ window.__siteContent = {
       if (app.link) card.setAttribute('href', app.link);
     });
 
-    document.querySelectorAll('.Discover-label').forEach(function(label, index) {
-      const value = content.discover.labels[index];
-      if (value == null) return;
-      label.querySelectorAll('.label__inner').forEach(function(el) {
-        el.textContent = value;
-      });
-    });
+    // F04:这里原来按**下标**把 discover.labels 覆盖到 .Discover-label 上。
+    // 那是与 F02 串号同一类的位置耦合:HTML 里的分类换了词表,这份按下标覆盖的
+    // 旧文案会把正确文案盖回去 —— 而且跑马灯是「一组重复若干遍」的结构,
+    // 下标与分类的对应关系一改结构就错位。
+    // 现在文案由 HTML 自己承载(分类词表是 ?f= 链接契约的一部分,必须与 slug 同源),
+    // content.js 不再插手。删除这段覆盖的同时也删掉了 discover.labels 数据。
 
     document.querySelectorAll('.Footer-col').forEach(function(column, columnIndex) {
       const data = content.footer.columns[columnIndex];

@@ -29,7 +29,7 @@ const SKIP_DIRS = new Set(['node_modules', '.git', 'test-results', 'audit-shots'
 // src/landing.js / src/styles/main.css / 整套 demo 引擎都不再可达(这是预期结果);
 // F13 统一删除死文件后请把这个数字往下钉(lint 会打印建议值)。
 // 临时放行:DEAD_LINE_BUDGET=999999 npm run lint
-const DEAD_LINE_BUDGET = Number(process.env.DEAD_LINE_BUDGET ?? 6288)
+const DEAD_LINE_BUDGET = Number(process.env.DEAD_LINE_BUDGET ?? 6281)
 
 const errors = []
 const warnings = []

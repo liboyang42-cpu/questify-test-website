@@ -77,7 +77,9 @@
 
     /* ===== Main ===== */
     .main-content {
-      position: relative; padding-top: 140px;
+      /* 顶栏高度取站壳导出的变量,不再抄数字。原值 140px 是给已删除的旧本地顶栏
+         留的,共享顶栏只有 64px,照抄会让顶部空一截。 */
+      position: relative; padding-top: calc(var(--cy-header-h, 64px) + 40px);
       background: #000;
     }
 
@@ -692,17 +694,26 @@ function renderGrid() {
 }
 
 // ─── Scroll reveal ───
-function observeCards() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px 60px 0px' });
+// F19:observer 提到模块作用域,只建一个,每次重绘先 disconnect 再重新观察。
+// 原来是每次 renderGrid() 都 new 一个且从不 disconnect —— 筛选/排序/搜索各触发一次。
+// IntersectionObserver 对 target 持**强引用**,而 renderGrid 用 innerHTML 换掉了旧卡片,
+// 于是每次重绘都把「一批脱离文档的节点 + 一个还活着的 observer」永久留在内存里。
+let cardObserver = null;
 
-  document.querySelectorAll('.AppCard:not(.visible)').forEach(el => observer.observe(el));
+function observeCards() {
+  if (!cardObserver) {
+    cardObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          cardObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px 60px 0px' });
+  }
+  // 旧卡片已被 innerHTML 替换,先断开对它们的引用再观察本轮的卡片
+  cardObserver.disconnect();
+  document.querySelectorAll('.AppCard:not(.visible)').forEach(el => cardObserver.observe(el));
 }
 
 // ─── Sort init ───

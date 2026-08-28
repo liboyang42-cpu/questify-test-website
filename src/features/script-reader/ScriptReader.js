@@ -187,6 +187,9 @@ export function setupScriptReader(root, item, options = {}) {
     reader.classList.add('open');
     reader.setAttribute('aria-hidden', 'false');
     document.body.classList.add('script-reader-open');
+    // 收起站壳固定顶栏(z-index:1000,否则会压住 z-index:80 的阅读器)。
+    // 走站壳暴露的接口而不是反向写它的类名;站壳未加载时静默跳过。
+    if (window.cyShell && window.cyShell.setChromeHidden) window.cyShell.setChromeHidden(true);
     setBackgroundInert(true);
     invalidateSectionTops();
     scroller.scrollTo({ top: 0, behavior: 'auto' });
@@ -213,6 +216,7 @@ export function setupScriptReader(root, item, options = {}) {
     reader.classList.remove('open');
     reader.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('script-reader-open');
+    if (window.cyShell && window.cyShell.setChromeHidden) window.cyShell.setChromeHidden(false);
     // 先解除背景 inert,否则焦点还不回去(F31)
     setBackgroundInert(false);
     if (lastFocused && document.contains(lastFocused)) lastFocused.focus?.({ preventScroll: true });

@@ -3095,20 +3095,6 @@ function initHeroWebGL() {
     updateBodyBg();
   });
 
-  // F04:Discover 分类词表是链接契约的一部分 —— 文案必须和 ?f= slug 指向的分类一致。
-  // public/content.js 的 discover.labels 仍是旧的 12 条模板文案(按下标覆盖 .Discover-label),
-  // 且它在 DOMContentLoaded 里 hydrate,会盖掉 HTML 里的正确文案。
-  // 这里按 HTML 自带的 data-discover-label 回写一次(本模块的监听器注册晚于 content.js,
-  // 因此一定在它之后执行)。等 content.js 的词表同步过来之后,这段可以直接删掉。
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.Discover-label[data-discover-label]').forEach(function(link) {
-      var text = link.getAttribute('data-discover-label');
-      link.querySelectorAll('.label__inner').forEach(function(el) {
-        if (el.textContent !== text) el.textContent = text;
-      });
-    });
-  });
-
   // Wire each activity card to its configured theme page without changing layout.
   document.querySelectorAll('.SimpleSlider .AppCard').forEach(function(card, index) {
     var activityCards = window.__siteContent && window.__siteContent.apechain && window.__siteContent.apechain.appsSection && window.__siteContent.apechain.appsSection.cards;
