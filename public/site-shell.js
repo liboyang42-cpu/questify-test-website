@@ -29,11 +29,34 @@
       '<nav class="cy-nav" id="cyNav" aria-label="主导航">' + links + '</nav>';
     var burger = header.querySelector('.cy-burger');
     var nav = header.querySelector('.cy-nav');
+
+    function isOpen() {
+      return nav.getAttribute('data-open') === 'true';
+    }
+    function setOpen(open) {
+      nav.setAttribute('data-open', String(open));
+      burger.setAttribute('aria-expanded', String(open));
+    }
+
     burger.addEventListener('click', function () {
-      var open = nav.getAttribute('data-open') === 'true';
-      nav.setAttribute('data-open', String(!open));
-      burger.setAttribute('aria-expanded', String(!open));
+      setOpen(!isOpen());
     });
+    // 移动端菜单是一层盖住页面的面板,要能退出:
+    // Esc 关闭并把焦点还给汉堡按钮;点面板外部关闭;点导航链接后收起。
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape' || !isOpen()) return;
+      setOpen(false);
+      burger.focus();
+    });
+    document.addEventListener('click', function (event) {
+      if (!isOpen()) return;
+      if (nav.contains(event.target) || burger.contains(event.target)) return;
+      setOpen(false);
+    });
+    nav.addEventListener('click', function (event) {
+      if (event.target.closest && event.target.closest('a')) setOpen(false);
+    });
+
     return header;
   }
 

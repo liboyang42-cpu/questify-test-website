@@ -94,10 +94,10 @@
 .cy-webgl-fallback__d{color:rgba(255,255,255,.55); font-size:14px; line-height:1.8; margin:0;}
 
 /* 页内锚点避让固定顶栏(F07)
-   顶栏是 position:fixed,高 64px(≤720px 时 56px);没有这条时 #merchant / #contact
-   这类锚点会正好落到顶栏底下(实测 top = -3px / 0px)。
-   放在滚动容器上而不是逐个元素加 scroll-margin-top,页面新增锚点时无需再改。
-   影响范围 = 所有引 site-shell.css 的页面(index / apechain / build / about / d20 / privacy / terms)。 */
+   顶栏是 position:fixed;没有这条时 #merchant / #contact 这类锚点会正好落到顶栏底下
+   (实测 top = -3px / 0px)。放在滚动容器上而不是逐个元素加 scroll-margin-top,
+   页面新增锚点时无需再改;高度直接取 --cy-header-h,顶栏改高不用同步改这里。
+   影响范围 = 所有引 site-shell.css 的页面。 */
 html{ scroll-padding-top:calc(var(--cy-header-h, 64px) + 24px); }
 
 /* 仅供屏幕阅读器的文本(F27) */
