@@ -2307,9 +2307,14 @@
   <!-- ===== FOOTER ===== -->
   </div><!-- page-wrap end -->
 
-<!-- F14:首页交互脚本改为 ES module —— three 由 import('three') 按需加载,
-     不再同步阻塞加载 public/assets/vendor/three.r128.min.js。 -->
+<!-- F14:首页交互脚本改为 ES module,three 从 npm 引入(与 d20 页共用同一个 chunk),
+     不再同步阻塞加载 public/assets/vendor/three.r128.min.js。
+     module 脚本天然 defer,不阻塞首屏解析;打包器还能按实际用到的类做 tree-shaking
+     (544KB,比 r128 的 603KB 更小)。注:用动态 import('three') 反而会关掉 tree-shaking
+     ——rollup 无法预知调用方要访问哪些导出,只能整包保留,实测会涨到 733KB。 -->
 <script type="module">
+import * as THREE from 'three';
+
 // ==========================================
 // 城瘾 Homepage — Interactions
 // ==========================================
@@ -2434,10 +2439,10 @@ window.cyMotion = (function() {
 
 
 // ===== 3. Hero WebGL Canvas (Three.js Particle Field) =====
-// F14:原先在 <body> 末同步阻塞加载 public/assets/vendor/three.r128.min.js(590KB,全局 THREE)。
-// 现改为从 npm 的 three 按需 import —— 全站只剩 0.184 一份(d20 页用的也是它),
-// 且不支持 WebGL 的设备一个字节都不下载,支持的设备也不再阻塞首屏。
-function initHeroWebGL(THREE) {
+// F14:原先在 <body> 末同步阻塞加载 public/assets/vendor/three.r128.min.js(603KB,全局 THREE)。
+// 现改为 npm 的 three 0.184 —— 全站只剩一份(d20 页用的也是它),
+// 用到的 API 全是两版之间没变过的核心类,迁移只需补一条色彩空间设置(见下)。
+function initHeroWebGL() {
   const renderCanvas = document.getElementById('heroCanvasRender');
   const interactionCanvas = document.getElementById('heroCanvasInteraction');
   const canvasWrap = document.getElementById('heroCanvas');
@@ -2882,14 +2887,11 @@ function initHeroWebGL(THREE) {
   startLoop();
 }
 
-// three 按需加载(F14/F03):先做能力检查,不支持 WebGL 时连库都不下载,保留 hero 文案与 CTA(M2-24)
+// WebGL 不支持:跳过 3D 初始化,保留 hero 文案与 CTA(M2-24)
 (function() {
   if (!document.getElementById('heroCanvasRender')) return;
   if (window.cyWebGLSupported && !window.cyWebGLSupported()) return;
-  import('three').then(initHeroWebGL).catch(function(error) {
-    // 加载失败时静态 hero 依然完整可用
-    if (window.console) console.warn('[hero] three 加载失败,已保留静态首屏', error);
-  });
+  initHeroWebGL();
 })();
 
 
