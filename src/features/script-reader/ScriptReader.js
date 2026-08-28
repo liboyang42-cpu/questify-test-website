@@ -273,25 +273,30 @@ export function setupScriptReader(root, item, options = {}) {
     if (prefersReducedMotion()) {
       cancelAnimationFrame(slowSnapFrame);
       isSlowSnapping = false;
-      scroller.scrollTo({ top: endTop, behavior: 'auto' });
+      scroller.style.scrollBehavior = 'auto';
+      scroller.scrollTop = endTop;
+      scroller.style.scrollBehavior = '';
       updateOverlays();
       syncVisibleState();
       return;
     }
     const startTime = performance.now();
     isSlowSnapping = true;
+    // 容器 CSS 是 scroll-behavior:smooth,浏览器会把每帧写入的位置再平滑一次:
+    // 逐帧写完之后浏览器还在自己往目标滑,取消 rAF 也拦不住(F32 的「逃不掉」有一半在这)。
+    // 动画期间临时关掉,结束/被打断时还原。
+    scroller.style.scrollBehavior = 'auto';
     cancelAnimationFrame(slowSnapFrame);
     const animateSnap = (now) => {
       const t = Math.min((now - startTime) / duration, 1);
       const eased = 1 - Math.pow(1 - t, 3);
-      // 必须显式 behavior:'auto':容器上有 scroll-behavior:smooth,直接写 scrollTop 会被浏览器
-      // 再平滑一次 —— 动画早就结束了,浏览器还在自己往目标滑,取消 rAF 也拦不住(F32)
-      scroller.scrollTo({ top: startTop + (endTop - startTop) * eased, behavior: 'auto' });
+      scroller.scrollTop = startTop + (endTop - startTop) * eased;
       updateOverlays();
       if (t < 1) {
         slowSnapFrame = requestAnimationFrame(animateSnap);
         return;
       }
+        scroller.style.scrollBehavior = '';
         scroller.classList.remove('snap-disabled');
         snapReEnableTime = Date.now();
         isSlowSnapping = false;
@@ -354,6 +359,7 @@ export function setupScriptReader(root, item, options = {}) {
   const cancelSnapAnimation = () => {
     clearTimeout(snapTimer);
     cancelAnimationFrame(slowSnapFrame);
+    scroller.style.scrollBehavior = '';
     isSlowSnapping = false;
   };
 
