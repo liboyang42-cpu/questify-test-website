@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>城瘾</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0b0b0f" />
   <link rel="stylesheet" href="/assets/fonts/fonts.css" />
   <link rel="stylesheet" href="/site-shell.css" />
   <style>
@@ -211,6 +214,13 @@
       color: #fff;
     }
 
+    .btn-icon-hint {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.55);
+    }
+
     /* 「即将上线」徽标 —— 占位素材项在详情页也要显式标注 */
     .app-badge {
       position: absolute;
@@ -291,7 +301,7 @@
       <!-- App info（内容由下方脚本按 ?app=<slug> 填充） -->
       <div class="app-info">
         <a class="Header-back" href="apechain.html">
-          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
             <path d="M9 2.5L4.5 7 9 11.5"/>
           </svg>
           返回应用列表
@@ -332,15 +342,16 @@
           </a>
 
           <!-- Share icon -->
-          <button class="btn-icon" title="分享">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <button class="btn-icon" id="appCopyBtn" type="button" title="复制本页链接" aria-label="复制本页链接">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
               <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/>
             </svg>
           </button>
+          <span class="btn-icon-hint" id="appCopyHint" role="status" aria-live="polite"></span>
 
           <!-- X/Twitter icon -->
-          <a class="btn-icon" href="#" title="Twitter / X">
-            <svg viewBox="0 0 24 24" fill="currentColor">
+          <a class="btn-icon" id="appShareX" href="https://x.com" target="_blank" rel="noopener" title="分享到 X" aria-label="分享到 X">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
             </svg>
           </a>
@@ -379,11 +390,9 @@
       var elBadge = document.getElementById('appBadge');
       var img = document.getElementById('appImg');
 
-      function escapeHTML(value) {
-        return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
-          return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
-        });
-      }
+      // 转义 helper 与列表页共用,定义在 /content.js 里(单一事实源)。
+      // content.js 没加载时 apps 为空,会先走下面的「未找到」分支,到不了这里。
+      var escapeHTML = window.__siteEscapeHTML;
 
       if (!app) {
         document.title = '未找到该应用 — 城瘾';
@@ -470,6 +479,31 @@
       img.onload = extractAndApplyColor;
       img.src = app.img || '';
       if (img.complete && img.naturalWidth > 0) extractAndApplyColor();
+
+      // 两个分享控件原本只有 title、没有行为(X 链接指向 '#'),这里接上真实动作
+      var shareText = app.title + ' — 城瘾';
+      var shareX = document.getElementById('appShareX');
+      if (shareX) {
+        shareX.setAttribute('href', 'https://x.com/intent/post?text=' +
+          encodeURIComponent(shareText) + '&url=' + encodeURIComponent(location.href));
+      }
+      var copyBtn = document.getElementById('appCopyBtn');
+      var copyHint = document.getElementById('appCopyHint');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function() {
+          var done = function(text) {
+            copyHint.textContent = text;
+            setTimeout(function() { copyHint.textContent = ''; }, 2400);
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(location.href)
+              .then(function() { done('链接已复制'); })
+              .catch(function() { done('复制失败,请手动复制地址栏链接'); });
+          } else {
+            done('复制失败,请手动复制地址栏链接');
+          }
+        });
+      }
     })();
 
     // ── Cosmic starfield canvas ──────────────────────────

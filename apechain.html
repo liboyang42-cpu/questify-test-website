@@ -75,37 +75,6 @@
       .lg\\:col-span-9   { grid-column: span 9; }
     }
 
-    /* ===== Header ===== */
-    .Header {
-      position: fixed; left: 0; top: 0; z-index: 99;
-      display: flex; width: 100%; height: 100px;
-      align-items: center; justify-content: center;
-      padding: 0 24px;
-      background: transparent;
-    }
-    .Header-inner {
-      display: flex; align-items: center; justify-content: center;
-      width: 100%; position: relative;
-    }
-    .Header-logo {
-      position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-    }
-    .Header-logo svg { display: block; fill: #fff; }
-    .Header-nav {
-      display: flex; align-items: center; justify-content: center;
-      gap: 48px;
-    }
-    .Header-nav button, .Header-nav a {
-      background: none; border: none; color: #fff; cursor: pointer;
-      text-decoration: none;
-      opacity: 0.6; transition: opacity 0.3s;
-      font-family: 'DM Sans', system-ui, sans-serif;
-      font-size: 16px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.02em;
-    }
-    .Header-nav button:hover,
-    .Header-nav button:focus { opacity: 1; }
-
     /* ===== Main ===== */
     .main-content {
       position: relative; padding-top: 140px;
@@ -506,162 +475,6 @@
 
 <div class="page-wrap">
 
-  <!-- (重复的静态 Header 已移除,统一用下方 #mainHeader) -->
-
-  <style>
-  /* ===== Header ===== */
-  .Header {
-    position: fixed; left: 0; top: 0; z-index: 99;
-    display: flex; width: 100%; height: 96px;
-    align-items: center; justify-content: center;
-    padding: 0 24px;
-    background: transparent;
-    transition: transform 0.3s ease-in-out;
-  }
-  @media (min-width: 768px) {
-    .Header { height: 100px; }
-  }
-  .Header::before {
-    content: "";
-    pointer-events: none;
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    background-color: #000;
-    transition: transform 0.3s ease-in-out;
-    transform: translateY(-100%);
-  }
-  .Header.scrolled::before {
-    transform: translateY(0);
-  }
-  .Header.hidden-header {
-    transform: translateY(-100%);
-  }
-  .Header.hidden-header::before {
-    transform: translateY(0);
-  }
-  .Header.show-header {
-    transform: translateY(0);
-  }
-
-  .Header-bg-gradient {
-    pointer-events: none;
-    position: absolute; left: 0; right: 0; top: 0;
-    height: 11.25rem;
-    background: linear-gradient(to bottom, #000, transparent);
-    transition: opacity 0.3s ease-in-out;
-    opacity: 1;
-  }
-  .Header.hidden-header .Header-bg-gradient,
-  .Header.scrolled .Header-bg-gradient {
-    opacity: 0;
-  }
-
-  .Header-inner {
-    display: flex; align-items: center; justify-content: center;
-    width: 100%; position: relative; max-width: 1440px;
-  }
-  .Header-logo {
-    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-  }
-  .Header-logo svg { display: block; }
-  .Header-nav {
-    display: flex; align-items: center; justify-content: center;
-    gap: 48px;
-  }
-  .Header-nav button, .Header-nav a {
-    background: none; border: none; color: #fff; cursor: pointer;
-    text-decoration: none;
-    opacity: 0.6; transition: opacity 0.3s;
-    font-family: 'Bebas Neue', 'Oswald', sans-serif;
-    font-size: 26px; font-weight: 500;
-    text-transform: uppercase; letter-spacing: 0.02em;
-    line-height: 0.785;
-  }
-  .Header-nav button:hover,
-  .Header-nav button.active { opacity: 1; }
-
-  /* Hamburger */
-  .hamburger-btn {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    left: 0; z-index: 20;
-    padding: 6px; transition: all 0.3s;
-    background: none; border: none; color: #fff;
-  }
-  .hamburger-btn:hover { background: #fff; color: #000; }
-  @media (min-width: 768px) { .hamburger-btn { display: none; } }
-
-  .mobile-hidden {
-    display: none;
-  }
-  @media (min-width: 768px) {
-    .mobile-hidden { display: block; }
-    .mobile-logo { display: none !important; }
-  }
-</style>
-
-<script>
-(function() {
-  const header = document.getElementById('mainHeader');
-  if (!header) return;
-
-  let lastScrollY = 0;
-  let ticking = false;
-
-  window.addEventListener('scroll', function() {
-    if (!ticking) {
-      window.requestAnimationFrame(function() {
-        const currentScrollY = window.scrollY;
-
-        if (currentScrollY > 100) {
-          header.classList.add('scrolled');
-        } else {
-          header.classList.remove('scrolled');
-        }
-
-        if (currentScrollY > lastScrollY && currentScrollY > 200) {
-          header.classList.add('hidden-header');
-          header.classList.remove('show-header');
-        } else if (currentScrollY < lastScrollY && currentScrollY > 200) {
-          header.classList.remove('hidden-header');
-          header.classList.add('show-header');
-        } else if (currentScrollY <= 200) {
-          header.classList.remove('hidden-header');
-          header.classList.remove('show-header');
-        }
-
-        lastScrollY = currentScrollY;
-        ticking = false;
-      });
-      ticking = true;
-    }
-  });
-
-  // Nav button click handlers
-  const navButtons = document.querySelectorAll('.Header-nav button');
-  navButtons.forEach(btn => {
-    btn.addEventListener('click', function() {
-      const nav = this.dataset.nav;
-      navButtons.forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-
-      // Navigate based on button
-      switch(nav) {
-        case 'explore':
-          window.location.href = '/index.html';
-          break;
-        case 'build':
-          window.location.href = '/apechain.html';
-          break;
-        case 'learn':
-        case 'bridge':
-          // Placeholder for future pages
-          console.log('Navigate to:', nav);
-          break;
-      }
-    });
-  });
-})();
-</script>
-
   <!-- ===== Main Content ===== -->
   <main class="main-content">
 
@@ -726,11 +539,8 @@ const COLLATOR = (typeof Intl !== 'undefined' && Intl.Collator)
   ? new Intl.Collator('zh-Hans-CN', { numeric: true, sensitivity: 'base' })
   : { compare: function(a, b) { return a < b ? -1 : (a > b ? 1 : 0); } };
 
-function escapeHTML(value) {
-  return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
-    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
-  });
-}
+// 转义 helper 与详情页共用,定义在 /content.js 里(单一事实源)
+const escapeHTML = window.__siteEscapeHTML;
 
 function countCategory(slug) {
   if (slug === 'all') return APPS.length;
@@ -831,11 +641,6 @@ function renderGrid() {
       ? COLLATOR.compare(b.title, a.title)
       : COLLATOR.compare(a.title, b.title));
 
-  if (!APPS.length) {
-    grid.innerHTML = '<p class="AppGrid-empty">应用目录加载失败,请刷新页面重试。</p>';
-    return;
-  }
-
   if (!filtered.length) {
     grid.innerHTML = '<p class="AppGrid-empty">' +
       (state.query ? '没有匹配「' + escapeHTML(state.query) + '」的应用。' : '当前筛选条件下没有应用。') +
@@ -910,8 +715,14 @@ document.getElementById('sortSelect').addEventListener('change', function() {
 document.getElementById('searchInput').addEventListener('input', renderGrid);
 
 // ─── Init ───
-renderFilters(readCategorySlugsFromURL());
-renderGrid();
+if (!escapeHTML || !APPS.length) {
+  // /content.js 没加载成功:给出明确提示,不要留一个空白页面
+  document.getElementById('appGrid').innerHTML =
+    '<p class="AppGrid-empty">应用目录加载失败,请刷新页面重试。</p>';
+} else {
+  renderFilters(readCategorySlugsFromURL());
+  renderGrid();
+}
 </script>
 
   <script src="/site-shell.js" defer></script>

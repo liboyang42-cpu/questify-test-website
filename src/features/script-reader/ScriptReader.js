@@ -348,20 +348,23 @@ export function setupScriptReader(root, item, options = {}) {
   };
 
   // ── F32:逃出吸附 ──
-  // 停掉进行中的吸附动画;若动画正在跑就说明用户是被拽着的,之后不再自动吸附
+  // 停掉进行中的吸附动画与待触发的计时器(关闭/销毁时用)
   const cancelSnapAnimation = () => {
     clearTimeout(snapTimer);
     cancelAnimationFrame(slowSnapFrame);
-    if (isSlowSnapping) {
-      isSlowSnapping = false;
-      autoSnapEnabled = false;
-    }
+    isSlowSnapping = false;
+  };
+
+  // 滚轮 / 触摸 / 方向键 —— 用户要自己滚。
+  // 只有当吸附动画正在把视图往别处拽时才算「逃出」:立刻停手,并且之后不再自动吸附
+  // (还想要吸附就从目录点章节,那是明确意图)。没在吸附时什么都不做,免得把功能整个关掉。
+  const onUserScrollIntent = () => {
+    if (!isSlowSnapping) return;
+    cancelSnapAnimation();
+    autoSnapEnabled = false;
     scroller.classList.add('snap-disabled');
     snapReEnableTime = Date.now();
   };
-
-  // 滚轮 / 触摸 / 方向键 —— 任一即视为用户要自己滚
-  const onUserScrollIntent = () => cancelSnapAnimation();
   const SCROLL_KEYS = new Set([
     'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ', 'Spacebar'
   ]);

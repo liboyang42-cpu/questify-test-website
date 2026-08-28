@@ -1,3 +1,12 @@
+// 唯一一份 HTML 转义helper —— apechain.html(列表)与 deploy.html(详情)都引本文件,
+// 两页拼 innerHTML 时共用这一个实现,避免各写一份走样。
+// 同时转义引号,因此文本位与属性位都可以安全插值。
+window.__siteEscapeHTML = function (value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
+  });
+};
+
 window.__siteContent = {
   // 应用目录 —— apechain.html(列表)与 deploy.html(详情)共用的唯一数据源。
   // slug 是每条应用的稳定标识:列表页链接写 deploy.html?app=<slug>,详情页按 slug 反查,

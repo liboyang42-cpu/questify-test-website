@@ -1089,6 +1089,11 @@
         grid-column: 2 / 12;
       }
     }
+    /* F33:键盘可聚焦后要有可见焦点圈 */
+    .SimpleSlider:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 4px;
+    }
     .SimpleSlider-track {
       display: flex;
       flex-direction: row;
@@ -1097,6 +1102,8 @@
       gap: 8px;
       width: max-content;
       will-change: transform;
+      /* F33:横向拖拽交给 pointer 事件,纵向留给页面滚动 */
+      touch-action: pan-y;
     }
     @media (min-width: 768px) {
       .SimpleSlider-track { gap: 24px; }
@@ -1749,6 +1756,9 @@
 
     <!-- Content Grid -->
     <div class="Hero-content-grid">
+      <!-- F27:首页此前一个 h1 都没有(hero 大标题是会轮播的活动名,用的是 h2)。
+           这里补一个不改变视觉的页面主标题,供屏幕阅读器的结构导航与搜索引擎判定主题。 -->
+      <h1 class="cy-sr-only">城瘾 —— 把城市变成一场真人解谜游戏</h1>
       <!-- HOT Badge -->
       <div class="Hero-hot-badge">
         <svg width="21" height="28" viewBox="0 0 21 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width:auto;height:calc(25/32*1em);" aria-hidden="true">
@@ -2865,64 +2875,95 @@ function initHeroWebGL(THREE) {
 
 
 // ===== 4. Apps Carousel (Draggable Slider) =====
+// F33:原先只有 mouse / touch 事件,键盘完全进不去;mouseleave 会中途打断拖拽,
+// mouseup 只挂在轨道上,轨道外松手会留下卡住的拖拽状态;位移还靠
+// parseFloat(transform.replace(/[^\d.-]/g,'')) 反解析("-123.00.0" 全靠 parseFloat 容错)。
+// 这里按 IP 页档案 rail(ip-entry.js:71)的做法重写:自己记位移、pointer 事件 + 指针捕获、
+// 方向键 / Home / End 操作、Tab 聚焦时把卡片带进视野、拖拽后吞掉误触点击。
 (function() {
+  const slider = document.getElementById('appsSlider');
   const track = document.getElementById('appsSliderTrack');
-  if (!track) return;
+  if (!slider || !track) return;
 
-  let isDown = false;
-  let startX = 0;
-  let scrollLeft = 0;
+  var position = 0;
+  var dragging = false;
+  var startX = 0;
+  var startPos = 0;
+  var moved = 0;
 
-  track.addEventListener('mousedown', function(e) {
-    isDown = true;
-    track.classList.add('active');
-    startX = e.pageX - track.offsetLeft;
-    scrollLeft = track.style.transform
-      ? parseFloat(track.style.transform.replace(/[^\d.-]/g, '')) || 0
-      : 0;
-    track.style.cursor = 'grabbing';
+  function maxScroll() {
+    return Math.max(0, track.scrollWidth - slider.clientWidth);
+  }
+  function reducedMotion() {
+    return !!(window.cyMotion && window.cyMotion.reduced);
+  }
+  function setPosition(next, animate) {
+    position = Math.max(-maxScroll(), Math.min(0, next));
+    track.style.transition = (animate && !reducedMotion()) ? 'transform .35s ease' : '';
+    track.style.transform = 'translate3d(' + position + 'px, 0px, 0px)';
+  }
+  function stepSize() {
+    var card = track.querySelector('.AppCard');
+    return card ? card.getBoundingClientRect().width + 24 : 240;
+  }
+
+  // ---- 键盘 ----
+  slider.setAttribute('tabindex', '0');
+  slider.setAttribute('role', 'group');
+  slider.setAttribute('aria-label', '城瘾应用轮播,可用左右方向键翻动');
+  slider.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowRight') { event.preventDefault(); setPosition(position - stepSize(), true); }
+    else if (event.key === 'ArrowLeft') { event.preventDefault(); setPosition(position + stepSize(), true); }
+    else if (event.key === 'Home') { event.preventDefault(); setPosition(0, true); }
+    else if (event.key === 'End') { event.preventDefault(); setPosition(-maxScroll(), true); }
   });
 
-  track.addEventListener('mouseleave', function() {
-    isDown = false;
-    track.style.cursor = '';
+  // Tab 走到看不见的卡片上时把它带进视野;顺便抵消浏览器对 overflow:hidden 容器的隐式滚动
+  slider.addEventListener('focusin', function(event) {
+    var card = event.target && event.target.closest ? event.target.closest('.AppCard') : null;
+    if (!card) return;
+    slider.scrollLeft = 0;
+    var cardRect = card.getBoundingClientRect();
+    var boxRect = slider.getBoundingClientRect();
+    if (cardRect.left < boxRect.left) {
+      setPosition(position + (boxRect.left - cardRect.left) + 16, true);
+    } else if (cardRect.right > boxRect.right) {
+      setPosition(position - (cardRect.right - boxRect.right) - 16, true);
+    }
   });
 
-  track.addEventListener('mouseup', function() {
-    isDown = false;
-    track.style.cursor = '';
+  // ---- 指针拖拽(鼠标与触摸统一)----
+  track.addEventListener('pointerdown', function(event) {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    dragging = true;
+    moved = 0;
+    startX = event.clientX;
+    startPos = position;
+    track.style.transition = '';
+    slider.style.cursor = 'grabbing';
+    try { track.setPointerCapture(event.pointerId); } catch (error) { /* 旧浏览器忽略 */ }
   });
-
-  track.addEventListener('mousemove', function(e) {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - track.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    const maxScroll = track.scrollWidth - track.parentElement.clientWidth;
-    let newPos = scrollLeft - walk;
-    newPos = Math.max(-maxScroll, Math.min(0, newPos));
-    track.style.transform = 'translate3d(' + newPos + 'px, 0px, 0px)';
+  track.addEventListener('pointermove', function(event) {
+    if (!dragging) return;
+    var dx = event.clientX - startX;
+    moved = Math.max(moved, Math.abs(dx));
+    setPosition(startPos + dx * 1.5, false);
   });
+  function endDrag(event) {
+    if (!dragging) return;
+    dragging = false;
+    slider.style.cursor = '';
+    try { track.releasePointerCapture(event.pointerId); } catch (error) { /* 旧浏览器忽略 */ }
+  }
+  track.addEventListener('pointerup', endDrag);
+  track.addEventListener('pointercancel', endDrag);
 
-  // Touch support
-  let touchStartX = 0;
-  let touchScrollLeft = 0;
+  // 拖拽超过阈值时吞掉随后的点击,避免误触发卡片链接
+  track.addEventListener('click', function(event) {
+    if (moved > 6) { event.preventDefault(); event.stopPropagation(); moved = 0; }
+  }, true);
 
-  track.addEventListener('touchstart', function(e) {
-    touchStartX = e.touches[0].pageX - track.offsetLeft;
-    touchScrollLeft = track.style.transform
-      ? parseFloat(track.style.transform.replace(/[^\d.-]/g, '')) || 0
-      : 0;
-  }, { passive: true });
-
-  track.addEventListener('touchmove', function(e) {
-    const x = e.touches[0].pageX - track.offsetLeft;
-    const walk = (x - touchStartX) * 1.5;
-    const maxScroll = track.scrollWidth - track.parentElement.clientWidth;
-    let newPos = touchScrollLeft - walk;
-    newPos = Math.max(-maxScroll, Math.min(0, newPos));
-    track.style.transform = 'translate3d(' + newPos + 'px, 0px, 0px)';
-  }, { passive: true });
+  window.addEventListener('resize', function() { setPosition(position, false); });
 })();
 
 
@@ -3085,6 +3126,7 @@ function initHeroWebGL(THREE) {
       function closeIntro() {
         if (completed) return;
         completed = true;
+        window.removeEventListener('keydown', onIntroKeydown);
         intro.classList.add('is-leaving');
         try { window.sessionStorage.setItem('cy-intro-seen', '1'); } catch (error) {}
         window.setTimeout(function () {
@@ -3093,10 +3135,15 @@ function initHeroWebGL(THREE) {
         }, 720);
       }
 
-      intro.addEventListener('click', closeIntro);
-      window.addEventListener('keydown', function (event) {
+      function onIntroKeydown(event) {
         if (event.key === 'Escape') closeIntro();
-      }, { once: true });
+      }
+
+      intro.addEventListener('click', closeIntro);
+      // F26:原先带 { once: true },任意一个按键(比如 Tab)都会把监听器消耗掉,
+      // 之后再按 ESC 就没反应了 —— 而遮罩上明写着 "CLICK / ESC TO SKIP"。
+      // 改为常驻监听,由 closeIntro() 负责移除。
+      window.addEventListener('keydown', onIntroKeydown);
       window.setTimeout(closeIntro, 2100);
     })();
   </script>
