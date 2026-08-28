@@ -198,9 +198,9 @@
     if (conn.saveData) return false;                                   // 用户开了流量节省
     if (/^(slow-2g|2g|3g)$/.test(conn.effectiveType || '')) return false; // 慢网
     // 静止的地球等于一张 9.3MB 的静态装饰图,没有观感收益
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
     // 移动端:布局已收敛成单列,表单占满首屏,地球基本被内容盖住
-    if (matchMedia('(max-width: 860px)').matches) return false;
+    if (window.matchMedia('(max-width: 860px)').matches) return false;
     return true;
   }
 
@@ -215,7 +215,7 @@
       if (!env) { canvas.remove(); return; }
       env.resume(); // 启动绘制循环(落地页由 scheduler 触发,本页直接启动)
       // 晚到的地球淡进来,避免直接怼在 .cosmos 渐变上
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         gsap.to(canvas, { autoAlpha: 1, scale: 1, duration: 1.4, ease: 'power2.out' });
       } else {
         gsap.set(canvas, { autoAlpha: 1, scale: 1 });
@@ -229,8 +229,9 @@
 
   if (earthOn) {
     gsap.set(canvas, { autoAlpha: 0, scale: 1.06, transformOrigin: '50% 55%' });
-    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 200));
-    const kick = () => idle(startEarth, { timeout: 2000 });
+    const kick = () => (window.requestIdleCallback
+      ? window.requestIdleCallback(startEarth, { timeout: 2000 })
+      : setTimeout(startEarth, 200));
     if (document.readyState === 'complete') kick();
     else window.addEventListener('load', kick, { once: true });
   } else {
