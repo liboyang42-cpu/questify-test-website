@@ -2780,13 +2780,16 @@ function initHeroWebGL(THREE) {
   }
   function refreshLoopState() {
     if (loopShouldRun()) startLoop();
-    else { stopLoop(); renderFrame(); }
+    else { stopLoop(); requestRepaint(); }
   }
-  // 循环没在跑时按需补一帧(贴图到货、静态模式下的滚动等)。
-  // ready 保证初始化尚未完成时(比如没有图片的卡片会同步回调)不会提前进 renderFrame。
+  // 循环没在跑时按需补一帧(贴图到货、静态模式下的滚动、重新进入视口等)。
+  // ready 保证初始化尚未完成时(没有配图的卡片会同步回调)不会提前进 renderFrame;
+  // 画面不可见时也不必画。
   var ready = false;
   function requestRepaint() {
-    if (ready && rafId === null) renderFrame();
+    if (!ready || rafId !== null) return;
+    if (!pageVisible || !(heroInView || spotInView)) return;
+    renderFrame();
   }
 
   function renderFrame() {
@@ -2855,7 +2858,7 @@ function initHeroWebGL(THREE) {
 
   document.addEventListener('visibilitychange', function() {
     pageVisible = !document.hidden;
-    if (pageVisible) startLoop(); else stopLoop();
+    refreshLoopState();
   });
 
   if ('IntersectionObserver' in window && heroSection) {
@@ -2866,7 +2869,7 @@ function initHeroWebGL(THREE) {
         if (entry.target === heroSection) heroInView = entry.isIntersecting;
         else spotInView = entry.isIntersecting;
       });
-      if (loopShouldRun()) startLoop(); else stopLoop();
+      refreshLoopState();
     }, { threshold: 0 });
     visibilityObserver.observe(heroSection);
     if (spotEl) visibilityObserver.observe(spotEl);
