@@ -8,8 +8,10 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="theme-color" content="#0b0b0f" />
-  <!-- 留资 API 基地址:留空则本地 dev 自动指向 localhost:1337;生产填后端域名 -->
-  <meta name="cy-api-base" content="" />
+  <!-- 留资 API 基地址已改为构建期环境变量 VITE_LEADS_API_BASE(F01),不再用 <meta> 手填。
+       构建/部署前须在 .env(或托管平台的环境变量面板)设置,例如:
+         VITE_LEADS_API_BASE=https://api.example.com
+       未设置时表单会自动停用并引导访客走页面上的静态联系方式,不会再静默打同源 404。 -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="城瘾" />
   <meta property="og:title" content="联系我们 · 城瘾" />
@@ -82,6 +84,17 @@
   .form-status{grid-column:1/-1;font-size:14px;min-height:20px;margin-top:4px}
   .form-status.ok{color:var(--accent)}
   .form-status.err{color:#ff7a7a}
+  /* 表单不可用时(留资 API 未配置)整块降低存在感,把注意力交给静态兜底联系方式 */
+  .contact.is-disabled{opacity:.45;pointer-events:none}
+
+  /* 静态兜底联系方式(F01):表单挂掉时全站唯一的可触达路径,任何情况下都渲染 */
+  .contact-fallback{margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
+  .contact-fallback h2{font-size:15px;font-weight:600;letter-spacing:.08em;margin-bottom:12px}
+  .contact-fallback dl{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;margin:0;font-size:14px;line-height:1.6}
+  .contact-fallback dt{color:var(--mut);white-space:nowrap}
+  .contact-fallback dd{margin:0;color:var(--fg);word-break:break-all}
+  .contact-fallback a{color:var(--fg)}
+  .contact-fallback .fallback-hint{margin-top:12px;color:var(--mut);font-size:13px;line-height:1.6}
 
   footer{position:relative;z-index:2;text-align:center;padding:60px 0 50px;color:var(--mut);font-size:13px;letter-spacing:.06em;border-top:1px solid var(--line);margin-top:40px}
 
@@ -112,6 +125,23 @@
     <h1>联系我们</h1>
     <p class="contact-lead">城瘾把真实城市变成可参与的游戏系统。想合作、加入俱乐部,或把你的 IP 带进城市——这里能找到我们。</p>
     <p class="contact-meta">城瘾 Questify · AI 城市游戏操作系统 · 现已在上海启动</p>
+
+    <!-- ⚠️ 上线前必须替换:下面三行是占位符,不是真实联系方式。
+         需要业务/市场同学提供真实的对外邮箱、微信号与电话,替换 TODO-CONTACT-* 后
+         同时更新 mailto: 与 tel: 链接。在替换完成前,这一块仍要保留在页面上——
+         它是留资 API 未配置时全站唯一的可触达路径(F01)。 -->
+    <section class="contact-fallback" id="contact-fallback" aria-label="其他联系方式">
+      <h2>其他联系方式</h2>
+      <dl>
+        <dt>邮箱</dt>
+        <dd><a href="mailto:TODO-CONTACT-EMAIL">TODO-CONTACT-EMAIL</a></dd>
+        <dt>微信</dt>
+        <dd>TODO-CONTACT-WECHAT</dd>
+        <dt>电话</dt>
+        <dd><a href="tel:TODO-CONTACT-PHONE">TODO-CONTACT-PHONE</a></dd>
+      </dl>
+      <p class="fallback-hint">表单提交不成功时,请直接用以上任一方式联系我们。</p>
+    </section>
   </section>
 
   <div class="glass contact-card" id="contact">
@@ -156,42 +186,99 @@
 
 <script type="module">
   // 真实旋转晨昏线地球(复用落地页 bloomEnvironment):自动旋转 + 晨昏线 + 云层 + 城市夜光 + 大气层
-  import { setupBloomEnvironment } from './src/bloomEnvironment.js';
   import { gsap } from 'gsap';
 
   const canvas = document.getElementById('bloom');
-  const env = setupBloomEnvironment(canvas); // 无 WebGL 时静默返回,.cosmos 渐变兜底
-  env?.resume(); // 启动绘制循环(落地页由 scheduler 触发,本页直接启动)
 
-  // 进场动画(gsap):地球淡入推近 → hero 文案依次浮现;尊重 prefers-reduced-motion
-  const heroBits = ['.hero .eyebrow', '.hero h1', '.hero p', '.hero .scroll'];
+  // F36:这颗地球的四张 NASA 贴图合计约 9.3MB,是本页最大的一笔开销,而本页唯一的业务
+  // 目标是让人填完表单。它本来就有 .cosmos 渐变作为无 WebGL 时的降级方案,视觉上成立,
+  // 所以在「不划算」的场景直接不加载 —— 省下的是整整 9.3MB,而不是压缩能省的那点。
+  function shouldLoadEarth() {
+    const conn = navigator.connection || {};
+    if (conn.saveData) return false;                                   // 用户开了流量节省
+    if (/^(slow-2g|2g|3g)$/.test(conn.effectiveType || '')) return false; // 慢网
+    // 静止的地球等于一张 9.3MB 的静态装饰图,没有观感收益
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+    // 移动端:布局已收敛成单列,表单占满首屏,地球基本被内容盖住
+    if (window.matchMedia('(max-width: 860px)').matches) return false;
+    return true;
+  }
+
+  let env = null;
+  const earthOn = shouldLoadEarth();
+
+  // 装饰永远排在表单后面:等 load 之后的空闲时段再去取 bloomEnvironment 与那 9.3MB 贴图,
+  // 首屏(load 时刻)的传输量里因此不含任何贴图。
+  function startEarth() {
+    import('./src/bloomEnvironment.js').then(({ setupBloomEnvironment }) => {
+      env = setupBloomEnvironment(canvas) || null; // 无 WebGL 时静默返回,.cosmos 渐变兜底
+      if (!env) { canvas.remove(); return; }
+      env.resume(); // 启动绘制循环(落地页由 scheduler 触发,本页直接启动)
+      // 晚到的地球淡进来,避免直接怼在 .cosmos 渐变上
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        gsap.to(canvas, { autoAlpha: 1, scale: 1, duration: 1.4, ease: 'power2.out' });
+      } else {
+        gsap.set(canvas, { autoAlpha: 1, scale: 1 });
+      }
+      // F36:标签页切到后台时停掉绘制循环(bloomEnvironment 早就提供了 pause,只是没人调)
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) env?.pause(); else env?.resume();
+      });
+    }).catch(() => canvas.remove());
+  }
+
+  if (earthOn) {
+    gsap.set(canvas, { autoAlpha: 0, scale: 1.06, transformOrigin: '50% 55%' });
+    const kick = () => (window.requestIdleCallback
+      ? window.requestIdleCallback(startEarth, { timeout: 2000 })
+      : setTimeout(startEarth, 200));
+    if (document.readyState === 'complete') kick();
+    else window.addEventListener('load', kick, { once: true });
+  } else {
+    canvas.remove(); // 不加载时把空 canvas 摘掉,避免它盖在 .cosmos 上
+  }
+
+  // 进场动画(gsap):hero 文案依次浮现;尊重 prefers-reduced-motion
+  // (地球的淡入交给 startEarth,因为它比首屏晚到)
+  // 逐条列出而不用 '.hero p':兜底联系方式(.contact-fallback)也在 .hero 里,
+  // 它是表单失效时唯一的可触达路径,不该被入场动画挡住
+  const heroBits = ['.hero .eyebrow', '.hero h1', '.contact-lead', '.contact-meta'];
   gsap.matchMedia().add({
     motion: '(prefers-reduced-motion: no-preference)',
     reduce: '(prefers-reduced-motion: reduce)'
   }, (ctx) => {
     if (ctx.conditions.reduce) {
-      gsap.set([canvas, '.bloom-veil', ...heroBits], { autoAlpha: 1, clearProps: 'transform' });
+      gsap.set(['.bloom-veil', ...heroBits], { autoAlpha: 1, clearProps: 'transform' });
       return;
     }
-    gsap.set(canvas, { autoAlpha: 0, scale: 1.06, transformOrigin: '50% 55%' });
     gsap.set('.bloom-veil', { autoAlpha: 0 });
     gsap.set(heroBits, { autoAlpha: 0, y: 24 });
     gsap.timeline({ defaults: { ease: 'power3.out' } })
-      .to(canvas, { autoAlpha: 1, scale: 1, duration: 1.6, ease: 'power2.out' })
       .to('.bloom-veil', { autoAlpha: 1, duration: 1.2 }, 0.1)
       .to(heroBits, { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.12 }, 0.5);
   });
 </script>
-  <script>
+  <script type="module">
   // 联系表单:客户端校验 + 提交到留资 API(M6-08)
   (function(){
     var form=document.getElementById('leadForm'); if(!form) return;
     var status=document.getElementById('lf-status');
     var submitBtn=form.querySelector('.submit');
-    // API base:本地 dev 指向本地 Strapi;生产由 <meta name="cy-api-base"> 配置(域名确定后填)
-    var meta=document.querySelector('meta[name="cy-api-base"]');
-    var API_BASE=(meta&&meta.content.trim())||
-      ((location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:1337':'');
+    // API base(F01):构建期由 VITE_LEADS_API_BASE 注入。本地 dev 未配置时沿用本地 Strapi;
+    // 生产构建未配置时**不再**回落成空字符串——那会让 POST 变成同源请求,静态托管必然
+    // 404/405,访客只看到「提交失败」。这里改成显式停用表单并指向静态兜底联系方式。
+    var API_BASE=(import.meta.env.VITE_LEADS_API_BASE||'').trim()||
+      (import.meta.env.DEV?'http://localhost:1337':'');
+    if(!API_BASE){
+      // 配置缺失必须被发现:控制台留一条明确的错误,页面上明确告知访客表单不可用
+      console.error('[城瘾] 留资表单未配置 API 基地址:构建时缺少环境变量 VITE_LEADS_API_BASE,表单已停用。');
+      form.classList.add('is-disabled');
+      form.setAttribute('aria-disabled','true');
+      Array.prototype.forEach.call(form.querySelectorAll('input,select,textarea,button'),function(el){ el.disabled=true; });
+      status.className='form-status err';
+      status.textContent='表单暂不可用,请用下面的联系方式直接联系我们。';
+      return;
+    }
     var TYPE_MAP={'合作咨询':'consult','俱乐部合作':'join','商家合作':'cooperation','其他咨询':'other'};
     var submitting=false, idemKey=null;
 

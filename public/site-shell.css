@@ -1,8 +1,11 @@
 /* 城瘾官网共享站壳 Header / Footer —— 单一事实源(site-shell.js 注入)
    自包含样式,scoped 在 .cy-* 下,不依赖各页 CSS 变量,避免冲突。 */
 
+/* 顶栏高度对外导出为变量,各页避让固定顶栏时引用它,不要再抄数字 */
+:root{ --cy-header-h:64px; }
+
 .cy-header{
-  position:fixed; top:0; left:0; width:100%; height:64px; z-index:1000;
+  position:fixed; top:0; left:0; width:100%; height:var(--cy-header-h); z-index:1000;
   display:flex; align-items:center; justify-content:space-between;
   padding:0 32px; box-sizing:border-box;
   background:rgba(8,8,11,.6); backdrop-filter:blur(16px);
@@ -23,21 +26,36 @@
 .cy-burger span{display:block; width:22px; height:2px; background:#fff; margin:4px 0; transition:.25s;}
 
 @media(max-width:720px){
-  .cy-header{padding:0 18px; height:56px;}
+  :root{ --cy-header-h:56px; }
+  .cy-header{padding:0 18px;}
   .cy-burger{display:block;}
   .cy-nav{
-    position:fixed; top:56px; left:0; width:100%;
+    position:fixed; top:var(--cy-header-h); left:0; width:100%;
     flex-direction:column; gap:0; align-items:stretch;
     background:rgba(8,8,11,.97); backdrop-filter:blur(20px);
     border-bottom:1px solid rgba(255,255,255,.08);
-    transform:translateY(-120%); transition:transform .3s; pointer-events:none;
+    transform:translateY(-120%); pointer-events:none;
+    /* 收起态必须真正退出焦点顺序:transform + pointer-events 都不影响可聚焦性,
+       没有 visibility:hidden 时连按 Tab 会把焦点送进屏幕外的面板里。
+       visibility 不做插值,用 0s 延迟等滑出动画走完再隐藏。 */
+    visibility:hidden;
+    transition:transform .3s, visibility 0s linear .3s;
   }
-  .cy-nav[data-open="true"]{transform:translateY(0); pointer-events:auto;}
+  .cy-nav[data-open="true"]{
+    transform:translateY(0); pointer-events:auto;
+    visibility:visible; transition:transform .3s, visibility 0s;
+  }
   .cy-nav a{padding:18px 22px; border-top:1px solid rgba(255,255,255,.06); font-size:16px;}
   .cy-burger[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg);}
   .cy-burger[aria-expanded="true"] span:nth-child(2){opacity:0;}
   .cy-burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
 }
+
+/* 全屏浮层(剧本阅读器等)打开时收起固定顶栏。
+   .cy-header 是 position:fixed; z-index:1000,任何浮层都会被它压住。
+   约定:页面设 body[data-cy-chrome="hidden"](或调 cyShell.setChromeHidden(true)),
+   站壳自己响应 —— 页面不要反过来去写 .cy-header 的内部样式。 */
+body[data-cy-chrome="hidden"] .cy-header{ display:none; }
 
 /* ── Footer ── */
 .cy-footer{
@@ -80,6 +98,20 @@
 .cy-webgl-fallback__inner{max-width:420px;}
 .cy-webgl-fallback__t{color:#fff; font-size:17px; font-weight:500; margin:0 0 10px; letter-spacing:.04em;}
 .cy-webgl-fallback__d{color:rgba(255,255,255,.55); font-size:14px; line-height:1.8; margin:0;}
+
+/* 页内锚点避让固定顶栏(F07)
+   顶栏是 position:fixed;没有这条时 #merchant / #contact 这类锚点会正好落到顶栏底下
+   (实测 top = -3px / 0px)。放在滚动容器上而不是逐个元素加 scroll-margin-top,
+   页面新增锚点时无需再改;高度直接取 --cy-header-h,顶栏改高不用同步改这里。
+   影响范围 = 所有引 site-shell.css 的页面。 */
+html{ scroll-padding-top:calc(var(--cy-header-h, 64px) + 24px); }
+
+/* 仅供屏幕阅读器的文本(F27) */
+.cy-sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%);
+  white-space:nowrap; border:0;
+}
 
 /* 尊重减少动画偏好(M2-22):全站关闭非必要过渡/动画 */
 @media (prefers-reduced-motion: reduce){

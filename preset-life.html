@@ -12,9 +12,43 @@
     <meta property="og:site_name" content="城瘾" />
     <meta property="og:title" content="预制人生 · 城瘾" />
     <meta property="og:description" content="预制人生——一部发生在城市里的命运剧本,逐章打开的记忆切片。" />
+    <link rel="stylesheet" href="/assets/fonts/fonts.css" />
+    <!-- 共享站壳(F08):导航 / 页脚 / 法律链接 / ICP 位,单一事实源 -->
+    <link rel="stylesheet" href="/site-shell.css" />
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{background:#08080b;color:rgba(255,255,255,.72);min-height:100vh;
+        font-family:"HarmonyOS Sans SC",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+        -webkit-font-smoothing:antialiased}
+      /* 阅读器关闭时露出的落地内容,同时也是爬虫与无 JS 用户能读到的正文 */
+      .pl-intro{max-width:720px;margin:0 auto;padding:140px 24px 90px}
+      .pl-eyebrow{font-size:12px;letter-spacing:.34em;color:rgba(255,255,255,.4)}
+      .pl-intro h1{margin:14px 0 10px;font-size:clamp(34px,6vw,58px);font-weight:500;
+        letter-spacing:.06em;color:#fff;line-height:1.15}
+      .pl-sub{font-size:16px;color:rgba(255,255,255,.55);letter-spacing:.04em}
+      .pl-summary{margin-top:26px;font-size:15px;line-height:2;color:rgba(255,255,255,.6)}
+      .pl-open{margin-top:34px;display:inline-block;padding:13px 30px;border-radius:100px;
+        border:1px solid rgba(255,255,255,.22);background:transparent;color:#fff;
+        font-family:inherit;font-size:14px;letter-spacing:.14em;cursor:pointer;
+        transition:background-color .2s,border-color .2s}
+      .pl-open:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.4)}
+      .pl-open:focus-visible{outline:2px solid #fff;outline-offset:3px}
+    </style>
     <script type="module" src="./src/preset-life.js"></script>
   </head>
   <body>
-    <main id="preset-life-root" aria-label="预制人生 剧本阅读器"></main>
+    <main id="preset-life-root">
+      <div class="pl-intro">
+        <p class="pl-eyebrow">SCRIPT CASE 01</p>
+        <h1>预制人生</h1>
+        <p class="pl-sub">是你选择了命运,还是命运选择了你?</p>
+        <p class="pl-summary">
+          预制人生是一部发生在城市里的命运剧本。你会沿着一条看似早就被安排好的路线前进:出生、学习、工作、系统、命数、升级、共处,直到最后站在街角,发现自己也许从未真正拥有过选择。它不是一份普通目录,而是一组会被逐章打开的记忆切片。
+        </p>
+        <!-- data-script-open:ScriptReader 自动接管为打开入口,关闭阅读器后焦点回到这里(F31) -->
+        <button class="pl-open" type="button" data-script-open="0">打开剧本阅读器</button>
+      </div>
+    </main>
+    <script src="/site-shell.js" defer></script>
   </body>
 </html>

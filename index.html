@@ -1089,6 +1089,11 @@
         grid-column: 2 / 12;
       }
     }
+    /* F33:键盘可聚焦后要有可见焦点圈 */
+    .SimpleSlider:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 4px;
+    }
     .SimpleSlider-track {
       display: flex;
       flex-direction: row;
@@ -1097,6 +1102,8 @@
       gap: 8px;
       width: max-content;
       will-change: transform;
+      /* F33:横向拖拽交给 pointer 事件,纵向留给页面滚动 */
+      touch-action: pan-y;
     }
     @media (min-width: 768px) {
       .SimpleSlider-track { gap: 24px; }
@@ -1332,6 +1339,12 @@
         margin-right: 48px;
       }
     }
+
+    /* F04:分类文案换成中文后,原来的 line-height:0.785(为全大写拉丁字设计)
+       会把汉字的上下沿裁掉 —— .label 是 overflow:hidden。中日韩字形占满整个 em 框,
+       这里放宽到 1.08。用两级选择器提高优先级,压过 content.js 在 hydrate 时
+       注入的 .Discover-label{line-height:0.785}。 */
+    .Discover-inner .Discover-label { line-height: 1.08; }
 
     .Discover-label .label {
       position: relative;
@@ -1749,6 +1762,9 @@
 
     <!-- Content Grid -->
     <div class="Hero-content-grid">
+      <!-- F27:首页此前一个 h1 都没有(hero 大标题是会轮播的活动名,用的是 h2)。
+           这里补一个不改变视觉的页面主标题,供屏幕阅读器的结构导航与搜索引擎判定主题。 -->
+      <h1 class="cy-sr-only">城瘾 —— 把城市变成一场真人解谜游戏</h1>
       <!-- HOT Badge -->
       <div class="Hero-hot-badge">
         <svg width="21" height="28" viewBox="0 0 21 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width:auto;height:calc(25/32*1em);" aria-hidden="true">
@@ -2166,55 +2182,55 @@
         <div class="Discover-group">
           <div class="Discover-marquee">
             <div class="Discover-duplicated">
-              <a class="Discover-label" href="./apechain.html?f=intellectual-property">
+              <a class="Discover-label" data-discover-label="游戏" href="./apechain.html?f=game">
                 <span class="label">
-                  <span class="label__inner label__inner--main" style="transform:translate(0px,0px);">Intellectual Property</span>
-                  <span aria-hidden="true" class="label__inner label__inner--clone" style="transform:translate(0px,0px);">Intellectual Property</span>
+                  <span class="label__inner label__inner--main">游戏</span>
+                  <span aria-hidden="true" class="label__inner label__inner--clone">游戏</span>
                 </span>
                 <span class="Discover-thumb">
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=collectibles">
+              <a class="Discover-label" data-discover-label="交互插件" href="./apechain.html?f=interaction">
                 <span class="label">
-                  <span class="label__inner label__inner--main">Collectibles</span>
-                  <span aria-hidden="true" class="label__inner label__inner--clone">Collectibles</span>
+                  <span class="label__inner label__inner--main">交互插件</span>
+                  <span aria-hidden="true" class="label__inner label__inner--clone">交互插件</span>
                 </span>
                 <span class="Discover-thumb">
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=finance">
+              <a class="Discover-label" data-discover-label="AI插件" href="./apechain.html?f=ai">
                 <span class="label">
-                  <span class="label__inner label__inner--main">Finance</span>
-                  <span aria-hidden="true" class="label__inner label__inner--clone">Finance</span>
+                  <span class="label__inner label__inner--main">AI插件</span>
+                  <span aria-hidden="true" class="label__inner label__inner--clone">AI插件</span>
                 </span>
                 <span class="Discover-thumb">
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=intellectual-property">
+              <a class="Discover-label" data-discover-label="游戏" href="./apechain.html?f=game">
                 <span class="label">
-                  <span class="label__inner label__inner--main">Intellectual Property</span>
-                  <span aria-hidden="true" class="label__inner label__inner--clone">Intellectual Property</span>
+                  <span class="label__inner label__inner--main">游戏</span>
+                  <span aria-hidden="true" class="label__inner label__inner--clone">游戏</span>
                 </span>
                 <span class="Discover-thumb">
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=collectibles">
+              <a class="Discover-label" data-discover-label="交互插件" href="./apechain.html?f=interaction">
                 <span class="label">
-                  <span class="label__inner label__inner--main">Collectibles</span>
-                  <span aria-hidden="true" class="label__inner label__inner--clone">Collectibles</span>
+                  <span class="label__inner label__inner--main">交互插件</span>
+                  <span aria-hidden="true" class="label__inner label__inner--clone">交互插件</span>
                 </span>
                 <span class="Discover-thumb">
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=finance">
+              <a class="Discover-label" data-discover-label="AI插件" href="./apechain.html?f=ai">
                 <span class="label">
-                  <span class="label__inner label__inner--main">Finance</span>
-                  <span aria-hidden="true" class="label__inner label__inner--clone">Finance</span>
+                  <span class="label__inner label__inner--main">AI插件</span>
+                  <span aria-hidden="true" class="label__inner label__inner--clone">AI插件</span>
                 </span>
                 <span class="Discover-thumb">
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
@@ -2227,55 +2243,55 @@
         <div class="Discover-group">
           <div class="Discover-marquee">
             <div class="Discover-duplicated">
-              <a class="Discover-label" href="./apechain.html?f=gaming">
+              <a class="Discover-label" data-discover-label="成就激励" href="./apechain.html?f=achievement">
                 <span class="label">
-                  <span class="label__inner label__inner--main">Gaming</span>
-                  <span aria-hidden="true" class="label__inner label__inner--clone">Gaming</span>
+                  <span class="label__inner label__inner--main">成就激励</span>
+                  <span aria-hidden="true" class="label__inner label__inner--clone">成就激励</span>
                 </span>
                 <span class="Discover-thumb">
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=infrastructure">
+              <a class="Discover-label" data-discover-label="剧情插件" href="./apechain.html?f=story">
                 <span class="label">
-                  <span class="label__inner label__inner--main">Infrastructure</span>
-                  <span aria-hidden="true" class="label__inner label__inner--clone">Infrastructure</span>
+                  <span class="label__inner label__inner--main">剧情插件</span>
+                  <span aria-hidden="true" class="label__inner label__inner--clone">剧情插件</span>
                 </span>
                 <span class="Discover-thumb">
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=social">
+              <a class="Discover-label" data-discover-label="成就激励" href="./apechain.html?f=achievement">
                 <span class="label">
-                  <span class="label__inner label__inner--main">Social</span>
-                  <span aria-hidden="true" class="label__inner label__inner--clone">Social</span>
+                  <span class="label__inner label__inner--main">成就激励</span>
+                  <span aria-hidden="true" class="label__inner label__inner--clone">成就激励</span>
                 </span>
                 <span class="Discover-thumb">
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=gaming">
+              <a class="Discover-label" data-discover-label="剧情插件" href="./apechain.html?f=story">
                 <span class="label">
-                  <span class="label__inner label__inner--main">Gaming</span>
-                  <span aria-hidden="true" class="label__inner label__inner--clone">Gaming</span>
+                  <span class="label__inner label__inner--main">剧情插件</span>
+                  <span aria-hidden="true" class="label__inner label__inner--clone">剧情插件</span>
                 </span>
                 <span class="Discover-thumb">
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=infrastructure">
+              <a class="Discover-label" data-discover-label="成就激励" href="./apechain.html?f=achievement">
                 <span class="label">
-                  <span class="label__inner label__inner--main">Infrastructure</span>
-                  <span aria-hidden="true" class="label__inner label__inner--clone">Infrastructure</span>
+                  <span class="label__inner label__inner--main">成就激励</span>
+                  <span aria-hidden="true" class="label__inner label__inner--clone">成就激励</span>
                 </span>
                 <span class="Discover-thumb">
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=social">
+              <a class="Discover-label" data-discover-label="剧情插件" href="./apechain.html?f=story">
                 <span class="label">
-                  <span class="label__inner label__inner--main">Social</span>
-                  <span aria-hidden="true" class="label__inner label__inner--clone">Social</span>
+                  <span class="label__inner label__inner--main">剧情插件</span>
+                  <span aria-hidden="true" class="label__inner label__inner--clone">剧情插件</span>
                 </span>
                 <span class="Discover-thumb">
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
@@ -2291,47 +2307,35 @@
   <!-- ===== FOOTER ===== -->
   </div><!-- page-wrap end -->
 
-<script src="/assets/vendor/three.r128.min.js"></script>
-<script>
+<!-- F14:首页交互脚本改为 ES module,three 从 npm 引入(与 d20 页共用同一个 chunk),
+     不再同步阻塞加载 public/assets/vendor/three.r128.min.js。
+     module 脚本天然 defer,不阻塞首屏解析;打包器还能按实际用到的类做 tree-shaking
+     (544KB,比 r128 的 603KB 更小)。注:用动态 import('three') 反而会关掉 tree-shaking
+     ——rollup 无法预知调用方要访问哪些导出,只能整包保留,实测会涨到 733KB。 -->
+<script type="module">
+import * as THREE from 'three';
+
 // ==========================================
 // 城瘾 Homepage — Interactions
 // ==========================================
 
-// ===== 1. Header Scroll Behavior =====
-(function() {
-  const header = document.getElementById('mainHeader');
-  if (!header) return;
-  let lastScrollY = 0;
-  let ticking = false;
-
-  window.addEventListener('scroll', function() {
-    if (!ticking) {
-      window.requestAnimationFrame(function() {
-        const currentScrollY = window.scrollY;
-
-        if (currentScrollY > 100) {
-          header.classList.add('scrolled');
-        } else {
-          header.classList.remove('scrolled');
-        }
-
-        if (currentScrollY > lastScrollY && currentScrollY > 200) {
-          header.classList.add('hidden-header');
-          header.classList.remove('show-header');
-        } else if (currentScrollY < lastScrollY && currentScrollY > 200) {
-          header.classList.remove('hidden-header');
-          header.classList.add('show-header');
-        } else if (currentScrollY <= 200) {
-          header.classList.remove('hidden-header');
-          header.classList.remove('show-header');
-        }
-
-        lastScrollY = currentScrollY;
-        ticking = false;
-      });
-      ticking = true;
-    }
-  });
+// ===== 1. 动效偏好(F25) =====
+// JS 动效统一从这里读 prefers-reduced-motion,并在系统偏好变化时实时通知各模块,
+// 而不是只在启动时读一次。CSS 侧的全局规则在 site-shell.css。
+window.cyMotion = (function() {
+  var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var listeners = [];
+  function notify() {
+    listeners.forEach(function(fn) {
+      try { fn(mq.matches); } catch (error) { /* 单个订阅者出错不影响其它模块 */ }
+    });
+  }
+  if (mq.addEventListener) mq.addEventListener('change', notify);
+  else if (mq.addListener) mq.addListener(notify);   // Safari < 14
+  return {
+    get reduced() { return mq.matches; },
+    onChange: function(fn) { listeners.push(fn); }
+  };
 })();
 
 
@@ -2381,11 +2385,29 @@
     });
 
     currentIndex = index;
+
+    // F17:原先靠 monkey-patch 在外面补这段广播,导致「先导出未打补丁的版本、后打补丁」。
+    // 直接写在函数体内,只有一个 updateCarousel,导出的就是完整版本。
+    window.__carouselCurrentIndex = index;
+    if (window.__onCarouselChange) {
+      window.__onCarouselChange(index);
+    }
   }
 
   function rotateCarousel() {
     var next = (currentIndex + 1) % appsData.length;
     updateCarousel(next);
+  }
+
+  // F25:减少动画偏好下不做自动轮播,只保留用户点击缩略图切换
+  function stopAutoRotate() {
+    if (intervalId) { clearInterval(intervalId); intervalId = null; }
+  }
+  function startAutoRotate() {
+    stopAutoRotate();
+    if (window.cyMotion && window.cyMotion.reduced) return;
+    if (appsData.length < 2) return;
+    intervalId = setInterval(rotateCarousel, 3000);
   }
 
   // Thumbnail click handlers
@@ -2394,15 +2416,13 @@
       var idx = parseInt(this.getAttribute('data-index'), 10);
       updateCarousel(idx);
       // Reset auto-rotation timer
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-      intervalId = setInterval(rotateCarousel, 3000);
+      startAutoRotate();
     });
   });
 
   // Start auto-rotation
-  intervalId = setInterval(rotateCarousel, 3000);
+  startAutoRotate();
+  if (window.cyMotion) window.cyMotion.onChange(startAutoRotate);
 
   // Render the first activity immediately instead of showing static fallback copy.
   updateCarousel(0);
@@ -2410,17 +2430,6 @@
   // Store for 3D ring sync
   window.__featuredApps = appsData;
   window.__updateCarousel = updateCarousel;
-  window.__carouselCurrentIndex = 0;
-
-  // Patch updateCarousel to notify 3D ring on changes
-  var _origUpdateCarousel = updateCarousel;
-  updateCarousel = function(idx) {
-    _origUpdateCarousel(idx);
-    window.__carouselCurrentIndex = idx;
-    if (window.__onCarouselChange) {
-      window.__onCarouselChange(idx);
-    }
-  };
 
   // Initial fade-in for name/desc
   if (nameEl) { nameEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease'; }
@@ -2430,15 +2439,16 @@
 
 
 // ===== 3. Hero WebGL Canvas (Three.js Particle Field) =====
-(function() {
+// F14:原先在 <body> 末同步阻塞加载 public/assets/vendor/three.r128.min.js(603KB,全局 THREE)。
+// 现改为 npm 的 three 0.184 —— 全站只剩一份(d20 页用的也是它),
+// 用到的 API 全是两版之间没变过的核心类,迁移只需补一条色彩空间设置(见下)。
+function initHeroWebGL() {
   const renderCanvas = document.getElementById('heroCanvasRender');
   const interactionCanvas = document.getElementById('heroCanvasInteraction');
   const canvasWrap = document.getElementById('heroCanvas');
   const heroSection = document.getElementById('heroSection');
 
-  if (!renderCanvas || !window.THREE) return;
-  // WebGL 不支持:跳过 3D 初始化,保留 hero 文案与 CTA(M2-24)
-  if (window.cyWebGLSupported && !window.cyWebGLSupported()) return;
+  if (!renderCanvas) return;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -2449,6 +2459,9 @@
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // F14:three 0.184 默认输出 sRGB,而原先的 r128 是线性直通。
+  // 显式保持线性输出,迁移后星野与卡片的观感与旧版完全一致。
+  if (THREE.LinearSRGBColorSpace) renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
   // Create stars
   const starsGeometry = new THREE.BufferGeometry();
@@ -2522,6 +2535,7 @@
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
     updateHeroScrollState();
+    requestRepaint();
   });
 
   function updateHeroScrollState() {
@@ -2534,7 +2548,19 @@
     var shouldFloat = rect.top <= 0 && ((spotRect && spotRect.bottom > 0) || rect.bottom > 0);
     canvasWrap.classList.toggle('is-scroll-floating', shouldFloat);
   }
-  window.addEventListener('scroll', updateHeroScrollState, { passive: true });
+  // F20:滚动里做 getBoundingClientRect() 读取 + class 写入,用 rAF 节流避免布局抖动
+  var scrollTicking = false;
+  function onHeroScroll() {
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(function() {
+      scrollTicking = false;
+      updateHeroScrollState();
+      // F25:静态模式下没有常驻循环,滚动引起的变化在这里补一帧
+      requestRepaint();
+    });
+  }
+  window.addEventListener('scroll', onHeroScroll, { passive: true });
   updateHeroScrollState();
 
   // ---- 3D Card Ring (curved geometry, clockwise rotation) ----
@@ -2666,7 +2692,8 @@
 
     if (imageUrl) {
       var img = new Image();
-      img.crossOrigin = 'anonymous';
+      // F03:贴图与页面 <img> 同源,设 crossOrigin='anonymous' 会让 CORS 请求与普通请求
+      // 落在不同的缓存键上,同一张图被下载两遍(实测多出约 4.2MB)。这里不需要该属性。
       img.onload = function() { drawCard(img); };
       img.onerror = function() { drawCard(null); };
       img.src = imageUrl;
@@ -2687,6 +2714,9 @@
     createCardTexture(app.image, app.name, function(tex) {
       mat.map = tex;
       mat.needsUpdate = true;
+      // 贴图是异步到货的。减少动画偏好(或 hero 不可见)时主循环并不在跑,
+      // 这里必须主动补一帧,否则卡片会停在没有贴图的纯白状态。
+      requestRepaint();
     });
 
     ringGroup.add(mesh);
@@ -2705,21 +2735,77 @@
   var snapDuration = 40;
   var snapFrame = 0;
 
+  function isReduced() {
+    return !!(window.cyMotion && window.cyMotion.reduced);
+  }
+
+  // F18:吸附角度按实际卡片数算。原先写死 -idx * PI/3(60 度),只有 6 张卡时才与
+  // 卡片布置用的 (i / CARD_COUNT) * 2PI 一致,数据多一条就静默错位。
+  // 这里用链式包装而不是直接覆盖:three 是异步加载的,本段可能在后面的模块之后才执行(F14)。
+  var prevOnCarouselChange = window.__onCarouselChange;
   window.__onCarouselChange = function(idx) {
-    snapTarget = -idx * Math.PI / 3;
+    if (prevOnCarouselChange) prevOnCarouselChange(idx);
+    if (!CARD_COUNT) return;
+    snapTarget = -idx * Math.PI * 2 / CARD_COUNT;
+    if (isReduced()) {
+      // F25:静态模式下直接落到目标角度,不播 40 帧吸附动画
+      ringAngle = snapTarget;
+      snapProgress = 1;
+      requestRepaint();
+      return;
+    }
     snapStartAngle = ringAngle;
     snapProgress = 0;
     snapFrame = 0;
+    startLoop();
   };
 
-  // Animation loop
-  function animateHero() {
-    requestAnimationFrame(animateHero);
-    updateHeroScrollState();
+  // ---- 主循环(F20 / F25)----
+  // 1. 每帧不再调 updateHeroScrollState():那是两次 getBoundingClientRect(),
+  //    与已有的 scroll 监听重复,等于每帧一次强制同步布局。滚动状态由 onHeroScroll 维护。
+  // 2. 只依赖 scrollProgress 的写入(星野透明度/混合、卡片环位置缩放透明度)只在它变化时执行,
+  //    不再每帧 ringGroup.traverse() 重设整棵树、也不再每帧 material.needsUpdate = true。
+  // 3. 标签页切到后台、或 hero 画面滚出视口时停掉 rAF。
+  // 4. 减少动画偏好下不跑常驻循环,只在滚动/交互时按需重绘一帧。
+  var ringMaterials = ringCards.map(function(card) { return card.mesh.material; });
+  var appliedProgress = -1;
+  var rafId = null;
+  var pageVisible = !document.hidden;
+  var heroInView = true;
+  var spotInView = false;
 
-    // Smooth mouse tracking
-    targetRotX += (mouseY * 0.5 - targetRotX) * 0.03;
-    targetRotY += (mouseX * 0.5 - targetRotY) * 0.03;
+  function loopShouldRun() {
+    return pageVisible && (heroInView || spotInView) && !isReduced();
+  }
+  function startLoop() {
+    if (rafId === null && loopShouldRun()) rafId = requestAnimationFrame(animateHero);
+  }
+  function stopLoop() {
+    if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+  }
+  function refreshLoopState() {
+    if (loopShouldRun()) startLoop();
+    else { stopLoop(); requestRepaint(); }
+  }
+  // 循环没在跑时按需补一帧(贴图到货、静态模式下的滚动、重新进入视口等)。
+  // ready 保证初始化尚未完成时(没有配图的卡片会同步回调)不会提前进 renderFrame;
+  // 画面不可见时也不必画。
+  var ready = false;
+  function requestRepaint() {
+    if (!ready || rafId !== null) return;
+    if (!pageVisible || !(heroInView || spotInView)) return;
+    renderFrame();
+  }
+
+  function renderFrame() {
+    var reduced = isReduced();
+
+    if (!reduced) {
+      // Smooth mouse tracking
+      targetRotX += (mouseY * 0.5 - targetRotX) * 0.03;
+      targetRotY += (mouseX * 0.5 - targetRotY) * 0.03;
+    }
+
     if (Math.abs(scrollProgress - previousScrollProgress) > 0.002) {
       var colorAttr = starsGeometry.getAttribute('color');
       var colorArray = colorAttr.array;
@@ -2734,96 +2820,173 @@
       colorAttr.needsUpdate = true;
       previousScrollProgress = scrollProgress;
     }
-    var particleProgress = Math.max(0, Math.min(1, (scrollProgress - 0.05) / 0.95));
-    starsMaterial.opacity = 0.8 - particleProgress * 0.25;
-    starsMaterial.blending = particleProgress > 0.45 ? THREE.NormalBlending : THREE.AdditiveBlending;
-    starsMaterial.needsUpdate = true;
 
-    stars.rotation.x += 0.0002 + targetRotX * 0.0005;
-    stars.rotation.y += 0.0003 + targetRotY * 0.0005;
+    if (scrollProgress !== appliedProgress) {
+      var particleProgress = Math.max(0, Math.min(1, (scrollProgress - 0.05) / 0.95));
+      starsMaterial.opacity = 0.8 - particleProgress * 0.25;
+      var blending = particleProgress > 0.45 ? THREE.NormalBlending : THREE.AdditiveBlending;
+      if (starsMaterial.blending !== blending) {
+        starsMaterial.blending = blending;
+        starsMaterial.needsUpdate = true;   // 只有换混合模式才需要重编译材质
+      }
+      var ringOpacity = Math.max(0, 1 - scrollProgress * 1.45);
+      for (var mi = 0; mi < ringMaterials.length; mi++) {
+        ringMaterials[mi].transparent = true;
+        ringMaterials[mi].opacity = ringOpacity;
+      }
+      ringGroup.position.y = -0.15 + scrollProgress * 0.2;
+      ringGroup.scale.setScalar(1 - scrollProgress * 0.06);
+      appliedProgress = scrollProgress;
+    }
+
+    if (!reduced) {
+      stars.rotation.x += 0.0002 + targetRotX * 0.0005;
+      stars.rotation.y += 0.0003 + targetRotY * 0.0005;
+    }
     if (snapProgress < 1) {
       snapFrame++;
       snapProgress = Math.min(snapFrame / snapDuration, 1);
       var ease = 1 - Math.pow(1 - snapProgress, 3);
       ringAngle = snapStartAngle + (snapTarget - snapStartAngle) * ease;
-    } else {
+    } else if (!reduced) {
       ringAngle -= baseSpeed;
     }
     ringGroup.rotation.y = ringAngle;
-    ringGroup.position.y = -0.15 + scrollProgress * 0.2;
-    ringGroup.scale.setScalar(1 - scrollProgress * 0.06);
-    ringGroup.traverse(function(obj) {
-      if (obj.material) {
-        obj.material.transparent = true;
-        obj.material.opacity = Math.max(0, 1 - scrollProgress * 1.45);
-      }
-    });
 
     renderer.render(scene, camera);
   }
-  animateHero();
+
+  function animateHero() {
+    rafId = requestAnimationFrame(animateHero);
+    renderFrame();
+  }
+
+  document.addEventListener('visibilitychange', function() {
+    pageVisible = !document.hidden;
+    refreshLoopState();
+  });
+
+  if ('IntersectionObserver' in window && heroSection) {
+    // hero 画布在聚光灯区间会切成 fixed 继续可见(is-scroll-floating),所以两段都要观察
+    var spotEl = document.querySelector('.SectionSpotlight');
+    var visibilityObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.target === heroSection) heroInView = entry.isIntersecting;
+        else spotInView = entry.isIntersecting;
+      });
+      refreshLoopState();
+    }, { threshold: 0 });
+    visibilityObserver.observe(heroSection);
+    if (spotEl) visibilityObserver.observe(spotEl);
+  }
+
+  if (window.cyMotion) window.cyMotion.onChange(refreshLoopState);
+
+  ready = true;
+  renderFrame();
+  startLoop();
+}
+
+// WebGL 不支持:跳过 3D 初始化,保留 hero 文案与 CTA(M2-24)
+(function() {
+  if (!document.getElementById('heroCanvasRender')) return;
+  if (window.cyWebGLSupported && !window.cyWebGLSupported()) return;
+  initHeroWebGL();
 })();
 
 
 // ===== 4. Apps Carousel (Draggable Slider) =====
+// F33:原先只有 mouse / touch 事件,键盘完全进不去;mouseleave 会中途打断拖拽,
+// mouseup 只挂在轨道上,轨道外松手会留下卡住的拖拽状态;位移还靠
+// parseFloat(transform.replace(/[^\d.-]/g,'')) 反解析("-123.00.0" 全靠 parseFloat 容错)。
+// 这里按 IP 页档案 rail(ip-entry.js:71)的做法重写:自己记位移、pointer 事件 + 指针捕获、
+// 方向键 / Home / End 操作、Tab 聚焦时把卡片带进视野、拖拽后吞掉误触点击。
 (function() {
+  const slider = document.getElementById('appsSlider');
   const track = document.getElementById('appsSliderTrack');
-  if (!track) return;
+  if (!slider || !track) return;
 
-  let isDown = false;
-  let startX = 0;
-  let scrollLeft = 0;
+  var position = 0;
+  var dragging = false;
+  var startX = 0;
+  var startPos = 0;
+  var moved = 0;
 
-  track.addEventListener('mousedown', function(e) {
-    isDown = true;
-    track.classList.add('active');
-    startX = e.pageX - track.offsetLeft;
-    scrollLeft = track.style.transform
-      ? parseFloat(track.style.transform.replace(/[^\d.-]/g, '')) || 0
-      : 0;
-    track.style.cursor = 'grabbing';
+  function maxScroll() {
+    return Math.max(0, track.scrollWidth - slider.clientWidth);
+  }
+  function reducedMotion() {
+    return !!(window.cyMotion && window.cyMotion.reduced);
+  }
+  function setPosition(next, animate) {
+    position = Math.max(-maxScroll(), Math.min(0, next));
+    track.style.transition = (animate && !reducedMotion()) ? 'transform .35s ease' : '';
+    track.style.transform = 'translate3d(' + position + 'px, 0px, 0px)';
+  }
+  function stepSize() {
+    var card = track.querySelector('.AppCard');
+    return card ? card.getBoundingClientRect().width + 24 : 240;
+  }
+
+  // ---- 键盘 ----
+  slider.setAttribute('tabindex', '0');
+  slider.setAttribute('role', 'group');
+  slider.setAttribute('aria-label', '城瘾应用轮播,可用左右方向键翻动');
+  slider.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowRight') { event.preventDefault(); setPosition(position - stepSize(), true); }
+    else if (event.key === 'ArrowLeft') { event.preventDefault(); setPosition(position + stepSize(), true); }
+    else if (event.key === 'Home') { event.preventDefault(); setPosition(0, true); }
+    else if (event.key === 'End') { event.preventDefault(); setPosition(-maxScroll(), true); }
   });
 
-  track.addEventListener('mouseleave', function() {
-    isDown = false;
-    track.style.cursor = '';
+  // Tab 走到看不见的卡片上时把它带进视野;顺便抵消浏览器对 overflow:hidden 容器的隐式滚动
+  slider.addEventListener('focusin', function(event) {
+    var card = event.target && event.target.closest ? event.target.closest('.AppCard') : null;
+    if (!card) return;
+    slider.scrollLeft = 0;
+    var cardRect = card.getBoundingClientRect();
+    var boxRect = slider.getBoundingClientRect();
+    if (cardRect.left < boxRect.left) {
+      setPosition(position + (boxRect.left - cardRect.left) + 16, true);
+    } else if (cardRect.right > boxRect.right) {
+      setPosition(position - (cardRect.right - boxRect.right) - 16, true);
+    }
   });
 
-  track.addEventListener('mouseup', function() {
-    isDown = false;
-    track.style.cursor = '';
+  // ---- 指针拖拽(鼠标与触摸统一)----
+  track.addEventListener('pointerdown', function(event) {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    dragging = true;
+    moved = 0;
+    startX = event.clientX;
+    startPos = position;
+    track.style.transition = '';
+    slider.style.cursor = 'grabbing';
+    try { track.setPointerCapture(event.pointerId); } catch (error) { /* 旧浏览器忽略 */ }
   });
-
-  track.addEventListener('mousemove', function(e) {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - track.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    const maxScroll = track.scrollWidth - track.parentElement.clientWidth;
-    let newPos = scrollLeft - walk;
-    newPos = Math.max(-maxScroll, Math.min(0, newPos));
-    track.style.transform = 'translate3d(' + newPos + 'px, 0px, 0px)';
+  track.addEventListener('pointermove', function(event) {
+    if (!dragging) return;
+    var dx = event.clientX - startX;
+    moved = Math.max(moved, Math.abs(dx));
+    setPosition(startPos + dx * 1.5, false);
   });
+  function endDrag(event) {
+    if (!dragging) return;
+    dragging = false;
+    slider.style.cursor = '';
+    try { track.releasePointerCapture(event.pointerId); } catch (error) { /* 旧浏览器忽略 */ }
+  }
+  track.addEventListener('pointerup', endDrag);
+  track.addEventListener('pointercancel', endDrag);
+  // 卡片是 <a> + <img>,不抑制原生拖拽的话按下即触发 dragstart,pointer 事件会被打断
+  track.addEventListener('dragstart', function(event) { event.preventDefault(); });
 
-  // Touch support
-  let touchStartX = 0;
-  let touchScrollLeft = 0;
+  // 拖拽超过阈值时吞掉随后的点击,避免误触发卡片链接
+  track.addEventListener('click', function(event) {
+    if (moved > 6) { event.preventDefault(); event.stopPropagation(); moved = 0; }
+  }, true);
 
-  track.addEventListener('touchstart', function(e) {
-    touchStartX = e.touches[0].pageX - track.offsetLeft;
-    touchScrollLeft = track.style.transform
-      ? parseFloat(track.style.transform.replace(/[^\d.-]/g, '')) || 0
-      : 0;
-  }, { passive: true });
-
-  track.addEventListener('touchmove', function(e) {
-    const x = e.touches[0].pageX - track.offsetLeft;
-    const walk = (x - touchStartX) * 1.5;
-    const maxScroll = track.scrollWidth - track.parentElement.clientWidth;
-    let newPos = touchScrollLeft - walk;
-    newPos = Math.max(-maxScroll, Math.min(0, newPos));
-    track.style.transform = 'translate3d(' + newPos + 'px, 0px, 0px)';
-  }, { passive: true });
+  window.addEventListener('resize', function() { setPosition(position, false); });
 })();
 
 
@@ -2986,6 +3149,7 @@
       function closeIntro() {
         if (completed) return;
         completed = true;
+        window.removeEventListener('keydown', onIntroKeydown);
         intro.classList.add('is-leaving');
         try { window.sessionStorage.setItem('cy-intro-seen', '1'); } catch (error) {}
         window.setTimeout(function () {
@@ -2994,10 +3158,15 @@
         }, 720);
       }
 
-      intro.addEventListener('click', closeIntro);
-      window.addEventListener('keydown', function (event) {
+      function onIntroKeydown(event) {
         if (event.key === 'Escape') closeIntro();
-      }, { once: true });
+      }
+
+      intro.addEventListener('click', closeIntro);
+      // F26:原先带 { once: true },任意一个按键(比如 Tab)都会把监听器消耗掉,
+      // 之后再按 ESC 就没反应了 —— 而遮罩上明写着 "CLICK / ESC TO SKIP"。
+      // 改为常驻监听,由 closeIntro() 负责移除。
+      window.addEventListener('keydown', onIntroKeydown);
       window.setTimeout(closeIntro, 2100);
     })();
   </script>

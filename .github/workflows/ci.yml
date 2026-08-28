@@ -1,0 +1,88 @@
+# F23 · CI:lint + build + 冒烟
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # 留资表单的 API 基地址(F01)。构建时没有它,about.html 会 console.error 并停用表单,
+  # 冒烟的「无 console error」断言就会红 —— 这是有意的:生产构建必须被正确配置。
+  # 正式部署请在仓库 Variables 里配 LEADS_API_BASE;CI 里没配就用占位值。
+  VITE_LEADS_API_BASE: ${{ vars.LEADS_API_BASE || 'https://leads.example.invalid/api' }}
+
+jobs:
+  build-and-smoke:
+    name: lint · build · smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # vite.config.js 用 git rev-parse 注入 build-version
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # package-lock.json 与 package.json 必须一致,否则 npm ci 会失败。
+      # (F15 删依赖后需要在有网环境跑一次 npm install 同步 lockfile。)
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke (10 production entry pages)
+        run: npm run smoke
+
+      - name: Upload build output on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
+
+  smoke-selftest:
+    # 负控 / meta-test:向页面注入 4 类人为故障,要求冒烟套件每次都必须失败。
+    # 防止有人为了「让 CI 变绿」把断言改成永远成立 —— 那样这个 job 会红。
+    name: smoke self-test (assertions must be able to fail)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npx playwright install --with-deps chromium
+      - name: Negative control
+        run: npm run smoke:selftest

@@ -21,13 +21,32 @@
     .legal p { font-size:15px; margin:0 0 14px; }
     .legal .pending { border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.03);
       border-radius:10px; padding:16px 20px; font-size:14px; color:rgba(255,255,255,.6); margin-bottom:36px; }
+    /* F11:占位状态要让内部人一眼看见,不能和正文一个灰度混在一起 */
+    .legal .pending--todo { border-color:#e0a23c; background:rgba(224,162,60,.10); color:rgba(255,255,255,.82); }
+    .legal .pending--todo strong { display:block; color:#f0b862; font-size:13px; letter-spacing:.14em;
+      text-transform:uppercase; margin-bottom:8px; }
+    .legal .pending--todo ul { margin:10px 0 0; padding-left:20px; color:rgba(255,255,255,.66); font-size:13px; }
   </style>
 </head>
 <body>
   <main class="legal">
     <h1>隐私政策</h1>
+    <!-- ⚠️ 上线前必须由法务替换:本页 h1 以下的全部正文(第 1–5 节)均为占位草稿,不是审定过的
+         法律文本;about.html 的表单同意项直接链到这里,而表单收集的是姓名、手机/微信/邮箱等真实
+         个人信息。在法务出具正式文本之前,不要移除下面这块黄色提示,也不要去掉本页的 noindex。
+         需要法务/责任人提供的东西见提示框内的清单(F11)。 -->
     <p class="updated">最后更新:待发布前确认</p>
-    <p class="pending">本页为占位框架,正式法律文本待法务/责任人确认后发布(对应 DEC-07 / M1-14)。当前用于打通页面与链接结构,不构成正式法律声明。</p>
+    <div class="pending pending--todo">
+      <strong>内部提示 · 占位内容,上线前必须由法务替换</strong>
+      本页为占位框架,正式法律文本待法务/责任人确认后发布(对应 DEC-07 / M1-14)。当前用于打通页面与链接结构,不构成正式法律声明。
+      <ul>
+        <li>第 1–5 节全部正文,由法务出具正式版本</li>
+        <li>运营主体全称与注册地址</li>
+        <li>个人信息保护负责人的对外联系方式</li>
+        <li>ICP 备案号(全站页脚共用,当前显示「ICP 备案信息待补」)</li>
+        <li>本页生效/更新日期</li>
+      </ul>
+    </div>
 
     <h2>1. 我们收集的信息</h2>
     <p>当你通过本站联系表单提交合作或报名意向时,我们会收集你主动填写的称呼、联系方式、组织与需求等信息,以及提交来源页面等必要的技术信息。</p>

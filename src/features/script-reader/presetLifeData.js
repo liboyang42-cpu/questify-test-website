@@ -1,5 +1,47 @@
 // 预制人生阅读器数据 —— 从 src/landing.js 原样迁出(形状不变)
 
+/* ── 章节配图(F09)──────────────────────────────────────────────
+   原先 9 张章节图全部外链 images.unsplash.com:境内访问不稳定、访客 IP 泄露给
+   第三方、授权也没落到自己手上。现已改为本地路径 /assets/preset-life/<file>。
+
+   ⚠️ 图片文件本身尚未入库(需先确认授权再下载)。IMAGE_PENDING 里列出的文件名
+   表示「待替换」,chapterImage() 会暂时回落到占位图 pending.svg,页面不会空掉。
+   某张图就位后,把它的文件名从 IMAGE_PENDING 中删掉即可自动切到真图。
+
+   待办清单(文件名 / 建议尺寸 / 原始来源)见 IMAGE_TODO。
+   ───────────────────────────────────────────────────────────── */
+
+const IMAGE_DIR = '/assets/preset-life';
+const IMAGE_PENDING_SRC = `${IMAGE_DIR}/pending.svg`;
+
+/** 尚未入库的章节配图文件名;为空时全部走真图 */
+const IMAGE_PENDING = new Set([
+  '00-prologue.jpg', '01-birth.jpg', '02-study.jpg', '03-work.jpg', '04-system.jpg',
+  '05-fate.jpg', '06-upgrade.jpg', '07-coexist.jpg', '08-finale.jpg'
+]);
+
+/**
+ * 章节配图待办清单 —— 交给素材方按此下载并确认授权。
+ * 建议统一 1800x1200(3:2)JPEG,质量 ~82,单张控制在 400KB 以内(全屏 cover 使用)。
+ * source 为原外链所指的 Unsplash 图片,需确认可商用后再下载自托管。
+ */
+export const IMAGE_TODO = [
+  { file: '00-prologue.jpg', chapter: '00 序章',  size: '1800x1200', source: 'https://unsplash.com/photos/photo-1500530855697-b586d89ba3ee' },
+  { file: '01-birth.jpg',    chapter: '01 出生',  size: '1800x1200', source: 'https://unsplash.com/photos/photo-1494526585095-c41746248156' },
+  { file: '02-study.jpg',    chapter: '02 学习',  size: '1800x1200', source: 'https://unsplash.com/photos/photo-1524995997946-a1c2e315a42f' },
+  { file: '03-work.jpg',     chapter: '03 工作',  size: '1800x1200', source: 'https://unsplash.com/photos/photo-1497366811353-6870744d04b2' },
+  { file: '04-system.jpg',   chapter: '04 系统',  size: '1800x1200', source: 'https://unsplash.com/photos/photo-1497366754035-f200968a6e72' },
+  { file: '05-fate.jpg',     chapter: '05 命数',  size: '1800x1200', source: 'https://unsplash.com/photos/photo-1494522855154-9297ac14b55f' },
+  { file: '06-upgrade.jpg',  chapter: '06 升级',  size: '1800x1200', source: 'https://unsplash.com/photos/photo-1519681393784-d120267933ba' },
+  { file: '07-coexist.jpg',  chapter: '07 共处',  size: '1800x1200', source: 'https://unsplash.com/photos/photo-1519608487953-e999c86e7455' },
+  { file: '08-finale.jpg',   chapter: '08 终章',  size: '1800x1200', source: 'https://unsplash.com/photos/photo-1519501025264-65ba15a82390' }
+];
+
+/** 解析章节配图路径:文件未入库时回落到占位图 */
+function chapterImage(file) {
+  return IMAGE_PENDING.has(file) ? IMAGE_PENDING_SRC : `${IMAGE_DIR}/${file}`;
+}
+
 export const videos = {
   hero: '/videos/hero.mp4',
   featured: '/videos/hero.mp4',
@@ -27,7 +69,7 @@ export const scriptCases = [
         "title": "序章",
         "meta": "SYSTEM BOOT / 世界启动",
         "status": "INITIAL LIFE SEQUENCE LOADED",
-        "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=82",
+        "image": chapterImage('00-prologue.jpg'),
         "pull": "是你选择的命运？还是命运选择了你？",
         "body": [
           "我第一次有意识的时候，没有光，也没有声音。只有一种非常确定的感觉——一切都已经准备好了。",
@@ -42,7 +84,7 @@ export const scriptCases = [
         "title": "出生",
         "meta": "INITIALIZED / 被确认的幸运",
         "status": "MEMORY 01 UNLOCKED",
-        "image": "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1800&q=82",
+        "image": chapterImage('01-birth.jpg'),
         "pull": "那天，没人问我愿不愿意。但所有人都说，我很幸运。",
         "body": [
           "我出生在 ________。他们说我的哭声很标准，音量适中，持续时间正常。不像隔壁那孩子，一出生就哭个不停。",
@@ -66,7 +108,7 @@ export const scriptCases = [
         "title": "学习",
         "meta": "STANDARD ANSWER REQUIRED / 标准答案",
         "status": "STANDARD ANSWER CHECK FAILED",
-        "image": "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1800&q=82",
+        "image": chapterImage('02-study.jpg'),
         "pull": "我发现问题本身没那么重要。我需要答对那个“标准答案”。",
         "body": [
           "我第一次被要求坐好，是在一张很小的桌子前。凳子比我想象中硬。我的脚够不到地，只能悬在半空里晃。有人把我的背推直，说：“要坐端正。”",
@@ -93,7 +135,7 @@ export const scriptCases = [
         "title": "工作",
         "meta": "PERFORMANCE TABLE LOADED / 工位",
         "status": "NEXT PHASE APPROVED",
-        "image": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1800&q=82",
+        "image": chapterImage('03-work.jpg'),
         "pull": "在这里，被忽略，比被否定更常见。",
         "body": [
           "好像只是眨了一下眼，那个有蝉鸣的下午就突然不见了。灯光从天花板刺眼地落下来。没有阴影，也没有重点。",
@@ -122,7 +164,7 @@ export const scriptCases = [
         "title": "系统",
         "meta": "CONTROL INTERFACE / 边界",
         "status": "CONTROL ACCESS DENIED",
-        "image": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=82",
+        "image": chapterImage('04-system.jpg'),
         "pull": "即便自由，也早已被设计好了边界。",
         "body": [
           "升职的第一天，我以为自己掌握了更多自由。成为项目组长，意味着可以安排团队、制定策略、参与决策。我甚至想象自己会因此获得更高的尊重和成就感。",
@@ -141,7 +183,7 @@ export const scriptCases = [
         "title": "命数",
         "meta": "PROJECT COMPLETE / 交接",
         "status": "HANDOVER REQUIRED",
-        "image": "https://images.unsplash.com/photo-1494522855154-9297ac14b55f?auto=format&fit=crop&w=1800&q=82",
+        "image": chapterImage('05-fate.jpg'),
         "pull": "我们都是带着镣铐跳舞的人。",
         "body": [
           "那天，我收到了一封邮件。没有署名。只有一行字：“项目完成，感谢贡献。请准备交接。”",
@@ -166,7 +208,7 @@ export const scriptCases = [
         "title": "升级",
         "meta": "SYSTEM ADAPTATION / 自我节奏",
         "status": "ADAPTATION COMPLETE",
-        "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1800&q=82",
+        "image": chapterImage('06-upgrade.jpg'),
         "pull": "我不再想按照社会的要求去生活。而是开始思考：我真正想要的是什么。",
         "body": [
           "离开那个公司后，我休息了一段时间。也有了更多时间观察和思考。不是为了逃避。也不是为了寻找自由。而是想理解：我为什么这样生活，又为什么这样选择。",
@@ -187,7 +229,7 @@ export const scriptCases = [
         "title": "共处",
         "meta": "COEXISTENCE / 被打开的门",
         "status": "DOORS OPENED",
-        "image": "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1800&q=82",
+        "image": chapterImage('07-coexist.jpg'),
         "pull": "他无所住，生其心。与世界和谐共处，不被牵引。",
         "body": [
           "城市依旧喧嚣。街道车水马龙，人们各自忙碌。云朵厚得像棉花糖。梧桐树叶子翠绿。阳光在地上打碎斑驳。",
@@ -204,7 +246,7 @@ export const scriptCases = [
         "title": "终章",
         "meta": "BOUNDARY DETECTED / 不属于这里",
         "status": "SCRIPT COMPLETE",
-        "image": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1800&q=82",
+        "image": chapterImage('08-finale.jpg'),
         "pull": "世界允许你存在，却不会完全接纳你。",
         "body": [
           "你站在街角，手里没有任何东西。城市的灯光闪烁。街道上有声响，但你注意不到它们。",

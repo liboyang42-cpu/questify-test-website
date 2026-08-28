@@ -75,40 +75,11 @@
       .lg\\:col-span-9   { grid-column: span 9; }
     }
 
-    /* ===== Header ===== */
-    .Header {
-      position: fixed; left: 0; top: 0; z-index: 99;
-      display: flex; width: 100%; height: 100px;
-      align-items: center; justify-content: center;
-      padding: 0 24px;
-      background: transparent;
-    }
-    .Header-inner {
-      display: flex; align-items: center; justify-content: center;
-      width: 100%; position: relative;
-    }
-    .Header-logo {
-      position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-    }
-    .Header-logo svg { display: block; fill: #fff; }
-    .Header-nav {
-      display: flex; align-items: center; justify-content: center;
-      gap: 48px;
-    }
-    .Header-nav button, .Header-nav a {
-      background: none; border: none; color: #fff; cursor: pointer;
-      text-decoration: none;
-      opacity: 0.6; transition: opacity 0.3s;
-      font-family: 'DM Sans', system-ui, sans-serif;
-      font-size: 16px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.02em;
-    }
-    .Header-nav button:hover,
-    .Header-nav button:focus { opacity: 1; }
-
     /* ===== Main ===== */
     .main-content {
-      position: relative; padding-top: 140px;
+      /* 顶栏高度取站壳导出的变量,不再抄数字。原值 140px 是给已删除的旧本地顶栏
+         留的,共享顶栏只有 64px,照抄会让顶部空一截。 */
+      position: relative; padding-top: calc(var(--cy-header-h, 64px) + 40px);
       background: #000;
     }
 
@@ -187,6 +158,7 @@
     /* Filter list */
     .FilterList { margin-bottom: 32px; }
     .FilterItem {
+      position: relative;
       display: flex; align-items: center; gap: 8px;
       cursor: pointer;
       padding: 4px 0;
@@ -197,7 +169,22 @@
     .FilterItem:hover { opacity: 1; }
     .FilterItem.active { opacity: 1; }
 
-    .FilterItem input[type="checkbox"] { display: none; }
+    /* 复选框视觉隐藏,但保留可聚焦与键盘操作(不能用 display:none) */
+    .FilterItem input[type="checkbox"] {
+      position: absolute;
+      width: 1px; height: 1px;
+      margin: 0; padding: 0; border: 0;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .FilterItem:focus-within {
+      opacity: 1;
+      outline: 2px solid rgba(255,255,255,0.7);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
 
     .FilterItem-name {
       font-family: 'DM Sans', system-ui, sans-serif;
@@ -329,6 +316,29 @@
       border-radius: 8px;
       padding: 5px 8px;
       backdrop-filter: blur(4px);
+    }
+
+    /* 「即将上线」标注 —— 占位素材项不能让访客误认为是已上线成品 */
+    .AppCard-status {
+      position: absolute; top: 12px; right: 12px; z-index: 10;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; font-weight: 500;
+      letter-spacing: 1.2px; line-height: 14px;
+      color: #0b0b0f;
+      background: rgba(255,255,255,0.82);
+      border-radius: 8px;
+      padding: 5px 8px;
+      backdrop-filter: blur(4px);
+    }
+    .AppCard.is-soon .AppCard-preview img { opacity: 0.55; }
+
+    /* 无匹配结果提示 */
+    .AppGrid-empty {
+      grid-column: 1 / -1;
+      padding: 48px 0;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 16px; line-height: 1.6;
+      color: rgba(255,255,255,0.6);
     }
 
     /* Card frame glow (SVG gradient border) */
@@ -467,162 +477,6 @@
 
 <div class="page-wrap">
 
-  <!-- (重复的静态 Header 已移除,统一用下方 #mainHeader) -->
-
-  <style>
-  /* ===== Header ===== */
-  .Header {
-    position: fixed; left: 0; top: 0; z-index: 99;
-    display: flex; width: 100%; height: 96px;
-    align-items: center; justify-content: center;
-    padding: 0 24px;
-    background: transparent;
-    transition: transform 0.3s ease-in-out;
-  }
-  @media (min-width: 768px) {
-    .Header { height: 100px; }
-  }
-  .Header::before {
-    content: "";
-    pointer-events: none;
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    background-color: #000;
-    transition: transform 0.3s ease-in-out;
-    transform: translateY(-100%);
-  }
-  .Header.scrolled::before {
-    transform: translateY(0);
-  }
-  .Header.hidden-header {
-    transform: translateY(-100%);
-  }
-  .Header.hidden-header::before {
-    transform: translateY(0);
-  }
-  .Header.show-header {
-    transform: translateY(0);
-  }
-
-  .Header-bg-gradient {
-    pointer-events: none;
-    position: absolute; left: 0; right: 0; top: 0;
-    height: 11.25rem;
-    background: linear-gradient(to bottom, #000, transparent);
-    transition: opacity 0.3s ease-in-out;
-    opacity: 1;
-  }
-  .Header.hidden-header .Header-bg-gradient,
-  .Header.scrolled .Header-bg-gradient {
-    opacity: 0;
-  }
-
-  .Header-inner {
-    display: flex; align-items: center; justify-content: center;
-    width: 100%; position: relative; max-width: 1440px;
-  }
-  .Header-logo {
-    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-  }
-  .Header-logo svg { display: block; }
-  .Header-nav {
-    display: flex; align-items: center; justify-content: center;
-    gap: 48px;
-  }
-  .Header-nav button, .Header-nav a {
-    background: none; border: none; color: #fff; cursor: pointer;
-    text-decoration: none;
-    opacity: 0.6; transition: opacity 0.3s;
-    font-family: 'Bebas Neue', 'Oswald', sans-serif;
-    font-size: 26px; font-weight: 500;
-    text-transform: uppercase; letter-spacing: 0.02em;
-    line-height: 0.785;
-  }
-  .Header-nav button:hover,
-  .Header-nav button.active { opacity: 1; }
-
-  /* Hamburger */
-  .hamburger-btn {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    left: 0; z-index: 20;
-    padding: 6px; transition: all 0.3s;
-    background: none; border: none; color: #fff;
-  }
-  .hamburger-btn:hover { background: #fff; color: #000; }
-  @media (min-width: 768px) { .hamburger-btn { display: none; } }
-
-  .mobile-hidden {
-    display: none;
-  }
-  @media (min-width: 768px) {
-    .mobile-hidden { display: block; }
-    .mobile-logo { display: none !important; }
-  }
-</style>
-
-<script>
-(function() {
-  const header = document.getElementById('mainHeader');
-  if (!header) return;
-
-  let lastScrollY = 0;
-  let ticking = false;
-
-  window.addEventListener('scroll', function() {
-    if (!ticking) {
-      window.requestAnimationFrame(function() {
-        const currentScrollY = window.scrollY;
-
-        if (currentScrollY > 100) {
-          header.classList.add('scrolled');
-        } else {
-          header.classList.remove('scrolled');
-        }
-
-        if (currentScrollY > lastScrollY && currentScrollY > 200) {
-          header.classList.add('hidden-header');
-          header.classList.remove('show-header');
-        } else if (currentScrollY < lastScrollY && currentScrollY > 200) {
-          header.classList.remove('hidden-header');
-          header.classList.add('show-header');
-        } else if (currentScrollY <= 200) {
-          header.classList.remove('hidden-header');
-          header.classList.remove('show-header');
-        }
-
-        lastScrollY = currentScrollY;
-        ticking = false;
-      });
-      ticking = true;
-    }
-  });
-
-  // Nav button click handlers
-  const navButtons = document.querySelectorAll('.Header-nav button');
-  navButtons.forEach(btn => {
-    btn.addEventListener('click', function() {
-      const nav = this.dataset.nav;
-      navButtons.forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-
-      // Navigate based on button
-      switch(nav) {
-        case 'explore':
-          window.location.href = '/index.html';
-          break;
-        case 'build':
-          window.location.href = '/apechain.html';
-          break;
-        case 'learn':
-        case 'bridge':
-          // Placeholder for future pages
-          console.log('Navigate to:', nav);
-          break;
-      }
-    });
-  });
-})();
-</script>
-
   <!-- ===== Main Content ===== -->
   <main class="main-content">
 
@@ -635,7 +489,7 @@
       <aside class="Sidebar anim-fade-up anim-delay-1">
         <!-- Search -->
         <div class="SearchBox">
-          <input type="search" placeholder="Search" aria-label="Filter apps by name" />
+          <input type="search" id="searchInput" placeholder="搜索应用" aria-label="按名称、描述或分类搜索应用" />
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
             <g clip-path="url(#search-clip)">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M7.9304 9.00619C7.10698 9.59976 6.09456 9.9497 5 9.9497C2.23858 9.9497 0 7.72239 0 4.97485C0 2.22732 2.23858 0 5 0C7.76142 0 10 2.22732 10 4.97485C10 6.09489 9.62799 7.12848 9.00021 7.95997L12 10.9447L10.9393 12L7.9304 9.00619ZM8.5 4.97485C8.5 6.89813 6.933 8.45725 5 8.45725C3.067 8.45725 1.5 6.89813 1.5 4.97485C1.5 3.05158 3.067 1.49246 5 1.49246C6.933 1.49246 8.5 3.05158 8.5 4.97485Z" fill="white"/>
@@ -645,23 +499,23 @@
         </div>
 
         <!-- Filters -->
-        <div class="FilterList" id="filterList"></div>
+        <div class="FilterList" id="filterList" role="group" aria-label="按分类筛选"></div>
 
         <!-- Sort -->
         <div class="SortSection">
-          <p class="SortLabel">Sort by:</p>
+          <p class="SortLabel" id="sortLabel">排序方式</p>
           <div class="SortSelect">
-            <select id="sortSelect">
-              <option value="alpha-asc">Alphabetical ASC</option>
-              <option value="alpha-desc">Alphabetical DESC</option>
+            <select id="sortSelect" aria-labelledby="sortLabel">
+              <option value="alpha-asc">名称 A→Z</option>
+              <option value="alpha-desc">名称 Z→A</option>
             </select>
-            <span class="SortSelect-display" id="sortDisplay">Alphabetical ASC</span>
+            <span class="SortSelect-display" id="sortDisplay" aria-hidden="true">名称 A→Z</span>
           </div>
         </div>
       </aside>
 
       <!-- App Grid -->
-      <div class="AppGrid" id="appGrid"></div>
+      <div class="AppGrid" id="appGrid" aria-live="polite"></div>
 
     </div>
   </main>
@@ -669,198 +523,217 @@
   <!-- ===== Footer ===== -->
   </div>
 
+<!-- 应用目录与分类词表的唯一事实源 -->
+<script src="/content.js"></script>
+
 <script>
-// ─── App Data ────────────────────────────────────────────────
-const APPS = [
-  // 游戏类
-  { title: "d20 判定", category: "游戏", desc: "城市任务里的掷骰判定 · 点击试玩", link: "d20.html", img: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='608'%20height='336'%3E%3Crect%20width='608'%20height='336'%20fill='%23120608'/%3E%3Cpolygon%20points='304%2C84%20402%2C152%20366%2C246%20242%2C246%20206%2C152'%20fill='none'%20stroke='%23ff2233'%20stroke-width='6'/%3E%3Ctext%20x='304'%20y='292'%20font-family='Arial'%20font-size='58'%20font-weight='bold'%20fill='%23ff2233'%20text-anchor='middle'%3Ed20%3C/text%3E%3C/svg%3E" },
-  { title: "城市任务链", category: "游戏", desc: "动态生成的城市探险任务与挑战", img: "/assets/placeholder-app.svg" },
-  { title: "地标收集", category: "游戏", desc: "扫码打卡城市地点解锁成就", img: "/assets/placeholder-app.svg" },
-  { title: "商户竞赛", category: "游戏", desc: "跨店铺竞速与排行榜系统", img: "/assets/placeholder-app.svg" },
-  { title: "时间竞速", category: "游戏", desc: "限时任务与动态事件触发", img: "/assets/placeholder-app.svg" },
-  { title: "阵营战争", category: "游戏", desc: "多人社交对抗与领地争夺", img: "/assets/placeholder-app.svg" },
-  { title: "解谜探案", category: "游戏", desc: "城市故事线谜题解构系统", img: "/assets/placeholder-app.svg" },
-  
-  // 剧情插件
-  { title: "AI故事引擎", category: "剧情插件", desc: "生成式叙事与动态分支剧情", img: "/assets/placeholder-app.svg" },
-  { title: "角色伴侣系统", category: "剧情插件", desc: "AI NPC全程陪伴与实时对话", img: "/assets/placeholder-app.svg" },
-  { title: "城市传奇库", category: "剧情插件", desc: "本地化品牌故事与商户背景", img: "/assets/placeholder-app.svg" },
-  { title: "历史寻踪", category: "剧情插件", desc: "地点关联的互动内容解锁", img: "/assets/placeholder-app.svg" },
-  
-  // 交互插件
-  { title: "AR扫描引擎", category: "交互插件", desc: "虚实互动的沉浸式体验", img: "/assets/placeholder-app.svg" },
-  { title: "QR即触发", category: "交互插件", desc: "门店二维码一键启动任务", img: "/assets/placeholder-app.svg" },
-  { title: "社交互动点", category: "交互插件", desc: "多人共享与协作游戏模式", img: "/assets/placeholder-app.svg" },
-  { title: "位置签到卡", category: "交互插件", desc: "持久化身份与进度保存", img: "/assets/placeholder-app.svg" },
-  { title: "即时推送系统", category: "交互插件", desc: "隐藏任务与时限事件通知", img: "/assets/placeholder-app.svg" },
-  
-  // AI插件
-  { title: "AI导游伴侣", category: "AI插件", desc: "实时路线规划与动态推荐", img: "/assets/placeholder-app.svg" },
-  { title: "任务生成器", category: "AI插件", desc: "基于用户与环境的智能生成", img: "/assets/placeholder-app.svg" },
-  { title: "对话代理", category: "AI插件", desc: "多轮交互的自然语言处理", img: "/assets/placeholder-app.svg" },
-  { title: "智能匹配器", category: "AI插件", desc: "用户偏好与商户的精准适配", img: "/assets/placeholder-app.svg" },
-  { title: "行为分析器", category: "AI插件", desc: "实时学习与系统持续优化", img: "/assets/placeholder-app.svg" },
-  
-  // 成就激励
-  { title: "徽章收集簿", category: "成就激励", desc: "完成任务解锁专属勋章", img: "/assets/placeholder-app.svg" },
-  { title: "排行榜竞技", category: "成就激励", desc: "实时排名与周期结算奖励", img: "/assets/placeholder-app.svg" },
-  { title: "等级进阶", category: "成就激励", desc: "持久化身份与角色成长体系", img: "/assets/placeholder-app.svg" },
-  { title: "奖励兑换", category: "成就激励", desc: "参与凭证与商户优惠券整合", img: "/assets/placeholder-app.svg" }
-];
+// ─── 数据源 ──────────────────────────────────────────────────
+// 目录数据统一放在 /content.js 的 __siteContent.appCatalog,详情页 deploy.html 读同一份。
+// 每条应用有稳定 slug,卡片链接按 slug 生成,不再依赖筛选排序后的数组下标。
+const CATALOG = (window.__siteContent && window.__siteContent.appCatalog) || { categories: [], apps: [] };
+const APPS = CATALOG.apps || [];
 
-// ─── Category counts ───
-const CATEGORIES = [
-  { name: "全部", key: null },
-  { name: "游戏", key: "游戏" },
-  { name: "剧情插件", key: "剧情插件" },
-  { name: "交互插件", key: "交互插件" },
-  { name: "AI插件", key: "AI插件" },
-  { name: "成就激励", key: "成就激励" }
-];
+// 侧栏筛选项 =「全部」+ 词表里的分类;词表(含 ?f= 用的 slug)只在 content.js 里维护一份
+const CATEGORIES = [{ slug: 'all', name: '全部' }].concat(CATALOG.categories || []);
 
-function countCategory(key) {
-  if (!key) return APPS.length;
-  return APPS.filter(a => a.category.includes(key)).length;
+// 中文标题按本地化规则(拼音)排序,而不是 Unicode 码点
+const COLLATOR = (typeof Intl !== 'undefined' && Intl.Collator)
+  ? new Intl.Collator('zh-Hans-CN', { numeric: true, sensitivity: 'base' })
+  : { compare: function(a, b) { return a < b ? -1 : (a > b ? 1 : 0); } };
+
+// 转义 helper 与详情页共用,定义在 /content.js 里(单一事实源)
+const escapeHTML = window.__siteEscapeHTML;
+
+function countCategory(slug) {
+  if (slug === 'all') return APPS.length;
+  const cat = CATEGORIES.find(c => c.slug === slug);
+  if (!cat) return 0;
+  return APPS.filter(a => a.category === cat.name).length;
+}
+
+// ─── URL 参数 ────────────────────────────────────────────────
+// 首页的分类入口形如 ./apechain.html?f=game。未知 slug 一律忽略,降级为「全部」。
+function readCategorySlugsFromURL() {
+  const raw = new URLSearchParams(window.location.search).get('f');
+  if (!raw) return [];
+  const known = CATEGORIES.map(c => c.slug);
+  return raw.split(',')
+    .map(s => s.trim().toLowerCase())
+    .filter(s => s && s !== 'all' && known.indexOf(s) !== -1);
+}
+
+// 把当前分类选择写回地址栏,便于分享和刷新后保持
+function syncURL(slugs) {
+  if (!window.history || !window.history.replaceState) return;
+  const params = new URLSearchParams(window.location.search);
+  if (slugs.length) params.set('f', slugs.join(','));
+  else params.delete('f');
+  const qs = params.toString();
+  window.history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
 }
 
 // ─── Render filters ───
-function renderFilters() {
+function setFilterChecked(label, on) {
+  label.classList.toggle('active', on);
+  label.querySelector('input[type="checkbox"]').checked = on;
+}
+
+function renderFilters(initialSlugs) {
   const el = document.getElementById('filterList');
-  el.innerHTML = CATEGORIES.map((cat, i) => {
-    const count = countCategory(cat.key);
-    const active = i === 0 ? 'active' : '';
+  el.innerHTML = CATEGORIES.map(cat => {
+    const checked = cat.slug === 'all' ? initialSlugs.length === 0 : initialSlugs.indexOf(cat.slug) !== -1;
     return `
-      <label class="FilterItem ${active}" data-filter="${cat.key || 'all'}">
-        <input type="checkbox" ${i === 0 ? 'checked' : ''} />
-        <span class="FilterItem-name">${cat.name}</span>
-        <span class="FilterItem-count">${count}</span>
+      <label class="FilterItem ${checked ? 'active' : ''}" data-filter="${escapeHTML(cat.slug)}" data-name="${escapeHTML(cat.name)}">
+        <input type="checkbox" ${checked ? 'checked' : ''} />
+        <span class="FilterItem-name">${escapeHTML(cat.name)}</span>
+        <span class="FilterItem-count">${countCategory(cat.slug)}</span>
       </label>
     `;
   }).join('');
 
-  el.addEventListener('click', (e) => {
-    // Ignore clicks on the checkbox itself to prevent double-fire from <label> default behavior
-    if (e.target.tagName === 'INPUT') return;
+  // 监听 change 而非 click:鼠标点 label 与键盘按空格都会触发,键盘用户同样可操作
+  el.addEventListener('change', (e) => {
     const label = e.target.closest('.FilterItem');
     if (!label) return;
 
-    // Toggle
     if (label.dataset.filter === 'all') {
-      // "All" activates only itself
-      el.querySelectorAll('.FilterItem').forEach(l => l.classList.remove('active'));
-      label.classList.add('active');
-      label.querySelector('input[type="checkbox"]').checked = true;
+      // 「全部」是互斥项:选中它就清掉其它分类
+      el.querySelectorAll('.FilterItem').forEach(l => setFilterChecked(l, l === label));
     } else {
-      // Toggle this filter
-      label.classList.toggle('active');
-      const cb = label.querySelector('input[type="checkbox"]');
-      cb.checked = label.classList.contains('active');
-
-      // If no category filter is active, activate "All"
-      const anyActive = el.querySelectorAll('.FilterItem[data-filter]:not([data-filter="all"]).active').length > 0;
-      const allItem = el.querySelector('[data-filter="all"]');
-      allItem.classList.toggle('active', !anyActive);
-      allItem.querySelector('input[type="checkbox"]').checked = !anyActive;
+      setFilterChecked(label, label.querySelector('input[type="checkbox"]').checked);
+      // 一个分类都没选时自动回到「全部」
+      const anyActive = el.querySelectorAll('.FilterItem.active:not([data-filter="all"])').length > 0;
+      setFilterChecked(el.querySelector('[data-filter="all"]'), !anyActive);
     }
     renderGrid();
   });
 }
 
-// ─── Render grid ───
+// ─── 渲染管线 ────────────────────────────────────────────────
+// 搜索、筛选、排序共用这一条管线,三者可叠加,不会互相清空。
+function readState() {
+  const slugs = [];
+  const names = [];
+  document.querySelectorAll('#filterList .FilterItem.active:not([data-filter="all"])').forEach(l => {
+    slugs.push(l.dataset.filter);
+    names.push(l.dataset.name);
+  });
+  const input = document.getElementById('searchInput');
+  return {
+    slugs: slugs,
+    names: names,
+    query: input ? input.value.trim().toLowerCase() : '',
+    sort: document.getElementById('sortSelect').value
+  };
+}
+
+function matchesQuery(app, query) {
+  if (!query) return true;
+  return (app.title + ' ' + (app.desc || '') + ' ' + app.category).toLowerCase().indexOf(query) !== -1;
+}
+
 function renderGrid() {
   const grid = document.getElementById('appGrid');
+  const state = readState();
 
-  // Get active filters
-  const activeFilters = [];
-  document.querySelectorAll('.FilterItem.active[data-filter]:not([data-filter="all"])').forEach(l => {
-    activeFilters.push(l.dataset.filter);
-  });
-  const showAll = activeFilters.length === 0;
+  const filtered = APPS
+    .filter(a => state.names.length === 0 || state.names.indexOf(a.category) !== -1)
+    .filter(a => matchesQuery(a, state.query))
+    .sort((a, b) => state.sort === 'alpha-desc'
+      ? COLLATOR.compare(b.title, a.title)
+      : COLLATOR.compare(a.title, b.title));
 
-  // Get sort
-  const sortVal = document.getElementById('sortSelect').value;
-
-  // Filter
-  let filtered = showAll
-    ? [...APPS]
-    : APPS.filter(a => activeFilters.some(f => a.category.includes(f)));
-
-  // Sort
-  if (sortVal === 'alpha-asc') {
-    filtered.sort((a, b) => a.title.localeCompare(b.title));
-  } else {
-    filtered.sort((a, b) => b.title.localeCompare(a.title));
+  if (!filtered.length) {
+    grid.innerHTML = '<p class="AppGrid-empty">' +
+      (state.query ? '没有匹配「' + escapeHTML(state.query) + '」的应用。' : '当前筛选条件下没有应用。') +
+      '换个关键词或分类试试。</p>';
+    return;
   }
 
-  // Render
-  grid.innerHTML = filtered.map((app, i) => `
-    <div class="AppCard-wrapper"><a href="${app.link || 'deploy.html?id=' + i}" class="AppCard" style="transition-delay: ${i * 30}ms">
+  grid.innerHTML = filtered.map((app, i) => {
+    // 稳定链接:已上线项走自己的入口,其余走详情页的 slug 寻址
+    const href = app.link || ('deploy.html?app=' + encodeURIComponent(app.slug));
+    const soon = app.status === 'soon';
+    return `
+    <div class="AppCard-wrapper"><a href="${escapeHTML(href)}" class="AppCard${soon ? ' is-soon' : ''}" style="transition-delay: ${i * 30}ms">
       <div class="AppCard-preview">
-        <img src="${app.img}" alt="${app.title}" loading="lazy" />
+        <img src="${escapeHTML(app.img)}" alt="${escapeHTML(app.title)}" loading="lazy" />
         <div class="AppCard-category">
-          <span class="AppCard-pill">${app.category.split(',')[0]}</span>
+          <span class="AppCard-pill">${escapeHTML(app.category)}</span>
         </div>
+        ${soon ? '<span class="AppCard-status">即将上线</span>' : ''}
         <!-- frame glow -->
         <div class="AppCard-frame">
           <svg viewBox="0 0 373 220" fill="none">
             <defs>
-              <linearGradient id="g${i}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="g-${escapeHTML(app.slug)}" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="10%" stop-color="#A281FF"/>
                 <stop offset="33%" stop-color="#EB8280"/>
                 <stop offset="66%" stop-color="#EBBF9A"/>
                 <stop offset="90%" stop-color="#89D0FF"/>
               </linearGradient>
             </defs>
-            <rect x="16" y="16" width="341" height="188" rx="8" stroke="url(#g${i})" stroke-width="2" fill="none"/>
+            <rect x="16" y="16" width="341" height="188" rx="8" stroke="url(#g-${escapeHTML(app.slug)})" stroke-width="2" fill="none"/>
           </svg>
         </div>
       </div>
       <div class="AppCard-content">
         <div class="AppCard-content-inner">
-          <div class="AppCard-name">${app.title}</div>
-          ${app.desc ? `<div class="AppCard-desc">${app.desc}</div>` : ''}
+          <div class="AppCard-name">${escapeHTML(app.title)}</div>
+          ${app.desc ? `<div class="AppCard-desc">${escapeHTML(app.desc)}</div>` : ''}
         </div>
       </div>
     </a></div>
-  `).join('');
+  `;
+  }).join('');
+
+  syncURL(state.slugs);
 
   // Trigger scroll reveal
   observeCards();
 }
 
 // ─── Scroll reveal ───
-function observeCards() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px 60px 0px' });
+// F19:observer 提到模块作用域,只建一个,每次重绘先 disconnect 再重新观察。
+// 原来是每次 renderGrid() 都 new 一个且从不 disconnect —— 筛选/排序/搜索各触发一次。
+// IntersectionObserver 对 target 持**强引用**,而 renderGrid 用 innerHTML 换掉了旧卡片,
+// 于是每次重绘都把「一批脱离文档的节点 + 一个还活着的 observer」永久留在内存里。
+let cardObserver = null;
 
-  document.querySelectorAll('.AppCard:not(.visible)').forEach(el => observer.observe(el));
+function observeCards() {
+  if (!cardObserver) {
+    cardObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          cardObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px 60px 0px' });
+  }
+  // 旧卡片已被 innerHTML 替换,先断开对它们的引用再观察本轮的卡片
+  cardObserver.disconnect();
+  document.querySelectorAll('.AppCard:not(.visible)').forEach(el => cardObserver.observe(el));
 }
 
 // ─── Sort init ───
 document.getElementById('sortSelect').addEventListener('change', function() {
-  const txt = this.options[this.selectedIndex].text;
-  document.getElementById('sortDisplay').textContent = txt;
+  document.getElementById('sortDisplay').textContent = this.options[this.selectedIndex].text;
   renderGrid();
 });
 
 // ─── Search ───
-document.querySelector('.SearchBox input').addEventListener('input', function() {
-  const q = this.value.toLowerCase().trim();
-  document.querySelectorAll('.AppCard').forEach(card => {
-    const name = card.querySelector('.AppCard-name').textContent.toLowerCase();
-    card.style.display = name.includes(q) ? '' : 'none';
-  });
-});
+document.getElementById('searchInput').addEventListener('input', renderGrid);
 
 // ─── Init ───
-renderFilters();
-renderGrid();
+if (!escapeHTML || !APPS.length) {
+  // /content.js 没加载成功:给出明确提示,不要留一个空白页面
+  document.getElementById('appGrid').innerHTML =
+    '<p class="AppGrid-empty">应用目录加载失败,请刷新页面重试。</p>';
+} else {
+  renderFilters(readCategorySlugsFromURL());
+  renderGrid();
+}
 </script>
 
   <script src="/site-shell.js" defer></script>
