@@ -48,6 +48,11 @@ const caseAssets = {
   refWalker: '/assets/case-citywalk-ref/cropped/IMG_9557-crop.jpg'
 };
 
+// 侧栏纵向位移的三个参数(px / 滚动距离),供 updateMotion 计算,不再散落成魔数
+const SIDE_NAV_TOP = 96;
+const SIDE_NAV_LIFT_START = 450;
+const SIDE_NAV_LIFT_RANGE = 894;
+
 function metaStrip(meta) {
   if (!meta) return '';
   const cells = [
@@ -434,19 +439,18 @@ function baseStyles() {
       body { margin: 0; min-height: 100vh; background: #000; color: var(--white); overflow-x: hidden; }
       a { color: inherit; text-decoration: none; }
       button { font: inherit; cursor: pointer; }
-      .topbar {
+      /* 页面操作条:导航/页脚由共享站壳(site-shell.js)提供,这里只放本页专属操作。
+         top 留出站壳固定顶栏(桌面 64px / 移动 56px)的高度。 */
+      .page-actions {
         position: fixed;
-        top: 26px;
+        top: 78px;
         left: 22px;
         right: 22px;
         z-index: 50;
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        align-items: center;
+        display: flex;
+        justify-content: center;
         pointer-events: none;
       }
-      .mark { width: 54px; height: 32px; pointer-events: auto; color: #fff; }
-      .mark svg { width: 100%; height: 100%; display: block; }
       .timeline-pill { display: inline-flex; align-items: center; gap: 8px; pointer-events: auto; }
       .pill {
         border: 0;
@@ -462,25 +466,6 @@ function baseStyles() {
         text-transform: uppercase;
       }
       .pill.icon { width: 52px; padding: 0; display: grid; place-items: center; font-size: 28px; line-height: 1; }
-      .menu {
-        justify-self: end;
-        width: 48px;
-        height: 46px;
-        border: 0;
-        border-radius: 12px;
-        background: var(--pill);
-        pointer-events: auto;
-        position: relative;
-      }
-      .menu::before,
-      .menu::after { content: ""; position: absolute; left: 15px; right: 15px; height: 2px; background: #fff; }
-      .menu::before { top: 17px; }
-      .menu::after { top: 27px; }
-      .topbar-nav { display: flex; gap: 24px; align-items: center; }
-      .topbar-nav a { color: rgba(255,255,255,.6); text-decoration: none; font-size: 14px; letter-spacing: .08em; }
-      .topbar-nav a:hover,
-      .topbar-nav a[aria-current="page"] { color: #fff; }
-      @media (max-width: 640px) { .topbar-nav { display: none; } }
       .loader-screen {
         position: fixed;
         inset: 0;
@@ -501,32 +486,20 @@ function baseStyles() {
   `;
 }
 
-function topbar(center = '') {
-  return `
-    <div class="topbar">
-      <a class="mark" href="./index.html" aria-label="Back to home">
-        <svg viewBox="0 0 100 60" aria-hidden="true"><path d="M5 8L88 25L74 36L94 52L26 35L37 27L5 8Z" fill="white"/></svg>
-      </a>
-      <nav class="topbar-nav">
-        <a href="./index.html">探索</a>
-        <a href="./ip.html" aria-current="page">IP</a>
-        <a href="./build.html">构建</a>
-        <a href="./about.html">联系我们</a>
-      </nav>
-      ${center}
-      <button class="menu" type="button" aria-label="Menu"></button>
-    </div>
-  `;
+/* 本页专属操作条。品牌 logo、主导航与移动端汉堡菜单一律走共享站壳,
+   不再在这里手写第二份(原来那份的汉堡按钮没有任何监听,移动端等于没有导航)。 */
+function pageActions(content = '') {
+  return `<div class="page-actions">${content}</div>`;
 }
 
 function renderHome() {
   root.innerHTML = `
     ${baseStyles()}
     <style>
-      body { overflow: hidden; }
+      /* 首屏满屏但不锁死文档滚动:站壳页脚(法律/联系入口)接在下面,用户滚得到 */
       .home {
-        position: fixed;
-        inset: 0;
+        position: relative;
+        height: 100vh;
         overflow: hidden;
         background: #000;
         --liquid-x: 50%;
@@ -795,15 +768,14 @@ function renderHome() {
     </style>
     <div class="home">
       <div class="loader-screen">WORLD/IP</div>
-      ${topbar('')}
-      <div class="cube-carousel" aria-label="World archive carousel">
+      <div class="cube-carousel" role="group" aria-label="项目档案轮播(左右方向键切换)">
         <div class="cube-ring">
-          <button class="home-card left" data-face="left" type="button" aria-label="Show previous archive"></button>
-          <button class="home-card front active" data-face="front" type="button" aria-label="Enter selected archive"></button>
-          <button class="home-card right" data-face="right" type="button" aria-label="Show next archive"></button>
+          <button class="home-card left" data-face="left" type="button" aria-label="上一个项目"></button>
+          <button class="home-card front active" data-face="front" type="button" aria-label="进入当前项目"></button>
+          <button class="home-card right" data-face="right" type="button" aria-label="下一个项目"></button>
         </div>
-        <button class="carousel-zone left-zone" type="button" aria-label="Show previous archive"></button>
-        <button class="carousel-zone right-zone" type="button" aria-label="Show next archive"></button>
+        <button class="carousel-zone left-zone" type="button" aria-label="上一个项目"></button>
+        <button class="carousel-zone right-zone" type="button" aria-label="下一个项目"></button>
       </div>
       <div class="home-title">WORLD / IP</div>
       <div class="home-years">[2026 - LIVE]</div>
@@ -818,12 +790,14 @@ function renderHome() {
     front: document.querySelector('.home-card.front'),
     right: document.querySelector('.home-card.right')
   };
+  const carousel = document.querySelector('.cube-carousel');
   const leftZone = document.querySelector('.left-zone');
   const rightZone = document.querySelector('.right-zone');
   let activeIndex = 0;
   let currentAngle = 0;
   let isAnimating = false;
   let dragStartX = 0;
+  let dragStartY = 0;
   let dragging = false;
   let suppressClick = false;
 
@@ -850,7 +824,7 @@ function renderHome() {
   function setFace(face, project, role) {
     face.dataset.project = project.id;
     face.innerHTML = projectVisual(project, role !== 'front');
-    face.setAttribute('aria-label', role === 'front' ? `Enter ${project.title}` : `Show ${project.title}`);
+    face.setAttribute('aria-label', role === 'front' ? `进入 ${project.title}` : `切换到 ${project.title}`);
     face.classList.toggle('active', role === 'front');
   }
 
@@ -973,25 +947,38 @@ function renderHome() {
   leftZone?.addEventListener('click', () => animateTo(-1));
   rightZone?.addEventListener('click', () => animateTo(1));
 
-  window.addEventListener('wheel', event => {
-    event.preventDefault();
-    animateTo(event.deltaY > 0 ? 1 : -1);
-  }, { passive: false });
+  /* 滚轮:只认横向滚动(触控板左右划),并且全程 passive —— 不再 preventDefault,
+     所以浏览器缩放(Ctrl+滚轮 / 双指捏合)和页面纵向滚动都保持正常。 */
+  carousel?.addEventListener('wheel', event => {
+    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY) || Math.abs(event.deltaX) < 12) return;
+    animateTo(event.deltaX > 0 ? 1 : -1);
+  }, { passive: true });
 
-  window.addEventListener('pointerdown', event => {
+  /* 拖拽:只在轮播容器上生效(原来挂在 window 上,顶栏划一下或选中文字都会转卡),
+     且要求横向位移明显大于纵向,避免和上下滚动抢手势。 */
+  carousel?.addEventListener('pointerdown', event => {
     dragging = true;
     dragStartX = event.clientX;
+    dragStartY = event.clientY;
   }, { passive: true });
-  window.addEventListener('pointerup', event => {
+  carousel?.addEventListener('pointerup', event => {
     if (!dragging) return;
     dragging = false;
     const delta = event.clientX - dragStartX;
-    if (Math.abs(delta) > 70) {
+    const deltaY = event.clientY - dragStartY;
+    if (Math.abs(delta) > 70 && Math.abs(delta) > Math.abs(deltaY)) {
       suppressClick = true;
       animateTo(delta < 0 ? 1 : -1);
       setTimeout(() => { suppressClick = false; }, 180);
     }
   }, { passive: true });
+  carousel?.addEventListener('pointercancel', () => { dragging = false; }, { passive: true });
+
+  /* 键盘:卡片本身是 button,左右方向键在轮播内切换项目 */
+  carousel?.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft') { event.preventDefault(); animateTo(-1); }
+    if (event.key === 'ArrowRight') { event.preventDefault(); animateTo(1); }
+  });
 
   window.addEventListener('resize', () => updateGeometry(currentAngle), { passive: true });
 
@@ -1004,7 +991,6 @@ function renderDetail() {
   const leftProject = projects[wrapProjectIndex(projectIndex - 1)];
   const rightProject = projects[wrapProjectIndex(projectIndex + 1)];
   const nextProject = rightProject;
-  const nextRightProject = projects[wrapProjectIndex(projectIndex + 2)];
 
   root.innerHTML = `
     ${baseStyles()}
@@ -1013,7 +999,7 @@ function renderDetail() {
       .page { position: relative; min-height: 100vh; background: #000; --scroll: 0; }
       .side-nav {
         position: fixed; left: 20px; top: 0; z-index: 30; display: grid; gap: 8px;
-        transform: translate3d(0, 990px, 0); transition: opacity 0.8s ease 0.25s, transform 0.8s cubic-bezier(.2,.8,.2,1) 0.25s; will-change: transform;
+        transform: translate3d(0, calc(100vh - 90px), 0); transition: opacity 0.8s ease 0.25s, transform 0.8s cubic-bezier(.2,.8,.2,1) 0.25s; will-change: transform;
       }
       .side-nav a {
         width: max-content; min-width: 86px; max-width: 210px; height: 33px; display: inline-flex; align-items: center; justify-content: space-between; gap: 18px;
@@ -1959,13 +1945,18 @@ function renderDetail() {
       .map-nodes::after { inset: 31% 25%; border-color: rgba(156,255,109,0.28); }
       .node { position: absolute; transform: translate(-50%,-50%); min-width: 128px; padding: 10px 12px; border-radius: 6px; background: rgba(0,0,0,0.76); border: 1px solid rgba(255,255,255,0.22); color: #fff; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; animation: nodePulse 3.8s ease-in-out infinite; }
       @keyframes nodePulse { 0%,100% { box-shadow: 0 0 0 rgba(125,249,255,0); } 50% { box-shadow: 0 0 26px rgba(125,249,255,0.14); } }
+      /* 章末的“下一个项目”出口:一个普通链接,不再自动劫持滚动跳转 */
       .next-scroll {
         position: relative;
-        min-height: 92vh;
+        min-height: 62vh;
         display: grid;
         place-items: center;
+        align-content: center;
+        gap: 18px;
+        padding: 80px 22px;
         overflow: hidden;
         background: #000;
+        text-align: center;
       }
       .next-scroll::before {
         content: "";
@@ -1979,97 +1970,42 @@ function renderDetail() {
       .next-scroll__label {
         position: relative;
         z-index: 1;
-        color: #fff;
+        margin: 0;
+        color: rgba(255,255,255,0.55);
         font-family: var(--mono);
         font-size: 13px;
         font-weight: 800;
         letter-spacing: 0.08em;
         text-transform: uppercase;
       }
-      .handoff {
-        position: fixed;
-        inset: 0;
-        z-index: 80;
-        overflow: hidden;
-        background: #000;
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        perspective: 980px;
-        perspective-origin: 50% 42%;
-        transform-style: preserve-3d;
-        transition: opacity 0.42s ease, visibility 0.42s ease;
-      }
-      .handoff.is-active { opacity: 1; visibility: visible; }
-      .handoff-ring {
-        position: absolute;
-        left: 50%;
-        top: 9vh;
-        width: min(52vw, 730px);
-        aspect-ratio: 1 / 1;
-        transform-style: preserve-3d;
-        transform-origin: 50% 50%;
-        will-change: transform;
-      }
-      .handoff-card {
-        position: absolute;
-        left: 50%;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        border: 0;
-        background: #dde1fb;
-        box-shadow:
-          -3px 0 0 rgba(255,75,24,0.72),
-          3px 0 0 rgba(0,118,255,0.9),
-          0 0 0 8px #030303,
-          28px 22px 0 rgba(0,0,0,0.9);
-        transform-style: preserve-3d;
-        backface-visibility: visible;
-        will-change: transform, opacity, filter;
-      }
-      .handoff-card.front {
-        background:
-          radial-gradient(circle at 62% 38%, rgba(255,255,255,0.18), transparent 15%),
-          linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
-          #07080d;
-        background-size: auto, 44px 44px, 44px 44px, auto;
-      }
-      .handoff-card svg {
-        position: absolute;
-        inset: 13%;
-        width: 74%;
-        height: 74%;
-        filter: drop-shadow(0 20px 18px rgba(0,0,0,0.28));
-      }
-      .handoff-card:not(.front) svg { opacity: 0.34; }
-      .handoff-title {
-        position: absolute;
-        left: 1vw;
-        right: -1vw;
-        bottom: 4.2vh;
-        z-index: 7;
+      .next-scroll__link {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 30px;
+        border: 1px solid rgba(255,255,255,0.28);
+        border-radius: 14px;
         color: #fff;
         font-family: var(--display);
-        font-size: clamp(108px, 18vw, 260px);
-        line-height: 0.7;
-        letter-spacing: 0;
+        font-size: clamp(30px, 5vw, 54px);
+        line-height: 1;
         text-transform: uppercase;
-        pointer-events: none;
+        transition: border-color 0.25s ease, background 0.25s ease;
       }
-      .handoff-status {
-        position: absolute;
-        left: 24px;
-        bottom: 26px;
-        z-index: 8;
-        color: #fff;
-        font-size: 15px;
-        font-weight: 800;
-        letter-spacing: 0.04em;
+      .next-scroll__link:hover,
+      .next-scroll__link:focus-visible { border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.06); }
+      .next-scroll__hint {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        max-width: 34em;
+        color: rgba(255,255,255,0.5);
+        font-family: var(--mono);
+        font-size: 13px;
+        line-height: 1.8;
       }
-      body.handoff-lock { overflow: hidden; }
       @media (max-width: 900px) {
         .side-nav { display: none; }
         .hero { min-height: 1180px; }
@@ -2133,14 +2069,12 @@ function renderDetail() {
           padding: 74px 18px 34px 78px;
         }
         .event-strip, .entry-row, .entity-row { grid-template-columns: 1fr; }
-        .handoff-ring { top: 18vh; width: 82vw; }
-        .handoff-title { font-size: 45vw; bottom: 6vh; }
       }
     </style>
     <div class="page project-${project.id}">
       <div class="loader-screen">WORLD/IP</div>
-      ${topbar('<div class="timeline-pill"><a class="pill icon" href="./ip.html" aria-label="Back">‹</a><a class="pill" href="#about">TIMELINE</a></div>')}
-      <nav class="side-nav" aria-label="Section navigation">
+      ${pageActions('<div class="timeline-pill"><a class="pill icon" href="./ip.html" aria-label="返回 IP 世界">‹</a><a class="pill" href="#about">TIMELINE</a></div>')}
+      <nav class="side-nav" aria-label="章节导航">
         ${navItems.map(([label, id], index) => `<a class="${index === 0 ? 'active' : ''}" href="#${id}">${label}</a>`).join('')}
       </nav>
       <section class="hero" id="about">
@@ -2160,20 +2094,15 @@ function renderDetail() {
           <div></div><div class="tag-pill">${project.tag}</div>
         </div>
       </section>
-      <section class="media-block" aria-label="World layer media preview"><div class="play">Play</div></section>
+      <section class="media-block" aria-label="世界层影像预览"><div class="play">Play</div></section>
       <main class="content">
         ${renderProjectArticles(project)}
       </main>
-      <section class="next-scroll" aria-label="Scroll for next archive"><div class="next-scroll__label">Scroll for ${nextProject.title}</div></section>
-      <div class="handoff" aria-hidden="true">
-        <div class="handoff-ring">
-          <div class="handoff-card left">${projectVisual(leftProject, true)}</div>
-          <div class="handoff-card front">${projectVisual(project, true)}</div>
-          <div class="handoff-card right">${projectVisual(nextProject, true)}</div>
-        </div>
-        <div class="handoff-title">WORLD / IP</div>
-        <div class="handoff-status">Scroll for ${nextProject.short}</div>
-      </div>
+      <section class="next-scroll" aria-labelledby="next-project-label">
+        <p class="next-scroll__label" id="next-project-label">下一个项目</p>
+        <a class="next-scroll__link" href="./ip.html?project=${nextProject.id}">${nextProject.title} <span aria-hidden="true">→</span></a>
+        <p class="next-scroll__hint">${nextProject.short}</p>
+      </section>
     </div>
   `;
 
@@ -2188,18 +2117,9 @@ function renderDetail() {
   const archiveCard = document.querySelector('.archive-card');
   const heroIndex = document.querySelector('.hero-index');
   const sideNav = document.querySelector('.side-nav');
-  const nextScroll = document.querySelector('.next-scroll');
-  const handoff = document.querySelector('.handoff');
-  const handoffRing = document.querySelector('.handoff-ring');
   const routeMap = document.querySelector('[data-route-map]');
   const routePath = document.querySelector('[data-route-path]');
   const routeNodes = Array.from(document.querySelectorAll('[data-route-node]'));
-  const handoffFaces = {
-    left: document.querySelector('.handoff-card.left'),
-    front: document.querySelector('.handoff-card.front'),
-    right: document.querySelector('.handoff-card.right')
-  };
-  let handoffStarted = false;
 
   requestAnimationFrame(() => setTimeout(() => document.body.classList.add('loaded'), 540));
   requestAnimationFrame(() => {
@@ -2232,16 +2152,18 @@ function renderDetail() {
     setActiveNav(currentId);
   }
 
-  let ticking = false;
-  function maybeStartHandoff() {
-    if (handoffStarted) return;
-    const nextRect = nextScroll.getBoundingClientRect();
-    const nearDocumentEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 140;
-    const nextPromptEntered = nextRect.top <= window.innerHeight * 0.42;
-    if (nearDocumentEnd || nextPromptEntered) startNextHandoff();
-  }
+  /* 首屏视差涉及的九个模板元素:缺任意一个就整体跳过,
+     不再让每个滚动帧都抛 TypeError(章节高亮仍照常工作)。 */
+  const motionEls = [pageEl, cubeStage, mainCube, leftCube, rightCube, heroTitle, archiveCard, heroIndex];
+  const motionReady = motionEls.every(Boolean);
 
+  let ticking = false;
   function updateMotion() {
+    ticking = false;
+    if (!motionReady) {
+      updateActiveNav();
+      return;
+    }
     const y = window.scrollY || 0;
     const p = clamp(y / 1000, 0, 1);
     const switchP = clamp((y - 220) / 760, 0, 1);
@@ -2259,7 +2181,12 @@ function renderDetail() {
     archiveCard.style.transform = `translate3d(0, ${p * -118}px, 0)`;
     heroIndex.style.transform = `translate3d(0, ${p * -170}px, 0)`;
     heroIndex.style.opacity = String(clamp(1 - p * 1.6, 0, 1));
-    sideNav.style.transform = `translate3d(0, ${clamp(1440 - y, 96, 990)}px, 0)`;
+    if (sideNav) {
+      // 侧栏从视口下缘附近升到顶部锚点。原来写死的 1440/96/990 只在 1080 高的视口上对得上。
+      const navRest = Math.max(SIDE_NAV_TOP, window.innerHeight - 90);
+      const navP = clamp((y - SIDE_NAV_LIFT_START) / SIDE_NAV_LIFT_RANGE, 0, 1);
+      sideNav.style.transform = `translate3d(0, ${(navRest + (SIDE_NAV_TOP - navRest) * navP).toFixed(1)}px, 0)`;
+    }
     if (routeMap && routePath) {
       const rect = routeMap.getBoundingClientRect();
       const progress = clamp((window.innerHeight * 0.78 - rect.top) / (rect.height + window.innerHeight * 0.18), 0, 1);
@@ -2271,15 +2198,15 @@ function renderDetail() {
       });
     }
     updateActiveNav();
-    ticking = false;
   }
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(updateMotion);
-      ticking = true;
-    }
-    maybeStartHandoff();
-  }, { passive: true });
+  function requestMotion() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(updateMotion);
+  }
+  window.addEventListener('scroll', requestMotion, { passive: true });
+  // 侧栏位置依赖视口高度,窗口尺寸变化时也要重算
+  window.addEventListener('resize', requestMotion, { passive: true });
   updateMotion();
 
   const revealObserver = new IntersectionObserver((entries) => {
@@ -2290,105 +2217,6 @@ function renderDetail() {
   document.querySelectorAll('.article, .archive-image, .event-card, .entity-row, .entry').forEach(el => revealObserver.observe(el));
 
   setupArchiveRail();
-
-  const handoffObserver = new IntersectionObserver((entries) => {
-    if (entries.some(entry => entry.isIntersecting)) startNextHandoff();
-  }, { threshold: 0.34 });
-  handoffObserver.observe(nextScroll);
-
-  function easeInOutCubic(t) {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  }
-
-  function setHandoffFace(face, projectForFace, role) {
-    face.dataset.project = projectForFace.id;
-    face.innerHTML = projectVisual(projectForFace, role !== 'front');
-    face.classList.toggle('front', role === 'front');
-    face.classList.toggle('left', role === 'left');
-    face.classList.toggle('right', role === 'right');
-  }
-
-  function updateHandoffGeometry(angle = 0) {
-    const size = handoffRing.getBoundingClientRect().width;
-    const half = size / 2;
-    const wallAngle = 72;
-    const wallRadians = wallAngle * Math.PI / 180;
-    const hingeX = half;
-    const sideCenter = half + (Math.cos(wallRadians) * half) - size * 0.045;
-    const sideZ = Math.sin(wallRadians) * half;
-    const states = {
-      '-2': { x: -sideCenter - size * 0.64, z: sideZ * 1.16, ry: wallAngle + 18, opacity: 0, filter: 0.42 },
-      '-1': { x: -sideCenter, z: sideZ, ry: wallAngle, opacity: 0.94, filter: 0.86 },
-      '0': { x: 0, z: 0, ry: 0, opacity: 1, filter: 1 },
-      '1': { x: sideCenter, z: sideZ, ry: -wallAngle, opacity: 0.94, filter: 0.86 },
-      '2': { x: sideCenter + size * 0.64, z: sideZ * 1.16, ry: -wallAngle - 18, opacity: 0, filter: 0.42 }
-    };
-
-    function mix(from, to, t) {
-      return from + (to - from) * t;
-    }
-
-    function stateFor(slot) {
-      const clamped = Math.max(-2, Math.min(2, slot));
-      const lower = Math.floor(clamped);
-      const upper = Math.ceil(clamped);
-      if (lower === upper) return states[String(lower)];
-      const start = states[String(lower)];
-      const end = states[String(upper)];
-      const t = clamped - lower;
-      return {
-        x: mix(start.x, end.x, t),
-        z: mix(start.z, end.z, t),
-        ry: mix(start.ry, end.ry, t),
-        opacity: mix(start.opacity, end.opacity, t),
-        filter: mix(start.filter, end.filter, t)
-      };
-    }
-
-    function place(face, baseSlot) {
-      const state = stateFor(baseSlot - angle);
-      face.style.transform = `translate3d(calc(-50% + ${state.x}px), 0, ${state.z}px) rotateY(${state.ry}deg)`;
-      face.style.opacity = state.opacity;
-      face.style.filter = `brightness(${state.filter}) saturate(${face.classList.contains('front') ? 1 : 0.9})`;
-      face.style.zIndex = String(Math.round((state.z + hingeX) * 10));
-    }
-
-    handoffRing.style.transform = 'translateX(-50%) rotateZ(-4deg)';
-    place(handoffFaces.left, -1);
-    place(handoffFaces.front, 0);
-    place(handoffFaces.right, 1);
-  }
-
-  function startNextHandoff() {
-    if (handoffStarted) return;
-    handoffStarted = true;
-    handoffObserver.disconnect();
-    document.body.classList.add('handoff-lock');
-    handoff.classList.add('is-active');
-    updateHandoffGeometry(0);
-
-    const duration = 980;
-    const startedAt = performance.now() + 180;
-
-    function step(now) {
-      const t = Math.max(0, Math.min((now - startedAt) / duration, 1));
-      updateHandoffGeometry(easeInOutCubic(t));
-      if (t < 1) {
-        requestAnimationFrame(step);
-        return;
-      }
-
-      setHandoffFace(handoffFaces.left, project, 'left');
-      setHandoffFace(handoffFaces.front, nextProject, 'front');
-      setHandoffFace(handoffFaces.right, nextRightProject, 'right');
-      updateHandoffGeometry(0);
-      setTimeout(() => {
-        window.location.href = `./ip.html?project=${nextProject.id}`;
-      }, 260);
-    }
-
-    requestAnimationFrame(step);
-  }
 }
 
 if (detailMode) renderDetail();

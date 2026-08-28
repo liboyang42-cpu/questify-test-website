@@ -2297,41 +2297,23 @@
 // 城瘾 Homepage — Interactions
 // ==========================================
 
-// ===== 1. Header Scroll Behavior =====
-(function() {
-  const header = document.getElementById('mainHeader');
-  if (!header) return;
-  let lastScrollY = 0;
-  let ticking = false;
-
-  window.addEventListener('scroll', function() {
-    if (!ticking) {
-      window.requestAnimationFrame(function() {
-        const currentScrollY = window.scrollY;
-
-        if (currentScrollY > 100) {
-          header.classList.add('scrolled');
-        } else {
-          header.classList.remove('scrolled');
-        }
-
-        if (currentScrollY > lastScrollY && currentScrollY > 200) {
-          header.classList.add('hidden-header');
-          header.classList.remove('show-header');
-        } else if (currentScrollY < lastScrollY && currentScrollY > 200) {
-          header.classList.remove('hidden-header');
-          header.classList.add('show-header');
-        } else if (currentScrollY <= 200) {
-          header.classList.remove('hidden-header');
-          header.classList.remove('show-header');
-        }
-
-        lastScrollY = currentScrollY;
-        ticking = false;
-      });
-      ticking = true;
-    }
-  });
+// ===== 1. 动效偏好(F25) =====
+// JS 动效统一从这里读 prefers-reduced-motion,并在系统偏好变化时实时通知各模块,
+// 而不是只在启动时读一次。CSS 侧的全局规则在 site-shell.css。
+window.cyMotion = (function() {
+  var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var listeners = [];
+  function notify() {
+    listeners.forEach(function(fn) {
+      try { fn(mq.matches); } catch (error) { /* 单个订阅者出错不影响其它模块 */ }
+    });
+  }
+  if (mq.addEventListener) mq.addEventListener('change', notify);
+  else if (mq.addListener) mq.addListener(notify);   // Safari < 14
+  return {
+    get reduced() { return mq.matches; },
+    onChange: function(fn) { listeners.push(fn); }
+  };
 })();
 
 
@@ -2381,11 +2363,29 @@
     });
 
     currentIndex = index;
+
+    // F17:原先靠 monkey-patch 在外面补这段广播,导致「先导出未打补丁的版本、后打补丁」。
+    // 直接写在函数体内,只有一个 updateCarousel,导出的就是完整版本。
+    window.__carouselCurrentIndex = index;
+    if (window.__onCarouselChange) {
+      window.__onCarouselChange(index);
+    }
   }
 
   function rotateCarousel() {
     var next = (currentIndex + 1) % appsData.length;
     updateCarousel(next);
+  }
+
+  // F25:减少动画偏好下不做自动轮播,只保留用户点击缩略图切换
+  function stopAutoRotate() {
+    if (intervalId) { clearInterval(intervalId); intervalId = null; }
+  }
+  function startAutoRotate() {
+    stopAutoRotate();
+    if (window.cyMotion && window.cyMotion.reduced) return;
+    if (appsData.length < 2) return;
+    intervalId = setInterval(rotateCarousel, 3000);
   }
 
   // Thumbnail click handlers
@@ -2394,15 +2394,13 @@
       var idx = parseInt(this.getAttribute('data-index'), 10);
       updateCarousel(idx);
       // Reset auto-rotation timer
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-      intervalId = setInterval(rotateCarousel, 3000);
+      startAutoRotate();
     });
   });
 
   // Start auto-rotation
-  intervalId = setInterval(rotateCarousel, 3000);
+  startAutoRotate();
+  if (window.cyMotion) window.cyMotion.onChange(startAutoRotate);
 
   // Render the first activity immediately instead of showing static fallback copy.
   updateCarousel(0);
@@ -2410,17 +2408,6 @@
   // Store for 3D ring sync
   window.__featuredApps = appsData;
   window.__updateCarousel = updateCarousel;
-  window.__carouselCurrentIndex = 0;
-
-  // Patch updateCarousel to notify 3D ring on changes
-  var _origUpdateCarousel = updateCarousel;
-  updateCarousel = function(idx) {
-    _origUpdateCarousel(idx);
-    window.__carouselCurrentIndex = idx;
-    if (window.__onCarouselChange) {
-      window.__onCarouselChange(idx);
-    }
-  };
 
   // Initial fade-in for name/desc
   if (nameEl) { nameEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease'; }

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>城瘾</title>
   <link rel="stylesheet" href="/assets/fonts/fonts.css" />
+  <link rel="stylesheet" href="/site-shell.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
@@ -24,37 +25,11 @@
       pointer-events: none;
     }
 
-    /* ── Nav header ──────────────────────────────────── */
-    .SiteHeader {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 32px;
-    }
-    .SiteHeader::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
-      pointer-events: none;
-    }
-    .Header-logo {
-      position: relative;
-      z-index: 1;
-      font-family: 'Bebas Neue', 'Oswald', sans-serif;
-      font-size: 22px;
-      font-weight: 400;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #fff;
-      text-decoration: none;
-    }
+    /* ── 返回链接(顶栏与页脚由共享站壳 site-shell.js 注入) ─── */
     .Header-back {
       position: relative;
       z-index: 1;
+      align-self: start;
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -69,6 +44,9 @@
     }
     .Header-back:hover { color: #fff; }
     .Header-back svg { width: 14px; height: 14px; }
+
+    /* 星空 canvas 是 fixed z-index:0,给共享站壳页脚一个层级避免被盖住 */
+    .cy-footer { position: relative; z-index: 1; }
 
     /* ── Page layout ─────────────────────────────────── */
     .page {
@@ -233,6 +211,31 @@
       color: #fff;
     }
 
+    /* 「即将上线」徽标 —— 占位素材项在详情页也要显式标注 */
+    .app-badge {
+      position: absolute;
+      top: 14px; right: 14px;
+      z-index: 3;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      color: #0b0b0f;
+      background: rgba(255,255,255,0.85);
+      border-radius: 8px;
+      padding: 5px 9px;
+      backdrop-filter: blur(4px);
+    }
+
+    /* 没有可用入口时的按钮:不可点击、不可聚焦 */
+    .UIBtn.is-disabled {
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.5);
+      cursor: default;
+    }
+    .UIBtn.is-disabled:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.5); }
+    .UIBtn.is-disabled .UIBtn-glow { display: none; }
+
     /* Rainbow glow border on hover */
     .UIBtn-glow {
       position: absolute;
@@ -271,17 +274,6 @@
 
   <canvas id="cosmicCanvas"></canvas>
 
-  <!-- Nav -->
-  <header class="SiteHeader">
-    <a class="Header-logo" href="index.html">城瘾</a>
-    <a class="Header-back" href="index.html">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M9 2.5L4.5 7 9 11.5"/>
-      </svg>
-      返回
-    </a>
-  </header>
-
   <main class="page">
     <div class="page-inner">
 
@@ -290,23 +282,30 @@
         <div class="card-tilt" id="card3d">
           <div class="card-img-wrap">
             <img id="appImg" src="" alt="" />
+            <span class="app-badge" id="appBadge" hidden></span>
             <div class="card-shine" id="cardShine"></div>
           </div>
         </div>
       </div>
 
-      <!-- App info -->
+      <!-- App info（内容由下方脚本按 ?app=<slug> 填充） -->
       <div class="app-info">
-        <div class="app-eyebrow" id="appCategory">剧情插件</div>
-        <h1 class="app-name" id="appName">LBS任务链引擎</h1>
-        <p class="app-desc" id="appDesc">基于位置服务的任务链引擎，将现实城市地点与成就系统深度融合。</p>
+        <a class="Header-back" href="apechain.html">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 2.5L4.5 7 9 11.5"/>
+          </svg>
+          返回应用列表
+        </a>
+        <div class="app-eyebrow" id="appCategory">应用</div>
+        <h1 class="app-name" id="appName">城瘾应用</h1>
+        <p class="app-desc" id="appDesc"></p>
 
         <!-- App info details -->
         <div id="appInfo" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.85);"></div>
 
-        <div class="app-actions">
+        <div class="app-actions" id="appActions">
           <!-- Launch button -->
-          <a class="UIBtn primary" id="appLaunchBtn" href="#">
+          <a class="UIBtn primary" id="appLaunchBtn">
             <span class="UIBtn-glow">
               <svg viewBox="0 0 196 78" preserveAspectRatio="none">
                 <defs>
@@ -329,7 +328,7 @@
                 <rect x="0" y="0" width="196" height="78" rx="16" fill="none" stroke="url(#dgrad)" stroke-width="1.5"/>
               </svg>
             </span>
-            立即体验
+            <span id="appLaunchLabel">立即体验</span>
           </a>
 
           <!-- Share icon -->
@@ -352,272 +351,88 @@
   </main>
 
   <!-- Load content data -->
-  <script>
-  const APPS = [
-  // 游戏类
-  {
-    title: "城市任务链",
-    category: "游戏",
-    desc: "动态生成的城市探险任务与挑战",
-    img: "/assets/placeholder-app.svg",
-    introduction: "城市任务链是城瘾核心引擎，将城市地理转化为任务流。AI实时生成任务线路，用户探索城市同时完成目标。每条街道、每家门店都可能成为新的任务节点。",
-    gameplay: "打开应用 → 接收AI任务 → 导航至目标位置 → 完成交互 → 获得奖励 → 解锁下一环节。支持单人探险和多人协作。"
-  },
-  {
-    title: "地标收集",
-    category: "游戏",
-    desc: "扫码打卡城市地点解锁成就",
-    img: "/assets/placeholder-app.svg",
-    introduction: "探索城市的同时自动发现地标。每个地点都有独特的标识和背景故事。集齐同类型地标可解锁特殊徽章和奖励。",
-    gameplay: "靠近地标 → 自动识别 → 扫码或拍照确认 → 收集地标卡片 → 积累地点进度 → 达成主题集合获奖励。"
-  },
-  {
-    title: "商户竞赛",
-    category: "游戏",
-    desc: "跨店铺竞速与排行榜系统",
-    img: "/assets/placeholder-app.svg",
-    introduction: "多人竞速模式，挑战用户在规定时间内访问指定商户数量。排行榜实时更新，周期结算奖励。商户合作创建专属挑战。",
-    gameplay: "参加竞赛 → 接收商户清单 → 在限时内完成签到 → 提交成绩 → 查看排名 → 领取周期奖励。支持邀请好友组队竞争。"
-  },
-  {
-    title: "时间竞速",
-    category: "游戏",
-    desc: "限时任务与动态事件触发",
-    img: "/assets/placeholder-app.svg",
-    introduction: "时间驱动的任务系统，任务在特定时间自动出现和消失。抓住稍纵即逝的机会，完成闪电任务获得高倍奖励。",
-    gameplay: "接收时限提示 → 在规定时间内赶往地点 → 完成快速交互 → 获得加成奖励。夜间、周末、节假日有特殊任务加成。"
-  },
-  {
-    title: "阵营战争",
-    category: "游戏",
-    desc: "多人社交对抗与领地争夺",
-    img: "/assets/placeholder-app.svg",
-    introduction: "城市被划分为多个势力范围。加入阵营与其他玩家争夺领地控制权。控制的地区越多，每日收益越高。",
-    gameplay: "选择加入阵营 → 前往敌方领地 → 完成控制任务 → 转换领地颜色 → 每日获得地区收益 → 参与阵营战役。"
-  },
-  {
-    title: "解谜探案",
-    category: "游戏",
-    desc: "城市故事线谜题解构系统",
-    img: "/assets/placeholder-app.svg",
-    introduction: "多线程故事线，玩家通过收集线索解开城市之谜。线索分散在各个地点，需要逻辑推理才能破案。",
-    gameplay: "接收案件线索 → 前往相关地点 → 收集物证 → 进行推理 → 提交答案 → 解锁故事下一章 → 获得剧情奖励。"
-  },
-
-  // 剧情插件
-  {
-    title: "AI故事引擎",
-    category: "剧情插件",
-    desc: "生成式叙事与动态分支剧情",
-    img: "/assets/placeholder-app.svg",
-    introduction: "AI动态生成故事线，根据用户选择创建分支剧情。每个决定都影响故事走向，同一个任务可能有完全不同的结局。",
-    gameplay: "进入故事场景 → 阅读AI生成的叙述 → 做出选择影响剧情 → 解锁新的故事分支 → 体验不同的结局 → 重复游玩发现隐藏剧情。"
-  },
-  {
-    title: "角色伴侣系统",
-    category: "剧情插件",
-    desc: "AI NPC全程陪伴与实时对话",
-    img: "/assets/placeholder-app.svg",
-    introduction: "AI驱动的动态NPC，可自然对话交互。NPC会记住你的选择，根据历史互动调整态度和任务。",
-    gameplay: "与NPC对话 → 选择对话选项 → 发展NPC关系 → 触发角色支线任务 → 解锁隐藏剧情 → NPC提供特殊帮助。"
-  },
-  {
-    title: "城市传奇库",
-    category: "剧情插件",
-    desc: "本地化品牌故事与商户背景",
-    img: "/assets/placeholder-app.svg",
-    introduction: "每个商户都有自己的品牌故事和背景设定。探索商户历史，了解其在城市中的角色和影响力。",
-    gameplay: "进入商户地点 → 触发故事弹窗 → 阅读品牌背景 → 参与商户特殊活动 → 收集商户徽章 → 解锁隐藏优惠。"
-  },
-  {
-    title: "历史寻踪",
-    category: "剧情插件",
-    desc: "地点关联的互动内容解锁",
-    img: "/assets/placeholder-app.svg",
-    introduction: "地点本身就是内容。靠近特定位置自动解锁历史信息、文化背景或地理故事。",
-    gameplay: "靠近地点 → 自动接收历史提示 → 阅读地点背景 → 完成相关任务 → 拍照打卡 → 积累知识徽章。"
-  },
-
-  // 交互插件
-  {
-    title: "AR扫描引擎",
-    category: "交互插件",
-    desc: "虚实互动的沉浸式体验",
-    img: "/assets/placeholder-app.svg",
-    introduction: "增强现实技术将虚拟内容叠加到现实城市。扫描真实世界发现隐藏的AR内容、虚拟NPC和交互物件。",
-    gameplay: "打开AR扫描 → 对准城市环境 → 发现虚拟元素 → 与AR对象交互 → 收集虚拟奖励 → 拍摄AR照片分享。"
-  },
-  {
-    title: "QR即触发",
-    category: "交互插件",
-    desc: "门店二维码一键启动任务",
-    img: "/assets/placeholder-app.svg",
-    introduction: "商户在门店贴二维码，玩家扫码立即触发该商户的专属任务和优惠。简单快速的交互入口。",
-    gameplay: "靠近商户 → 看到二维码 → 快速扫描 → 任务自动启动 → 完成店内交互 → 领取优惠或奖励。"
-  },
-  {
-    title: "社交互动点",
-    category: "交互插件",
-    desc: "多人共享与协作游戏模式",
-    img: "/assets/placeholder-app.svg",
-    introduction: "在特定地点与其他玩家互动。共同完成合作任务、交换物品或进行竞技。",
-    gameplay: "进入社交地点 → 匹配其他玩家 → 组织合作或竞争 → 共同完成目标 → 获得分享奖励 → 建立社交关系。"
-  },
-  {
-    title: "位置签到卡",
-    category: "交互插件",
-    desc: "持久化身份与进度保存",
-    img: "/assets/placeholder-app.svg",
-    introduction: "在地点签到建立持久化足迹。签到卡记录你在城市中的探索历史，形成个人的位置数据档案。",
-    gameplay: "到达新地点 → 进行签到 → 收集位置卡片 → 查看签到历史 → 达成位置成就 → 分享签到路线。"
-  },
-  {
-    title: "即时推送系统",
-    category: "交互插件",
-    desc: "隐藏任务与时限事件通知",
-    img: "/assets/placeholder-app.svg",
-    introduction: "系统根据你的位置推送实时通知。发现隐藏的快闪活动、限时优惠、周边任务机会。",
-    gameplay: "接收位置推送 → 阅读隐藏任务信息 → 在指定时间赶去 → 完成闪电任务 → 获得稀有奖励。"
-  },
-
-  // AI插件
-  {
-    title: "AI导游伴侣",
-    category: "AI插件",
-    desc: "实时路线规划与动态推荐",
-    img: "/assets/placeholder-app.svg",
-    introduction: "AI智能导游根据你的偏好、位置和时间智能规划游览路线。动态调整推荐，避免冷门或危险区域。",
-    gameplay: "输入兴趣 → AI规划最优路线 → 跟随AI导航 → 接收实时推荐 → 发现隐藏景点 → 反馈评价优化AI。"
-  },
-  {
-    title: "任务生成器",
-    category: "AI插件",
-    desc: "基于用户与环境的智能生成",
-    img: "/assets/placeholder-app.svg",
-    introduction: "AI根据你的行为习惯、当前位置、时间、天气等因素实时生成个性化任务。每次打开都有新任务。",
-    gameplay: "打开应用 → AI自动生成个性化任务 → 完成任务获奖励 → 系统学习你的偏好 → 下次任务更贴切。"
-  },
-  {
-    title: "对话代理",
-    category: "AI插件",
-    desc: "多轮交互的自然语言处理",
-    img: "/assets/placeholder-app.svg",
-    introduction: "自然对话的AI助手，可以用自然语言提问、寻求建议、解决问题。支持长对话上下文记忆。",
-    gameplay: "点击对话 → 自然语言提问 → AI实时回复 → 多轮对话追问 → 获得帮助信息 → 反馈改进AI。"
-  },
-  {
-    title: "智能匹配器",
-    category: "AI插件",
-    desc: "用户偏好与商户的精准适配",
-    img: "/assets/placeholder-app.svg",
-    introduction: "AI学习你的消费习惯和兴趣偏好，推荐最匹配的商户、优惠和活动。精准度随使用次数提升。",
-    gameplay: "使用系统建立偏好档案 → AI推荐相关商户 → 前往消费 → 系统记录反馈 → 推荐越来越精准。"
-  },
-  {
-    title: "行为分析器",
-    category: "AI插件",
-    desc: "实时学习与系统持续优化",
-    img: "/assets/placeholder-app.svg",
-    introduction: "后台AI不断分析所有用户行为，优化系统推荐、任务生成、路线规划。个人体验随时间不断改进。",
-    gameplay: "正常使用系统 → AI在后台学习 → 逐步优化体验 → 周期获得个性化报告 → 享受定制体验。"
-  },
-
-  // 成就激励
-  {
-    title: "徽章收集簿",
-    category: "成就激励",
-    desc: "完成任务解锁专属勋章",
-    img: "/assets/placeholder-app.svg",
-    introduction: "完成各类任务和挑战解锁勋章。勋章代表你的成就，可分享展示。集齐主题勋章组合激活特殊效果。",
-    gameplay: "完成特定任务 → 解锁相关勋章 → 查看徽章详情 → 集齐同系列勋章 → 激活勋章加成 → 展示成就。"
-  },
-  {
-    title: "排行榜竞技",
-    category: "成就激励",
-    desc: "实时排名与周期结算奖励",
-    img: "/assets/placeholder-app.svg",
-    introduction: "多维度排行榜实时更新排名。按积分、任务完成数、地点探索数等不同维度竞争。每周期结算奖励。",
-    gameplay: "完成任务累积积分 → 查看实时排名 → 目标冲刺高排名 → 周期结算获奖励 → 新周期排名重置。"
-  },
-  {
-    title: "等级进阶",
-    category: "成就激励",
-    desc: "持久化身份与角色成长体系",
-    img: "/assets/placeholder-app.svg",
-    introduction: "完成任务获经验升级。等级决定可解锁内容、任务难度和奖励幅度。高等级玩家获得特殊头衔。",
-    gameplay: "完成任务获经验 → 积累升级经验条 → 等级提升解锁新功能 → 获得等级奖励 → 挑战更高难度任务。"
-  },
-  {
-    title: "奖励兑换",
-    category: "成就激励",
-    desc: "积分与商户优惠券整合",
-    img: "/assets/placeholder-app.svg",
-    introduction: "积累的成就和积分可兑换商户优惠或现实奖励。系统记录保证权益持续有效。",
-    gameplay: "积累成就积分 → 进入兑换商城 → 选择奖励类型 → 完成兑换 → 获得参与凭证 → 商户使用优惠。"
-  }
-];
-  </script>
-
   <script src="/content.js"></script>
 
   <script>
-    // ── Populate from URL param ──────────────────────────
+    // ── 按稳定 slug 取应用 ────────────────────────────────
+    // 目录数据来自 /content.js 的 __siteContent.appCatalog,与列表页 apechain.html 共用同一份。
+    // 地址形如 deploy.html?app=ar-scan;slug 缺失或查不到时给出明确的「未找到」态,
+    // 不再静默保留页面上的占位文案。
     (function() {
       var params = new URLSearchParams(window.location.search);
-      var site = window.__siteContent && window.__siteContent.apechain;
-      var featuredId = params.has('featured') ? parseInt(params.get('featured') || '0', 10) : null;
-      var id = parseInt(params.get('id') || '0', 10);
+      var catalog = (window.__siteContent && window.__siteContent.appCatalog) || {};
+      var apps = catalog.apps || [];
+      var slug = (params.get('app') || '').trim();
 
-      function normalizeApp(app, fallback) {
-        if (!app) return null;
-        var name = app.name || app.title || (fallback && fallback.name) || '城瘾应用';
-        var category = app.category || (fallback && fallback.category) || '应用';
-        var description = app.description || app.desc || (fallback && fallback.description) || '';
-        return {
-          name: name,
-          category: category,
-          description: description,
-          image: app.thumb || app.image || app.img || (fallback && (fallback.thumb || fallback.image || fallback.img)) || '',
-          color: app.color || (fallback && fallback.color) || '#0088FF',
-          introduction: app.introduction || '这是一个城市应用模块，将现实地点、用户行为和记录判定连接成可持续运行的互动体验。',
-          gameplay: app.gameplay || '进入应用后选择目标任务，按提示完成地点互动、内容触发或数据提交，系统会同步更新进度并展示对应奖励。'
-        };
+      var app = null;
+      for (var k = 0; k < apps.length; k++) {
+        if (apps[k].slug === slug) { app = apps[k]; break; }
       }
 
-      var sourceApp = null;
-      var fallbackCard = null;
-      if (featuredId !== null && site && site.appsData) {
-        sourceApp = site.appsData[featuredId];
-      } else {
-        sourceApp = site && site.appsSection && site.appsSection.cards ? site.appsSection.cards[id] : null;
-        fallbackCard = APPS[id];
-      }
+      var elName = document.getElementById('appName');
+      var elCategory = document.getElementById('appCategory');
+      var elDesc = document.getElementById('appDesc');
+      var elInfo = document.getElementById('appInfo');
+      var elActions = document.getElementById('appActions');
+      var elLaunch = document.getElementById('appLaunchBtn');
+      var elLaunchLabel = document.getElementById('appLaunchLabel');
+      var elBadge = document.getElementById('appBadge');
+      var img = document.getElementById('appImg');
 
-      var app = normalizeApp(sourceApp, fallbackCard);
-      if (!app) return;
-
-      document.title = app.name + ' — 城瘾';
-      document.getElementById('appName').textContent = app.name;
-      document.getElementById('appCategory').textContent = app.category;
-      document.getElementById('appDesc').textContent = app.description;
-      
-      // Add introduction and gameplay
-      var infoSection = document.getElementById('appInfo');
       function escapeHTML(value) {
-        return String(value).replace(/[&<>"']/g, function(ch) {
+        return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
           return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
         });
       }
-      if (infoSection) {
-        infoSection.innerHTML = '<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 18px; font-weight: 600;">应用介绍</h3>' +
-                                '<p style="line-height: 1.6; margin-bottom: 20px;">' + escapeHTML(app.introduction) + '</p>' +
-                                '<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 18px; font-weight: 600;">玩法说明</h3>' +
-                                '<p style="line-height: 1.6;">' + escapeHTML(app.gameplay) + '</p>';
+
+      if (!app) {
+        document.title = '未找到该应用 — 城瘾';
+        elCategory.textContent = '未找到';
+        elName.textContent = '未找到该应用';
+        elDesc.textContent = slug
+          ? '地址里的应用标识「' + slug + '」不在当前应用目录中,可能已下线或链接有误。'
+          : '这个地址没有指定要查看的应用。';
+        elInfo.innerHTML = '<p style="line-height: 1.6;">请回到应用列表重新选择。</p>';
+        if (elActions) {
+          elActions.innerHTML = '<a class="UIBtn primary" href="apechain.html">返回应用列表</a>';
+        }
+        img.remove();
+        return;
       }
 
-      var img = document.getElementById('appImg');
+      document.title = app.title + ' — 城瘾';
+      elName.textContent = app.title;
+      elCategory.textContent = app.category;
+      elDesc.textContent = app.desc || '';
+
+      // 占位素材项显式标注「即将上线」,避免被当成已上线成品
+      var soon = app.status === 'soon';
+      if (elBadge) {
+        elBadge.textContent = '即将上线';
+        elBadge.hidden = !soon;
+      }
+      if (elLaunch) {
+        if (app.link) {
+          elLaunch.setAttribute('href', app.link);
+          elLaunch.removeAttribute('aria-disabled');
+          elLaunch.classList.remove('is-disabled');
+          elLaunchLabel.textContent = '立即体验';
+        } else {
+          // 没有可用入口就不做成假的可点击按钮:去掉 href,标注不可用
+          elLaunch.removeAttribute('href');
+          elLaunch.setAttribute('aria-disabled', 'true');
+          elLaunch.classList.add('is-disabled');
+          elLaunchLabel.textContent = soon ? '即将上线' : '暂未开放';
+        }
+      }
+
+      elInfo.innerHTML = '<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 18px; font-weight: 600;">应用介绍</h3>' +
+                         '<p style="line-height: 1.6; margin-bottom: 20px;">' + escapeHTML(app.introduction) + '</p>' +
+                         '<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 18px; font-weight: 600;">玩法说明</h3>' +
+                         '<p style="line-height: 1.6;">' + escapeHTML(app.gameplay) + '</p>';
+
       img.crossOrigin = 'anonymous';
-      img.alt = app.name;
+      img.alt = app.title;
       function extractAndApplyColor() {
         try {
           var tmp = document.createElement('canvas');
@@ -653,7 +468,7 @@
         } catch(e) {}
       }
       img.onload = extractAndApplyColor;
-      img.src = app.image || '';
+      img.src = app.img || '';
       if (img.complete && img.naturalWidth > 0) extractAndApplyColor();
     })();
 
@@ -857,5 +672,7 @@
       });
     })();
   </script>
+
+  <script src="/site-shell.js" defer></script>
 </body>
 </html>

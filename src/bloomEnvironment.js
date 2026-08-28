@@ -299,7 +299,9 @@ export function setupBloomEnvironment(canvas) {
     energy: 0
   };
 
-  let active = false;
+  let wanted = false;    // 调用方是否希望它跑(scheduler / 页面脚本控制)
+  let visible = true;    // 页面可见 且 画布在视口内
+  let active = false;    // rAF 循环实际是否在跑
   let frameId = 0;
 
   const onPointerDown = (event) => {
@@ -358,6 +360,8 @@ export function setupBloomEnvironment(canvas) {
   };
 
   const start = performance.now();
+  let pausedAt = 0;
+  let pausedTotal = 0;   // 暂停期间不推进着色器时间,恢复时画面不跳变
   const draw = (now) => {
     if (!active) return;
     resize();
@@ -388,15 +392,19 @@ export function setupBloomEnvironment(canvas) {
     gl.uniform2f(gl.getUniformLocation(program, 'u_lag'), shared.lag.x, shared.lag.y);
     gl.uniform2f(gl.getUniformLocation(program, 'u_velocity'), shared.velocity.x, shared.velocity.y);
     gl.uniform2f(gl.getUniformLocation(program, 'u_rotation'), shared.rotation.x, shared.rotation.y);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_time'), (now - start) / 1000);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_time'), (now - start - pausedTotal) / 1000);
     gl.uniform1f(gl.getUniformLocation(program, 'u_energy'), shared.energy);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     frameId = requestAnimationFrame(draw);
   };
 
-  const resume = () => {
+  const startLoop = () => {
     if (active) return;
     active = true;
+    if (pausedAt) {
+      pausedTotal += performance.now() - pausedAt;
+      pausedAt = 0;
+    }
     window.addEventListener('pointerdown', onPointerDown, { passive: true, capture: true });
     window.addEventListener('pointermove', onPointerMove, { passive: true, capture: true });
     window.addEventListener('pointerup', onPointerUp, { passive: true, capture: true });
@@ -404,9 +412,10 @@ export function setupBloomEnvironment(canvas) {
     frameId = requestAnimationFrame(draw);
   };
 
-  const pause = () => {
+  const stopLoop = () => {
     if (!active) return;
     active = false;
+    pausedAt = performance.now();
     if (frameId) cancelAnimationFrame(frameId);
     frameId = 0;
     shared.dragging = false;
@@ -416,8 +425,48 @@ export function setupBloomEnvironment(canvas) {
     window.removeEventListener('pointercancel', onPointerCancel, { capture: true });
   };
 
+  // 纯装饰的背景:只有「调用方想要」且「页面可见 + 画布在视口内」时才烧 GPU
+  const sync = () => {
+    if (wanted && visible) startLoop();
+    else stopLoop();
+  };
+
+  let inViewport = true;
+  const syncVisibility = () => {
+    const next = document.visibilityState !== 'hidden' && inViewport;
+    if (next === visible) return;
+    visible = next;
+    sync();
+  };
+
+  document.addEventListener('visibilitychange', syncVisibility);
+
+  let viewportObserver = null;
+  if (typeof IntersectionObserver === 'function') {
+    viewportObserver = new IntersectionObserver((entries) => {
+      inViewport = entries.some(entry => entry.isIntersecting);
+      syncVisibility();
+    }, { threshold: 0 });
+    viewportObserver.observe(canvas);
+  }
+  visible = document.visibilityState !== 'hidden';
+
+  const resume = () => {
+    wanted = true;
+    sync();
+  };
+
+  const pause = () => {
+    wanted = false;
+    sync();
+  };
+
   const destroy = () => {
     pause();
+    // 解绑所有全局监听与观察器,避免页面切换后泄漏
+    document.removeEventListener('visibilitychange', syncVisibility);
+    viewportObserver?.disconnect();
+    viewportObserver = null;
     gl.deleteBuffer(buffer);
     gl.deleteTexture(earthTexture);
     gl.deleteTexture(cloudTexture);

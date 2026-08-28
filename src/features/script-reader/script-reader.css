@@ -235,6 +235,18 @@ body.script-reader-open { overflow: hidden !important; }
 
 .script-reader-shell::-webkit-scrollbar { display: none; }
 
+/* 打开阅读器时程序化聚焦滚动容器(F31),不显示轮廓 */
+.script-reader-shell:focus { outline: none; }
+
+/* F31:阅读器内可聚焦元素统一给出可见焦点环 —— 焦点被困在对话框里,得看得见落在哪 */
+.script-reader :focus-visible {
+  outline: 2px solid #1a1a1a;
+  outline-offset: 3px;
+}
+
+/* F08:阅读器铺满视口(z-index 80),站壳顶栏 z-index 1000 会盖在上面,打开期间收起 */
+body.script-reader-open .cy-header { display: none; }
+
 /* ── Close button ── */
 
 .script-reader-close {
@@ -290,6 +302,8 @@ body.script-reader-open { overflow: hidden !important; }
 .reader-index-preview-img {
   width: 100%;
   height: 100%;
+  /* F09:章节配图尚未全部入库,给个中性底色,单张图加载失败也不会露出黑块 */
+  background-color: #e8e6e2;
   background-size: cover;
   background-position: center top;
   transition: background-image .5s ease;
@@ -459,6 +473,8 @@ body.script-reader-open { overflow: hidden !important; }
 .scene-image {
   position: absolute;
   inset: 0;
+  /* F09:配图缺失时保留占位底色,视口高度由 .scene-image-viewport 撑住,布局不塌 */
+  background-color: #e8e6e2;
   background-image: var(--chapter-img);
   background-size: cover;
   background-position: 50% 50%;
@@ -517,6 +533,7 @@ body.script-reader-open { overflow: hidden !important; }
 .scene-thumb-image {
   width: 54%;
   aspect-ratio: .86;
+  background-color: #e8e6e2;
   background-size: cover;
   background-position: center;
 }

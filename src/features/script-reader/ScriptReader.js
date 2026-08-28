@@ -20,7 +20,7 @@ export function scriptReaderOverlay(item) {
   const introLines = splitIntoLines(item.summary);
   const initialPreview = item.chapters[1]?.image || item.chapters[0].image;
   return `<div class="script-reader" data-script-reader aria-hidden="true" role="dialog" aria-modal="true" aria-label="${item.title} 剧本阅读器">
-    <div class="script-reader-shell" data-reader-shell>
+    <div class="script-reader-shell" data-reader-shell tabindex="-1">
       <button class="script-reader-close" type="button" data-script-close aria-label="关闭剧本">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
@@ -114,6 +114,42 @@ export function setupScriptReader(root, item, options = {}) {
   let slowSnapFrame = 0;
   let lastScrollTop = 0;
   let scrollDirection = 1;
+  // F32:用户可随时逃出吸附;prefers-reduced-motion 下彻底关掉吸附
+  const motionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  const prefersReducedMotion = () => !!(motionQuery && motionQuery.matches);
+  let autoSnapEnabled = !prefersReducedMotion();
+  // F32:章节位置缓存 —— 原先 updateOverlays 每帧遍历 offsetTop / getBoundingClientRect,逐帧强制重排
+  let sectionTopsCache = null;
+  // F31:打开期间被置为 inert 的背景节点(记录原 aria-hidden 以便还原)
+  let inertedBg = [];
+
+  // ── F31:背景 inert —— 同时挡住 Tab 与无障碍树 ──
+  const FOCUSABLE_SELECTOR =
+    'a[href],area[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),' +
+    'textarea:not([disabled]),iframe,object,embed,[tabindex]:not([tabindex="-1"])';
+
+  const focusableItems = () =>
+    [...reader.querySelectorAll(FOCUSABLE_SELECTOR)].filter((el) => el.getClientRects().length > 0);
+
+  const setBackgroundInert = (on) => {
+    if (on) {
+      if (inertedBg.length) return;
+      inertedBg = [...document.body.children]
+        .filter((el) => el !== reader && !/^(SCRIPT|STYLE|LINK|TEMPLATE)$/.test(el.nodeName))
+        .map((el) => ({ el, ariaHidden: el.getAttribute('aria-hidden'), inert: el.hasAttribute('inert') }));
+      inertedBg.forEach(({ el }) => {
+        el.setAttribute('inert', '');
+        el.setAttribute('aria-hidden', 'true');
+      });
+      return;
+    }
+    inertedBg.forEach(({ el, ariaHidden, inert }) => {
+      if (!inert) el.removeAttribute('inert');
+      if (ariaHidden === null) el.removeAttribute('aria-hidden');
+      else el.setAttribute('aria-hidden', ariaHidden);
+    });
+    inertedBg = [];
+  };
 
   const ensureReaderLayer = () => {
     if (reader.parentElement !== document.body) {
@@ -122,11 +158,18 @@ export function setupScriptReader(root, item, options = {}) {
   };
 
   const open = () => {
-    lastFocused = document.activeElement;
+    // 触发元素可能不可聚焦(autoOpen 时 activeElement 是 body):回落到页面上的打开按钮,
+    // 保证关闭后焦点有地方可还(F31)
+    const active = document.activeElement;
+    lastFocused = (active && active !== document.body && !reader.contains(active))
+      ? active
+      : (openButtons[0] || null);
     ensureReaderLayer();
     reader.classList.add('open');
     reader.setAttribute('aria-hidden', 'false');
     document.body.classList.add('script-reader-open');
+    setBackgroundInert(true);
+    invalidateSectionTops();
     scroller.scrollTo({ top: 0, behavior: 'auto' });
     scroller.classList.add('snap-disabled');
     lastScrollTop = 0;
@@ -139,14 +182,20 @@ export function setupScriptReader(root, item, options = {}) {
       if (body) body.hidden = true;
     });
     clearTimeout(snapTimer);
-    snapTimer = setTimeout(() => scroller.classList.remove('snap-disabled'), 2000);
+    // 减少动画偏好下不再打开 CSS 吸附(F32)
+    if (autoSnapEnabled) {
+      snapTimer = setTimeout(() => scroller.classList.remove('snap-disabled'), 2000);
+    }
     requestAnimationFrame(() => scroller.focus({ preventScroll: true }));
   };
 
   const close = () => {
+    cancelSnapAnimation();
     reader.classList.remove('open');
     reader.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('script-reader-open');
+    // 先解除背景 inert,否则焦点还不回去(F31)
+    setBackgroundInert(false);
     if (lastFocused && document.contains(lastFocused)) lastFocused.focus?.({ preventScroll: true });
   };
 
@@ -173,6 +222,7 @@ export function setupScriptReader(root, item, options = {}) {
     scene.classList.toggle('text-open', textVisible);
     const body = scene.querySelector('[data-scene-body]');
     if (body) body.hidden = !textVisible;
+    invalidateSectionTops();
   };
 
   const sectionTargets = () => [indexPage, ...scenes].filter(Boolean);
@@ -194,10 +244,23 @@ export function setupScriptReader(root, item, options = {}) {
     }
   };
 
+  // F32:章节顶端位置只在开启 / 尺寸变化 / 正文展开时重算,不再逐帧读 offsetTop
+  const invalidateSectionTops = () => { sectionTopsCache = null; };
+
+  const sectionTops = () => {
+    if (!sectionTopsCache) {
+      sectionTopsCache = {
+        tops: sectionTargets().map((target) => target.offsetTop),
+        vh: scroller.clientHeight || window.innerHeight
+      };
+    }
+    return sectionTopsCache;
+  };
+
   const nearestSectionIndex = () => {
-    const targets = sectionTargets();
-    return targets.reduce((best, target, index) => {
-      const distance = Math.abs(target.offsetTop - scroller.scrollTop);
+    const { tops } = sectionTops();
+    return tops.reduce((best, top, index) => {
+      const distance = Math.abs(top - scroller.scrollTop);
       return distance < best.distance ? { index, distance } : best;
     }, { index: 0, distance: Infinity }).index;
   };
@@ -206,6 +269,15 @@ export function setupScriptReader(root, item, options = {}) {
     if (!target) return;
     const startTop = scroller.scrollTop;
     const endTop = target.offsetTop;
+    // 减少动画偏好:直接落位,不播 1400/1700ms 的拽动画(F32)
+    if (prefersReducedMotion()) {
+      cancelAnimationFrame(slowSnapFrame);
+      isSlowSnapping = false;
+      scroller.scrollTop = endTop;
+      updateOverlays();
+      syncVisibleState();
+      return;
+    }
     const startTime = performance.now();
     isSlowSnapping = true;
     cancelAnimationFrame(slowSnapFrame);
@@ -229,17 +301,18 @@ export function setupScriptReader(root, item, options = {}) {
   // ── 2s scroll snap delay ──
   let snapReEnableTime = 0;
   const delaySnap = () => {
+    // 用户已经明确表示不要吸附(中断过一次动画,或系统开了减少动画):不再自动拽视图(F32)
+    if (!autoSnapEnabled) {
+      scroller.classList.add('snap-disabled');
+      return;
+    }
     if (isSlowSnapping) return;
     // Ignore scroll events fired by the browser's own snap just after re-enable
     if (Date.now() - snapReEnableTime < 400) return;
     scroller.classList.add('snap-disabled');
     clearTimeout(snapTimer);
     snapTimer = setTimeout(() => {
-      const snapTargets = [indexPage, ...scenes].filter(Boolean);
-      const nearest = snapTargets.reduce((best, target) => {
-        const distance = Math.abs(target.offsetTop - scroller.scrollTop);
-        return distance < best.distance ? { target, distance } : best;
-      }, { target: indexPage, distance: Infinity }).target;
+      const nearest = sectionTargets()[nearestSectionIndex()] || indexPage;
       smoothSnapTo(nearest, 1400);
     }, 2000);
   };
@@ -248,29 +321,50 @@ export function setupScriptReader(root, item, options = {}) {
   let tickPending = false;
   const updateOverlays = () => {
     const scrollTop = scroller.scrollTop;
-    const vh = scroller.clientHeight || window.innerHeight;
+    const { tops, vh } = sectionTops();
     const primarySceneIndex = nearestSectionIndex() - 1;
-    scenes.forEach(scene => {
+    scenes.forEach((scene, i) => {
+      // tops[0] 是目录页,章节从 1 开始
+      const sceneTop = tops[i + 1] ?? scene.offsetTop;
       const overlay = scene.querySelector('[data-scene-overlay]');
       const image = scene.querySelector('.scene-image');
       if (!overlay) return;
       const sceneIndex = parseInt(scene.dataset.chapterIndex);
       // Progress: 0 when scene below viewport, 1 when scene at viewport top
-      const progress = Math.max(0, Math.min(1, (scrollTop - scene.offsetTop + vh) / vh));
+      const progress = Math.max(0, Math.min(1, (scrollTop - sceneTop + vh) / vh));
       overlay.style.transform = `translateY(${-progress * 100}%)`;
       scene.style.setProperty('--scroll-dir', scrollDirection);
       const visible = progress > 0.03;
       scene.classList.toggle('image-in-view', visible);
       scene.classList.toggle('image-primary', sceneIndex === primarySceneIndex);
       if (image) {
-        const rect = scene.getBoundingClientRect();
-        const travel = (rect.top / vh) * 200;
+        // scroller 铺满视口,章节的视口顶端 = 缓存位置 - 滚动量(等价于 getBoundingClientRect().top,但不触发重排)
+        const travel = ((sceneTop - scrollTop) / vh) * 200;
         const offset = Math.max(-200, Math.min(200, travel));
         image.style.setProperty('--image-offset', `${offset.toFixed(2)}px`);
       }
     });
     tickPending = false;
   };
+
+  // ── F32:逃出吸附 ──
+  // 停掉进行中的吸附动画;若动画正在跑就说明用户是被拽着的,之后不再自动吸附
+  const cancelSnapAnimation = () => {
+    clearTimeout(snapTimer);
+    cancelAnimationFrame(slowSnapFrame);
+    if (isSlowSnapping) {
+      isSlowSnapping = false;
+      autoSnapEnabled = false;
+    }
+    scroller.classList.add('snap-disabled');
+    snapReEnableTime = Date.now();
+  };
+
+  // 滚轮 / 触摸 / 方向键 —— 任一即视为用户要自己滚
+  const onUserScrollIntent = () => cancelSnapAnimation();
+  const SCROLL_KEYS = new Set([
+    'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ', 'Spacebar'
+  ]);
 
   const onScroll = () => {
     const currentTop = scroller.scrollTop;
@@ -364,10 +458,55 @@ export function setupScriptReader(root, item, options = {}) {
   const introWrap = reader.querySelector('[data-split-intro]');
   if (introWrap) splitObserver.observe(introWrap);
 
-  // ── Keyboard: Escape to close ──
-  reader.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') close();
-  });
+  // ── F31:Esc 关闭 + Tab 焦点陷阱 ──
+  // 背景已 inert,这里再显式兜住 Tab,避免个别浏览器不支持 inert 时焦点跑出去。
+  // 挂在 document 上是因为焦点可能落在不可聚焦的 body 上,事件不会冒泡经过 reader。
+  const onKeydown = (event) => {
+    if (!reader.classList.contains('open')) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      close();
+      return;
+    }
+    if (SCROLL_KEYS.has(event.key) && reader.contains(event.target)) {
+      onUserScrollIntent();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const items = focusableItems();
+    if (!items.length) {
+      event.preventDefault();
+      scroller.focus({ preventScroll: true });
+      return;
+    }
+    const first = items[0];
+    const last = items[items.length - 1];
+    const active = document.activeElement;
+    const outside = !active || !reader.contains(active);
+    if (event.shiftKey && (outside || active === first)) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && (outside || active === last)) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+  document.addEventListener('keydown', onKeydown);
+
+  // F32:用户自己滚动时立刻放开吸附
+  scroller.addEventListener('wheel', onUserScrollIntent, { passive: true });
+  scroller.addEventListener('touchstart', onUserScrollIntent, { passive: true });
+
+  // F32:尺寸变化后章节位置缓存作废
+  const onResize = () => invalidateSectionTops();
+  window.addEventListener('resize', onResize);
+
+  // 系统的减少动画偏好可随时切换
+  const onMotionChange = () => {
+    autoSnapEnabled = !prefersReducedMotion();
+    if (!autoSnapEnabled) cancelSnapAnimation();
+  };
+  motionQuery?.addEventListener?.('change', onMotionChange);
 
   // ── Scroll-to-start triggers ──
   const startTriggers = [...reader.querySelectorAll('[data-script-start]')];
@@ -388,6 +527,11 @@ export function setupScriptReader(root, item, options = {}) {
       clearTimeout(snapTimer);
       cancelAnimationFrame(slowSnapFrame);
       scroller.removeEventListener('scroll', onScroll);
+      scroller.removeEventListener('wheel', onUserScrollIntent);
+      scroller.removeEventListener('touchstart', onUserScrollIntent);
+      document.removeEventListener('keydown', onKeydown);
+      window.removeEventListener('resize', onResize);
+      motionQuery?.removeEventListener?.('change', onMotionChange);
       close();
     }
   };
