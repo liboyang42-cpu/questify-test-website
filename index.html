@@ -2963,6 +2963,8 @@ function initHeroWebGL(THREE) {
   }
   track.addEventListener('pointerup', endDrag);
   track.addEventListener('pointercancel', endDrag);
+  // 卡片是 <a> + <img>,不抑制原生拖拽的话按下即触发 dragstart,pointer 事件会被打断
+  track.addEventListener('dragstart', function(event) { event.preventDefault(); });
 
   // 拖拽超过阈值时吞掉随后的点击,避免误触发卡片链接
   track.addEventListener('click', function(event) {
