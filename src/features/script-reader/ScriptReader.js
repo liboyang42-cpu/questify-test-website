@@ -273,7 +273,7 @@ export function setupScriptReader(root, item, options = {}) {
     if (prefersReducedMotion()) {
       cancelAnimationFrame(slowSnapFrame);
       isSlowSnapping = false;
-      scroller.scrollTop = endTop;
+      scroller.scrollTo({ top: endTop, behavior: 'auto' });
       updateOverlays();
       syncVisibleState();
       return;
@@ -284,7 +284,9 @@ export function setupScriptReader(root, item, options = {}) {
     const animateSnap = (now) => {
       const t = Math.min((now - startTime) / duration, 1);
       const eased = 1 - Math.pow(1 - t, 3);
-      scroller.scrollTop = startTop + (endTop - startTop) * eased;
+      // 必须显式 behavior:'auto':容器上有 scroll-behavior:smooth,直接写 scrollTop 会被浏览器
+      // 再平滑一次 —— 动画早就结束了,浏览器还在自己往目标滑,取消 rAF 也拦不住(F32)
+      scroller.scrollTo({ top: startTop + (endTop - startTop) * eased, behavior: 'auto' });
       updateOverlays();
       if (t < 1) {
         slowSnapFrame = requestAnimationFrame(animateSnap);
