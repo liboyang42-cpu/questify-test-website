@@ -81,8 +81,16 @@
         '</div>' +
       '</div>' +
       '<div class="cy-footer__bottom">' +
-        '<span>&copy; 2026 城瘾</span>' +
-        '<span data-cy-icp>ICP 备案信息待补</span>' +
+        // 版权年份取当前年,避免写死的年份跨年即错(页脚出现在每一页上)
+        '<span>&copy; ' + new Date().getFullYear() + ' 城瘾</span>' +
+        // ============================ 上线阻断项 ============================
+        // 这里是占位,不是备案信息。境内正式站点必须展示真实 ICP 备案号,
+        // 备案号需由业务方提供,任何人不得编造或猜测。
+        // 替换时:把下面这段整体换成 <a href="https://beian.miit.gov.cn/">沪ICP备XXXXXXXX号</a>,
+        // 并把 data-cy-icp 的值从 "placeholder" 改成 "ok"(冒烟测试按这个断言)。
+        // 关联:REVIEW.md F11。
+        // ==================================================================
+        '<span data-cy-icp="placeholder">ICP 备案信息待补</span>' +
       '</div>';
     return footer;
   }
@@ -124,6 +132,15 @@
     }
   };
 
+  // 占位没换掉就上线是合规风险,这里在控制台留一条显式告警
+  // (与 about.html 对缺失 API 基地址的处理同一套路),别让它静默过去。
+  function warnPlaceholders() {
+    var icp = document.querySelector('[data-cy-icp="placeholder"]');
+    if (icp && window.console) {
+      console.warn('[城瘾] 页脚 ICP 备案信息仍是占位文案,上线前必须替换为真实备案号(见 site-shell.js)。');
+    }
+  }
+
   function mount() {
     if (!document.querySelector('.cy-header')) {
       document.body.insertBefore(buildHeader(), document.body.firstChild);
@@ -132,6 +149,7 @@
       document.body.appendChild(buildFooter());
     }
     applyInert();
+    warnPlaceholders();
   }
 
   if (document.readyState === 'loading') {
