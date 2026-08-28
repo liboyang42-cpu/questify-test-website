@@ -10,7 +10,9 @@ export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
 // 只允许 5186(任务约束)。可用 SMOKE_PORT 覆盖,默认 5186。
 export const PORT = Number(process.env.SMOKE_PORT || 5186)
-export const OUT_DIR = process.env.SMOKE_OUT_DIR || 'dist-f'
+// 默认对 `npm run build` 的产物 dist/ 做冒烟。
+// 本地多流并行时用 SMOKE_OUT_DIR=dist-f 指到自己的临时产物目录。
+export const OUT_DIR = process.env.SMOKE_OUT_DIR || 'dist'
 export const BASE_URL = process.env.SMOKE_BASE_URL || `http://127.0.0.1:${PORT}`
 
 // 生产构建的 10 个入口页(与 vite.config.js 的 productionInput 一一对应)。

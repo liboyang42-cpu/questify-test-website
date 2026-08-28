@@ -405,7 +405,9 @@
         if (elActions) {
           elActions.innerHTML = '<a class="UIBtn primary" href="apechain.html">返回应用列表</a>';
         }
-        img.remove();
+        // 没有内容可展示时把整张卡片一起去掉,只留说明和返回入口
+        var cardWrap = document.querySelector('.card-perspective');
+        if (cardWrap) cardWrap.remove();
         return;
       }
 

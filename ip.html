@@ -17,9 +17,45 @@
   <meta property="og:title" content="IP 世界 · 城瘾" />
   <meta property="og:description" content="城瘾 IP 世界——城市事件、角色与世界观档案,真实案例与合作入口。" />
     <script type="module" src="./src/ip-entry.js"></script>
+  <style>
+    /* F34:下面 <main> 里那份静态正文是给爬虫和关掉 JS 的用户看的。
+       JS 可用时由内联脚本给 <html> 打上 .js,这段在首次绘制前就被隐藏,
+       不会闪一下再被 ip-entry.js 覆盖(ip-entry 本来就会整体重写 #next-scene)。 */
+    .ip-static { max-width: 760px; margin: 0 auto; padding: 120px 22px 80px; color: #f7f7f7;
+      font-family: "HarmonyOS Sans SC", -apple-system, "PingFang SC", sans-serif; line-height: 1.85; }
+    .ip-static h1 { font-size: clamp(30px, 6vw, 46px); margin: 0 0 14px; }
+    .ip-static h2 { font-size: 21px; margin: 44px 0 8px; }
+    .ip-static p { margin: 0 0 10px; color: rgba(255,255,255,.72); }
+    .ip-static a { color: #fff; }
+    .ip-static .k { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.42); }
+    html.js .ip-static { display: none; }
+    body { margin: 0; background: #000; }
+  </style>
+  <script>document.documentElement.className += ' js';</script>
   </head>
   <body>
-    <main id="next-scene" aria-label="IP 世界"></main>
+    <main id="next-scene" aria-label="IP 世界">
+      <div class="ip-static">
+        <h1>IP 世界</h1>
+        <p>城瘾把城市当成舞台:一条真实走得通的路线、一段能一起解开的故事、一批可以被搬进街区的 IP。下面是目前已经成型的三个项目。</p>
+
+        <h2><a href="./ip.html?project=geisai">那一夜，我们一起当警察</a></h2>
+        <p class="k">City Story · 2000 Winter · 未结案</p>
+        <p>一条 6.2 公里的上海夜行，把整座城市变成案发现场。你和朋友组成一支临时小队，沿南京西路一路走到外滩，线索藏在门牌、橱窗、路牌和传呼机代码里。走到哪、看见什么、怎么把时间重新排好，决定你们解开的是哪一个版本的结局。</p>
+
+        <h2><a href="./ip.html?project=forging">游戏模式</a></h2>
+        <p class="k">Game Modes · 2026-04-24 · 模板</p>
+        <p>城瘾不止一个故事，而是一套能反复组合的城市玩法。同一座城市，可以是一个人的安静探索，也可以是几十人的阵营对抗。</p>
+
+        <h2><a href="./ip.html?project=airforce">IP 入城</a></h2>
+        <p class="k">IP in City · 2026-08-30 · 联动</p>
+        <p>熟悉的影视、游戏、角色与品牌，走进真实城市变成可玩的体验。你认识的 IP 不再只在屏幕里，它变成城市里的一条路线、一个任务、一位会说话的角色。</p>
+
+        <h2>继续了解</h2>
+        <p><a href="./index.html">首页</a> · <a href="./build.html">共建 / 商家合作</a> · <a href="./about.html">联系我们</a> · <a href="./privacy.html">隐私政策</a> · <a href="./terms.html">用户协议</a></p>
+        <p>本页的三维档案浏览需要 JavaScript;以上文字内容在关闭 JavaScript 时同样完整可读。</p>
+      </div>
+    </main>
     <!-- 共享站壳:统一顶栏(含移动端汉堡菜单)与页脚,见 public/site-shell.js -->
     <script src="/site-shell.js" defer></script>
   </body>

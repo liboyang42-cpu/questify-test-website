@@ -1340,6 +1340,12 @@
       }
     }
 
+    /* F04:分类文案换成中文后,原来的 line-height:0.785(为全大写拉丁字设计)
+       会把汉字的上下沿裁掉 —— .label 是 overflow:hidden。中日韩字形占满整个 em 框,
+       这里放宽到 1.08。用两级选择器提高优先级,压过 content.js 在 hydrate 时
+       注入的 .Discover-label{line-height:0.785}。 */
+    .Discover-inner .Discover-label { line-height: 1.08; }
+
     .Discover-label .label {
       position: relative;
       overflow: hidden;
@@ -2176,7 +2182,7 @@
         <div class="Discover-group">
           <div class="Discover-marquee">
             <div class="Discover-duplicated">
-              <a class="Discover-label" href="./apechain.html?f=game">
+              <a class="Discover-label" data-discover-label="游戏" href="./apechain.html?f=game">
                 <span class="label">
                   <span class="label__inner label__inner--main">游戏</span>
                   <span aria-hidden="true" class="label__inner label__inner--clone">游戏</span>
@@ -2185,7 +2191,7 @@
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=interaction">
+              <a class="Discover-label" data-discover-label="交互插件" href="./apechain.html?f=interaction">
                 <span class="label">
                   <span class="label__inner label__inner--main">交互插件</span>
                   <span aria-hidden="true" class="label__inner label__inner--clone">交互插件</span>
@@ -2194,7 +2200,7 @@
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=ai">
+              <a class="Discover-label" data-discover-label="AI插件" href="./apechain.html?f=ai">
                 <span class="label">
                   <span class="label__inner label__inner--main">AI插件</span>
                   <span aria-hidden="true" class="label__inner label__inner--clone">AI插件</span>
@@ -2203,7 +2209,7 @@
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=game">
+              <a class="Discover-label" data-discover-label="游戏" href="./apechain.html?f=game">
                 <span class="label">
                   <span class="label__inner label__inner--main">游戏</span>
                   <span aria-hidden="true" class="label__inner label__inner--clone">游戏</span>
@@ -2212,7 +2218,7 @@
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=interaction">
+              <a class="Discover-label" data-discover-label="交互插件" href="./apechain.html?f=interaction">
                 <span class="label">
                   <span class="label__inner label__inner--main">交互插件</span>
                   <span aria-hidden="true" class="label__inner label__inner--clone">交互插件</span>
@@ -2221,7 +2227,7 @@
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=ai">
+              <a class="Discover-label" data-discover-label="AI插件" href="./apechain.html?f=ai">
                 <span class="label">
                   <span class="label__inner label__inner--main">AI插件</span>
                   <span aria-hidden="true" class="label__inner label__inner--clone">AI插件</span>
@@ -2237,7 +2243,7 @@
         <div class="Discover-group">
           <div class="Discover-marquee">
             <div class="Discover-duplicated">
-              <a class="Discover-label" href="./apechain.html?f=achievement">
+              <a class="Discover-label" data-discover-label="成就激励" href="./apechain.html?f=achievement">
                 <span class="label">
                   <span class="label__inner label__inner--main">成就激励</span>
                   <span aria-hidden="true" class="label__inner label__inner--clone">成就激励</span>
@@ -2246,7 +2252,7 @@
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=story">
+              <a class="Discover-label" data-discover-label="剧情插件" href="./apechain.html?f=story">
                 <span class="label">
                   <span class="label__inner label__inner--main">剧情插件</span>
                   <span aria-hidden="true" class="label__inner label__inner--clone">剧情插件</span>
@@ -2255,7 +2261,7 @@
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=achievement">
+              <a class="Discover-label" data-discover-label="成就激励" href="./apechain.html?f=achievement">
                 <span class="label">
                   <span class="label__inner label__inner--main">成就激励</span>
                   <span aria-hidden="true" class="label__inner label__inner--clone">成就激励</span>
@@ -2264,7 +2270,7 @@
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=story">
+              <a class="Discover-label" data-discover-label="剧情插件" href="./apechain.html?f=story">
                 <span class="label">
                   <span class="label__inner label__inner--main">剧情插件</span>
                   <span aria-hidden="true" class="label__inner label__inner--clone">剧情插件</span>
@@ -2273,7 +2279,7 @@
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=achievement">
+              <a class="Discover-label" data-discover-label="成就激励" href="./apechain.html?f=achievement">
                 <span class="label">
                   <span class="label__inner label__inner--main">成就激励</span>
                   <span aria-hidden="true" class="label__inner label__inner--clone">成就激励</span>
@@ -2282,7 +2288,7 @@
                   <img src="/assets/placeholder-app.svg" alt="" loading="lazy" />
                 </span>
               </a>
-              <a class="Discover-label" href="./apechain.html?f=story">
+              <a class="Discover-label" data-discover-label="剧情插件" href="./apechain.html?f=story">
                 <span class="label">
                   <span class="label__inner label__inner--main">剧情插件</span>
                   <span aria-hidden="true" class="label__inner label__inner--clone">剧情插件</span>
@@ -3070,6 +3076,20 @@ function initHeroWebGL(THREE) {
   window.addEventListener('resize', function() {
     collectMotionItems();
     updateBodyBg();
+  });
+
+  // F04:Discover 分类词表是链接契约的一部分 —— 文案必须和 ?f= slug 指向的分类一致。
+  // public/content.js 的 discover.labels 仍是旧的 12 条模板文案(按下标覆盖 .Discover-label),
+  // 且它在 DOMContentLoaded 里 hydrate,会盖掉 HTML 里的正确文案。
+  // 这里按 HTML 自带的 data-discover-label 回写一次(本模块的监听器注册晚于 content.js,
+  // 因此一定在它之后执行)。等 content.js 的词表同步过来之后,这段可以直接删掉。
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.Discover-label[data-discover-label]').forEach(function(link) {
+      var text = link.getAttribute('data-discover-label');
+      link.querySelectorAll('.label__inner').forEach(function(el) {
+        if (el.textContent !== text) el.textContent = text;
+      });
+    });
   });
 
   // Wire each activity card to its configured theme page without changing layout.

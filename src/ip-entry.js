@@ -48,6 +48,28 @@ const caseAssets = {
   refWalker: '/assets/case-citywalk-ref/cropped/IMG_9557-crop.jpg'
 };
 
+/* 这些模板都是拼字符串再塞 innerHTML。目前 projects / archives 全是本文件里的硬编码
+   常量,不存在可被利用的注入面;但一旦这批数据改从 CMS 或接口来,就直接变成存储型 XSS。
+   趁数据还是常量的时候把转义补上,成本最低。文本位与属性位规则不同:属性位要连引号一起转义,
+   URL 位还要挡住 javascript: 这类可执行协议。 */
+function escapeHTML(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function escapeAttr(value) {
+  return escapeHTML(value).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function safeUrl(value) {
+  const url = String(value ?? '').trim();
+  const scheme = /^([a-zA-Z][a-zA-Z0-9+.-]*):/.exec(url);
+  if (scheme && !/^(https?|mailto)$/i.test(scheme[1])) return '#';
+  return escapeAttr(url);
+}
+
 // 侧栏纵向位移的三个参数(px / 滚动距离),供 updateMotion 计算,不再散落成魔数
 const SIDE_NAV_TOP = 96;
 const SIDE_NAV_LIFT_START = 450;
@@ -60,15 +82,15 @@ function metaStrip(meta) {
     ['DURATION', meta.duration], ['CITY', meta.city]
   ].filter(([, v]) => v);
   if (!cells.length) return '';
-  return `<div class="ip-meta-strip">${cells.map(([k, v]) => `<div class="ip-meta-cell"><span class="ip-meta-k">${k}</span><span class="ip-meta-v">${v}</span></div>`).join('')}</div>`;
+  return `<div class="ip-meta-strip">${cells.map(([k, v]) => `<div class="ip-meta-cell"><span class="ip-meta-k">${escapeHTML(k)}</span><span class="ip-meta-v">${escapeHTML(v)}</span></div>`).join('')}</div>`;
 }
 
 function renderArchiveCard(item) {
-  const ph = `<div class="ip-arch-cover" data-glyph="${(item.title || '◇').slice(0, 1)}"></div>`;
-  const body = `<span class="ip-arch-type">${item.type || ''}</span><strong class="ip-arch-title">${item.title}</strong><span class="ip-arch-status">${item.status || (item.href ? '打开 →' : '')}</span>`;
+  const ph = `<div class="ip-arch-cover" data-glyph="${escapeAttr((item.title || '◇').slice(0, 1))}"></div>`;
+  const body = `<span class="ip-arch-type">${escapeHTML(item.type || '')}</span><strong class="ip-arch-title">${escapeHTML(item.title)}</strong><span class="ip-arch-status">${escapeHTML(item.status || (item.href ? '打开 →' : ''))}</span>`;
   return item.href && !item.status
-    ? `<a class="ip-arch-card is-live" href="${item.href}">${ph}${body}</a>`
-    : `<div class="ip-arch-card is-soon" role="group" aria-label="${item.title}（${item.status || '即将上线'}）">${ph}${body}</div>`;
+    ? `<a class="ip-arch-card is-live" href="${safeUrl(item.href)}">${ph}${body}</a>`
+    : `<div class="ip-arch-card is-soon" role="group" aria-label="${escapeAttr(`${item.title}（${item.status || '即将上线'}）`)}">${ph}${body}</div>`;
 }
 
 // 横向档案 rail 交互(P2):左右按钮 / 鼠标拖拽 / 键盘 ← → / 序号计数。
@@ -156,34 +178,34 @@ function renderProjectArticles(project) {
   return `
         <article class="article ip-article ip-about" id="about-copy">
           <span class="section-kicker">[ABOUT]</span>
-          <h2>${project.about.headline}</h2>
-          ${project.about.body.map(p => `<p>${p}</p>`).join('')}
+          <h2>${escapeHTML(project.about.headline)}</h2>
+          ${project.about.body.map(p => `<p>${escapeHTML(p)}</p>`).join('')}
           ${metaStrip(project.meta)}
         </article>
         <article class="article ip-article ip-howto" id="how-to-play">
           <span class="section-kicker">[HOW TO PLAY]</span>
-          <h2>${project.howToPlay.title}</h2>
+          <h2>${escapeHTML(project.howToPlay.title)}</h2>
           <ol class="ip-steps">
-            ${project.howToPlay.steps.map((s, i) => `<li class="ip-step"><span class="ip-step-no">${String(i + 1).padStart(2, '0')}</span><div class="ip-step-body"><strong>${s.title}</strong><p>${s.desc}</p></div></li>`).join('')}
+            ${project.howToPlay.steps.map((s, i) => `<li class="ip-step"><span class="ip-step-no">${String(i + 1).padStart(2, '0')}</span><div class="ip-step-body"><strong>${escapeHTML(s.title)}</strong><p>${escapeHTML(s.desc)}</p></div></li>`).join('')}
           </ol>
         </article>
         <article class="article ip-article ip-features" id="features">
           <span class="section-kicker">[FEATURES]</span>
-          <h2>${project.features.title}</h2>
+          <h2>${escapeHTML(project.features.title)}</h2>
           <div class="ip-feature-grid">
             ${project.features.items.map(f => {
-              const body = `<span class="ip-feature-action">${f.action}</span><strong class="ip-feature-cap">${f.capability}</strong><p>${f.desc}</p>`;
+              const body = `<span class="ip-feature-action">${escapeHTML(f.action)}</span><strong class="ip-feature-cap">${escapeHTML(f.capability)}</strong><p>${escapeHTML(f.desc)}</p>`;
               return f.href
-                ? `<a class="ip-feature is-link" href="${f.href}">${body}<span class="ip-feature-go">打开 →</span></a>`
+                ? `<a class="ip-feature is-link" href="${safeUrl(f.href)}">${body}<span class="ip-feature-go">打开 →</span></a>`
                 : `<div class="ip-feature">${body}</div>`;
             }).join('')}
           </div>
         </article>
         <article class="article ip-article ip-media" id="media">
           <span class="section-kicker">[MEDIA]</span>
-          <h2>${project.media.title}</h2>
+          <h2>${escapeHTML(project.media.title)}</h2>
           <div class="ip-media-grid">
-            ${project.media.items.map(m => `<figure class="ip-media-card"><div class="ip-media-ph" data-glyph="${(m.label || '▮').slice(0, 1)}"></div><figcaption>${m.label}<span>${m.note}</span></figcaption></figure>`).join('')}
+            ${project.media.items.map(m => `<figure class="ip-media-card"><div class="ip-media-ph" data-glyph="${escapeAttr((m.label || '▮').slice(0, 1))}"></div><figcaption>${escapeHTML(m.label)}<span>${escapeHTML(m.note)}</span></figcaption></figure>`).join('')}
           </div>
         </article>
         <article class="article ip-article ip-archives" id="related-archives">
@@ -921,7 +943,7 @@ function renderHome() {
     const project = projects[activeIndex];
     document.body.classList.remove('loaded');
     setTimeout(() => {
-      window.location.href = `./ip.html?project=${project.id}`;
+      window.location.href = `./ip.html?project=${encodeURIComponent(project.id)}`;
     }, 280);
   }
 
@@ -2071,27 +2093,27 @@ function renderDetail() {
         .event-strip, .entry-row, .entity-row { grid-template-columns: 1fr; }
       }
     </style>
-    <div class="page project-${project.id}">
+    <div class="page project-${escapeAttr(project.id)}">
       <div class="loader-screen">WORLD/IP</div>
       ${pageActions('<div class="timeline-pill"><a class="pill icon" href="./ip.html" aria-label="返回 IP 世界">‹</a><a class="pill" href="#about">TIMELINE</a></div>')}
       <nav class="side-nav" aria-label="章节导航">
-        ${navItems.map(([label, id], index) => `<a class="${index === 0 ? 'active' : ''}" href="#${id}">${label}</a>`).join('')}
+        ${navItems.map(([label, id], index) => `<a class="${index === 0 ? 'active' : ''}" href="#${escapeAttr(id)}">${escapeHTML(label)}</a>`).join('')}
       </nav>
       <section class="hero" id="about">
-        <div class="hero-bg-panel left"></div><div class="hero-bg-panel right"></div><div class="hero-blur-field"></div><div class="hero-index">${project.index}</div>
+        <div class="hero-bg-panel left"></div><div class="hero-bg-panel right"></div><div class="hero-blur-field"></div><div class="hero-index">${escapeHTML(project.index)}</div>
         <div class="cube-stage">
           <div class="cube-panel left"><div class="sigil">${projectVisual(leftProject, true)}</div></div>
           <div class="cube-panel main"><div class="sigil">${projectVisual(project, true)}</div></div>
           <div class="cube-panel right"><div class="sigil">${projectVisual(rightProject, true)}</div></div>
         </div>
-        <h1 class="hero-title">${project.title}</h1>
+        <h1 class="hero-title">${escapeHTML(project.title)}</h1>
         <div class="archive-card">
           <div class="archive-thumb">${projectVisual(project, true)}</div>
           <div class="meta-grid">
-            <div><div class="meta-label">Launch Date</div><div class="meta-value">${project.date}</div></div>
-            <div><div class="meta-label">Contract</div><div class="meta-value">${project.contract}</div></div>
+            <div><div class="meta-label">Launch Date</div><div class="meta-value">${escapeHTML(project.date)}</div></div>
+            <div><div class="meta-label">Contract</div><div class="meta-value">${escapeHTML(project.contract)}</div></div>
           </div>
-          <div></div><div class="tag-pill">${project.tag}</div>
+          <div></div><div class="tag-pill">${escapeHTML(project.tag)}</div>
         </div>
       </section>
       <section class="media-block" aria-label="世界层影像预览"><div class="play">Play</div></section>
@@ -2100,8 +2122,8 @@ function renderDetail() {
       </main>
       <section class="next-scroll" aria-labelledby="next-project-label">
         <p class="next-scroll__label" id="next-project-label">下一个项目</p>
-        <a class="next-scroll__link" href="./ip.html?project=${nextProject.id}">${nextProject.title} <span aria-hidden="true">→</span></a>
-        <p class="next-scroll__hint">${nextProject.short}</p>
+        <a class="next-scroll__link" href="./ip.html?project=${encodeURIComponent(nextProject.id)}">${escapeHTML(nextProject.title)} <span aria-hidden="true">→</span></a>
+        <p class="next-scroll__hint">${escapeHTML(nextProject.short)}</p>
       </section>
     </div>
   `;
