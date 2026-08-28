@@ -15,7 +15,10 @@ export const BASE_URL = process.env.SMOKE_BASE_URL || `http://127.0.0.1:${PORT}`
 
 // 生产构建的 10 个入口页(与 vite.config.js 的 productionInput 一一对应)。
 // demos/galactic-core.html 已按 F10 移出生产构建,故不在此列 —— 见 buildOutputPages()。
-export const PAGES = [
+// SMOKE_PAGES=privacy,terms 可只跑子集(负控 meta-test 用它把耗时压到 ~10s)。
+const PAGE_FILTER = (process.env.SMOKE_PAGES || '').split(',').map((x) => x.trim()).filter(Boolean)
+
+const ALL_PAGES = [
   { name: 'index',       path: '/index.html' },
   { name: 'ip',          path: '/ip.html' },
   { name: 'apechain',    path: '/apechain.html' },
@@ -27,6 +30,12 @@ export const PAGES = [
   { name: 'terms',       path: '/terms.html' },
   { name: 'preset-life', path: '/preset-life.html' },
 ]
+
+export const PAGES = PAGE_FILTER.length
+  ? ALL_PAGES.filter((p) => PAGE_FILTER.includes(p.name))
+  : ALL_PAGES
+
+export const EXPECTED_BUILD_PAGES = ALL_PAGES.map((p) => p.path.replace(/^\//, '')).sort()
 
 // ── 自检开关(负控)────────────────────────────────────────────────
 // SMOKE_SELFTEST=console | pageerror | network | empty | all

@@ -17,7 +17,8 @@ let bad = 0
 for (const [kind, desc] of FAULTS) {
   const r = spawnSync(process.execPath, ['--test', 'tests/smoke.test.mjs'], {
     cwd: ROOT,
-    env: { ...process.env, SMOKE_SELFTEST: kind },
+    // 只跑一个小页面即可证明断言会红,把 meta-test 的耗时从 ~4x50s 压到 ~4x10s
+    env: { ...process.env, SMOKE_SELFTEST: kind, SMOKE_PAGES: process.env.SMOKE_PAGES || 'privacy' },
     encoding: 'utf8',
   })
   const failing = (r.stdout.match(/^# fail (\d+)$/m) || [])[1] || '?'

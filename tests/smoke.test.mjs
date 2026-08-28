@@ -5,7 +5,7 @@ import { test, before, after } from 'node:test'
 import assert from 'node:assert/strict'
 import { chromium } from 'playwright'
 import {
-  PAGES, BASE_URL, OUT_DIR, startServer, probe, buildOutputPages, isSelftest,
+  PAGES, EXPECTED_BUILD_PAGES, BASE_URL, OUT_DIR, startServer, probe, buildOutputPages, isSelftest,
   launchChromium,
 } from './helpers.mjs'
 
@@ -25,7 +25,7 @@ after(async () => {
 // ── 构建产物本身的断言 ───────────────────────────────────────────
 // 同时守住 F10:demos/galactic-core.html 若又混进生产构建,这条会红。
 test(`${OUT_DIR} 恰好包含 10 个生产入口页`, () => {
-  const expected = PAGES.map((p) => p.path.replace(/^\//, '')).sort()
+  const expected = EXPECTED_BUILD_PAGES
   const actual = buildOutputPages()
   assert.deepEqual(actual, expected,
     `构建产物页面集合与预期不符\n  实际: ${actual.join(', ')}\n  预期: ${expected.join(', ')}`)
