@@ -2530,7 +2530,7 @@ function initHeroWebGL(THREE) {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
     updateHeroScrollState();
-    if (isReduced()) renderFrame();
+    requestRepaint();
   });
 
   function updateHeroScrollState() {
@@ -2552,7 +2552,7 @@ function initHeroWebGL(THREE) {
       scrollTicking = false;
       updateHeroScrollState();
       // F25:静态模式下没有常驻循环,滚动引起的变化在这里补一帧
-      if (isReduced()) renderFrame();
+      requestRepaint();
     });
   }
   window.addEventListener('scroll', onHeroScroll, { passive: true });
@@ -2709,6 +2709,9 @@ function initHeroWebGL(THREE) {
     createCardTexture(app.image, app.name, function(tex) {
       mat.map = tex;
       mat.needsUpdate = true;
+      // 贴图是异步到货的。减少动画偏好(或 hero 不可见)时主循环并不在跑,
+      // 这里必须主动补一帧,否则卡片会停在没有贴图的纯白状态。
+      requestRepaint();
     });
 
     ringGroup.add(mesh);
@@ -2743,7 +2746,7 @@ function initHeroWebGL(THREE) {
       // F25:静态模式下直接落到目标角度,不播 40 帧吸附动画
       ringAngle = snapTarget;
       snapProgress = 1;
-      renderFrame();
+      requestRepaint();
       return;
     }
     snapStartAngle = ringAngle;
@@ -2778,6 +2781,12 @@ function initHeroWebGL(THREE) {
   function refreshLoopState() {
     if (loopShouldRun()) startLoop();
     else { stopLoop(); renderFrame(); }
+  }
+  // 循环没在跑时按需补一帧(贴图到货、静态模式下的滚动等)。
+  // ready 保证初始化尚未完成时(比如没有图片的卡片会同步回调)不会提前进 renderFrame。
+  var ready = false;
+  function requestRepaint() {
+    if (ready && rafId === null) renderFrame();
   }
 
   function renderFrame() {
@@ -2865,6 +2874,7 @@ function initHeroWebGL(THREE) {
 
   if (window.cyMotion) window.cyMotion.onChange(refreshLoopState);
 
+  ready = true;
   renderFrame();
   startLoop();
 }
