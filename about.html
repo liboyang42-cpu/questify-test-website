@@ -239,7 +239,9 @@
 
   // 进场动画(gsap):hero 文案依次浮现;尊重 prefers-reduced-motion
   // (地球的淡入交给 startEarth,因为它比首屏晚到)
-  const heroBits = ['.hero .eyebrow', '.hero h1', '.hero p', '.hero .scroll'];
+  // 逐条列出而不用 '.hero p':兜底联系方式(.contact-fallback)也在 .hero 里,
+  // 它是表单失效时唯一的可触达路径,不该被入场动画挡住
+  const heroBits = ['.hero .eyebrow', '.hero h1', '.contact-lead', '.contact-meta'];
   gsap.matchMedia().add({
     motion: '(prefers-reduced-motion: no-preference)',
     reduce: '(prefers-reduced-motion: reduce)'
