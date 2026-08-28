@@ -51,6 +51,12 @@
   .cy-burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
 }
 
+/* 全屏浮层(剧本阅读器等)打开时收起固定顶栏。
+   .cy-header 是 position:fixed; z-index:1000,任何浮层都会被它压住。
+   约定:页面设 body[data-cy-chrome="hidden"](或调 cyShell.setChromeHidden(true)),
+   站壳自己响应 —— 页面不要反过来去写 .cy-header 的内部样式。 */
+body[data-cy-chrome="hidden"] .cy-header{ display:none; }
+
 /* ── Footer ── */
 .cy-footer{
   background:#08080b; border-top:1px solid rgba(255,255,255,.08);

@@ -4,7 +4,8 @@
 (function () {
   var NAV = [
     { label: '探索', href: '/index.html', match: ['/', '/index.html', '/apechain.html', '/deploy.html', '/d20.html'] },
-    { label: 'IP', href: '/ip.html', match: ['/ip.html'] },
+    // preset-life 是从 IP 页档案 rail 进去的阅读器页,归在 IP 栏目下
+    { label: 'IP', href: '/ip.html', match: ['/ip.html', '/preset-life.html'] },
     { label: '构建', href: '/build.html', match: ['/build.html'] },
     { label: '联系我们', href: '/about.html', match: ['/about.html'] }
   ];
@@ -86,6 +87,43 @@
     return footer;
   }
 
+  // 站壳节点的 inert 状态。页面可能在站壳挂载前就打开模态,所以状态存在这里,
+  // mount() 时补上,不依赖「站壳一定先挂载」的时序。
+  var inertState = false;
+
+  function shellNodes() {
+    return [document.querySelector('.cy-header'), document.querySelector('.cy-footer')];
+  }
+
+  function applyInert() {
+    shellNodes().forEach(function (el) {
+      if (!el) return;
+      if (inertState) {
+        el.inert = true;
+        el.setAttribute('aria-hidden', 'true');
+      } else {
+        el.inert = false;
+        el.removeAttribute('aria-hidden');
+      }
+    });
+  }
+
+  /* 对外接口(单一事实源的一部分):
+     cyShell.setInert(true)        —— 打开模态时把站壳 header/footer 移出可访问树与焦点顺序
+     cyShell.setChromeHidden(true) —— 全屏浮层期间收起固定顶栏,免得 z-index:1000 的顶栏压住浮层。
+                                      实际隐藏由 site-shell.css 的 body[data-cy-chrome="hidden"] 负责,
+                                      页面也可以直接设这个 data 属性,不必依赖本 JS。 */
+  window.cyShell = {
+    setInert: function (on) {
+      inertState = !!on;
+      applyInert();
+    },
+    setChromeHidden: function (on) {
+      if (on) document.body.setAttribute('data-cy-chrome', 'hidden');
+      else document.body.removeAttribute('data-cy-chrome');
+    }
+  };
+
   function mount() {
     if (!document.querySelector('.cy-header')) {
       document.body.insertBefore(buildHeader(), document.body.firstChild);
@@ -93,6 +131,7 @@
     if (!document.querySelector('.cy-footer')) {
       document.body.appendChild(buildFooter());
     }
+    applyInert();
   }
 
   if (document.readyState === 'loading') {
