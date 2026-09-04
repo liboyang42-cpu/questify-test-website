@@ -1,9 +1,11 @@
 /* 城瘾官网共享站壳 —— 单一事实源:导航/页脚/当前栏目/移动菜单。
    用法:页面 <head> 引 site-shell.css,<body> 末引 <script src="/site-shell.js" defer>。
-   自动注入 header(body 首)与 footer(body 末),按路径高亮当前栏目。 */
+   自动注入 header(body 首)与 footer(body 末),按路径高亮当前栏目。
+   body[data-cy-shell="footer"] 只注入页脚(IP 页自带顶栏)。 */
 (function () {
   var NAV = [
     { label: '探索', href: '/index.html', match: ['/', '/index.html', '/apechain.html', '/deploy.html', '/d20.html'] },
+    { label: 'IP', href: '/ip.html', match: ['/ip.html'] },
     { label: '构建', href: '/build.html', match: ['/build.html'] },
     { label: '联系我们', href: '/about.html', match: ['/about.html'] }
   ];
@@ -22,7 +24,7 @@
     var header = document.createElement('header');
     header.className = 'cy-header';
     header.innerHTML =
-      '<a class="cy-header__logo" href="/index.html" aria-label="城瘾首页">城瘾</a>' +
+      '<a class="cy-header__logo" href="/index.html" aria-label="城瘾首页"><img src="/assets/logo.png" alt=""></a>' +
       '<button class="cy-burger" aria-label="菜单" aria-expanded="false" aria-controls="cyNav">' +
         '<span></span><span></span><span></span></button>' +
       '<nav class="cy-nav" id="cyNav" aria-label="主导航">' + links + '</nav>';
@@ -48,19 +50,24 @@
         '<div class="cy-footer__cols">' +
           '<div class="cy-footer__col"><h4>探索</h4>' +
             '<a href="/index.html">首页</a><a href="/apechain.html">产品能力</a>' +
-            '<a href="/build.html">共建</a><a href="/d20.html">d20 判定</a></div>' +
+            '<a href="/ip.html">IP 世界</a><a href="/build.html">共建</a></div>' +
           '<div class="cy-footer__col"><h4>合作</h4>' +
             '<a href="/about.html">联系我们</a><a href="/build.html">商家 / 俱乐部</a></div>' +
         '</div>' +
       '</div>' +
       '<div class="cy-footer__bottom">' +
-        '<span>&copy; 2026 城瘾 · 西安吾令文化传媒有限公司</span>' +
+        '<span>&copy; 2026 城瘾hub · 上海城瘾科技有限公司</span>' +
+        '<span class="cy-footer__meta">' +
+          '<a href="https://chein.ink" target="_blank" rel="noopener noreferrer">chein.ink</a>' +
+          '<a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">沪ICP备2026043558号-1</a>' +
+        '</span>' +
       '</div>';
     return footer;
   }
 
   function mount() {
-    if (!document.querySelector('.cy-header')) {
+    var shell = document.body.getAttribute('data-cy-shell') || 'all';
+    if (shell !== 'footer' && !document.querySelector('.cy-header')) {
       document.body.insertBefore(buildHeader(), document.body.firstChild);
     }
     if (!document.querySelector('.cy-footer')) {

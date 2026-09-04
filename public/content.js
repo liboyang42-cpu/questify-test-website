@@ -80,16 +80,16 @@ window.__siteContent = {
       nameStyle: {
         selector: '.Hero-app-name h2 span',
         css: {
-          'font-family': "'Bebas Neue', 'Oswald', sans-serif",
-          'font-size': '56px',
-          'font-weight': '400',
-          'line-height': '0.785',
+          'font-family': '"HarmonyOS Sans SC", "PingFang SC", sans-serif',
+          'font-size': '40px',
+          'font-weight': '600',
+          'line-height': '1.15',
           'letter-spacing': '0',
-          'text-transform': 'uppercase'
+          'text-transform': 'none'
         },
         media: {
           '(min-width: 768px)': {
-            'font-size': '80px'
+            'font-size': '72px'
           }
         }
       },
@@ -379,19 +379,19 @@ window.__siteContent = {
       labelStyle: {
         selector: '.Discover-label',
         css: {
-          'font-family': "'Bebas Neue', 'Oswald', sans-serif",
-          'font-size': '56px',
-          'font-weight': '400',
-          'line-height': '0.785',
+          'font-family': '"HarmonyOS Sans SC", "PingFang SC", sans-serif',
+          'font-size': '48px',
+          'font-weight': '700',
+          'line-height': '1.15',
           'letter-spacing': '0',
-          'text-transform': 'uppercase'
+          'text-transform': 'none'
         },
         media: {
           '(min-width: 768px)': {
-            'font-size': '120px'
+            'font-size': '88px'
           },
           '(min-width: 1024px)': {
-            'font-size': 'clamp(120px, calc(120 / 900 * 100vh), 200px)'
+            'font-size': 'clamp(72px, 8vw, 120px)'
           }
         }
       }

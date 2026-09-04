@@ -615,17 +615,17 @@
       }
     }
     .Hero-app-name { position: relative; }
-    .Hero-app-name h2 { overflow: hidden; }
+    .Hero-app-name h2 { overflow: visible; }
     .Hero-app-name h2 span {
       display: block;
-      font-family: 'Bebas Neue', 'Oswald', sans-serif;
-      font-weight: 400;
-      text-transform: uppercase;
-      line-height: 0.785;
-      font-size: 56px;
+      font-family: "HarmonyOS Sans SC", "PingFang SC", sans-serif;
+      font-weight: 600;
+      text-transform: none;
+      line-height: 1.15;
+      font-size: 40px;
     }
     @media (min-width: 768px) {
-      .Hero-app-name h2 span { font-size: 120px; }
+      .Hero-app-name h2 span { font-size: 72px; }
     }
 
     .Hero-description {
@@ -1301,6 +1301,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      width: max-content;
       will-change: transform;
     }
     @media (min-width: 1024px) {
@@ -1308,13 +1309,13 @@
         flex-direction: row;
         align-items: baseline;
         gap: 0;
-        animation: marquee-scroll 10s linear infinite running;
+        animation: marquee-scroll 48s linear infinite;
       }
     }
 
     @keyframes marquee-scroll {
       0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
+      100% { transform: translateX(-50%); }
     }
 
     .Discover-label {
@@ -1323,18 +1324,20 @@
       flex-direction: row;
       align-items: center;
       gap: 16px;
-      font-family: 'Bebas Neue', 'Oswald', sans-serif;
-      font-size: 56px;
-      text-transform: uppercase;
-      line-height: 0.785;
+      font-family: "HarmonyOS Sans SC", "PingFang SC", sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      text-transform: none;
+      line-height: 1.15;
       color: #000;
+      white-space: nowrap;
     }
     @media (min-width: 768px) {
-      .Discover-label { font-size: 120px; }
+      .Discover-label { font-size: 88px; }
     }
     @media (min-width: 1024px) {
       .Discover-label {
-        font-size: clamp(120px, calc(120 / 900 * 100vh), 200px);
+        font-size: clamp(72px, 8vw, 120px);
         margin-right: 48px;
       }
     }
@@ -1342,23 +1345,14 @@
     .Discover-label .label {
       position: relative;
       overflow: hidden;
+      line-height: 1.15;
     }
     .Discover-label .label .label__inner {
       display: block;
       position: relative;
-      transition: transform 0.3s ease;
     }
     .Discover-label .label .label__inner--clone {
-      position: absolute;
-      top: 100%; left: 0;
-      width: 100%; height: 100%;
-      color: var(--color-ape-blue);
-    }
-    .Discover-label:hover .label .label__inner--main {
-      transform: translateY(-100%);
-    }
-    .Discover-label:hover .label .label__inner--clone {
-      transform: translateY(-100%);
+      display: none;
     }
 
     .Discover-thumb {
@@ -2944,19 +2938,6 @@
 })();
 </script>
 
-<a href="./d20.html" class="d20-cta" aria-label="试玩 d20 判定">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="12,3 21,8.5 18,18 6,18 3,8.5"/></svg>
-  <span>试玩 d20 判定</span>
-</a>
-<style>
-  .d20-cta{position:fixed;right:24px;bottom:24px;z-index:9000;display:flex;align-items:center;gap:10px;
-    padding:12px 20px;border-radius:100px;text-decoration:none;color:#fff;
-    background:rgba(255,34,51,.16);border:1px solid rgba(255,34,51,.55);backdrop-filter:blur(10px);
-    font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.08em;transition:transform .2s,background .2s}
-  .d20-cta:hover{transform:translateY(-2px);background:rgba(255,34,51,.3)}
-  .d20-cta svg{color:#ff2233}
-  @media(max-width:600px){.d20-cta span{display:none}.d20-cta{padding:12px}}
-</style>
   <script src="/site-shell.js" defer></script>
   <script>
     (function () {

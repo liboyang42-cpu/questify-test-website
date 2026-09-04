@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="canonical" href="https://www.chengyinhub.com/build.html" />
 <title>构建 · 城瘾</title>
-  <meta name="description" content="与城瘾共建:俱乐部 + 商家如何接入城市真人解谜生态。" />
+  <meta name="description" content="与城瘾共建:商家、玩家、俱乐部如何接入城市真人解谜生态。" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="theme-color" content="#0b0b0f" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="城瘾" />
   <meta property="og:title" content="构建 · 城瘾" />
-  <meta property="og:description" content="与城瘾共建:俱乐部 + 商家如何接入城市真人解谜生态。" />
+  <meta property="og:description" content="与城瘾共建:商家、玩家、俱乐部如何接入城市真人解谜生态。" />
   <link rel="stylesheet" href="/assets/fonts/fonts.css" />
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
@@ -25,78 +25,38 @@
   html{scroll-behavior:smooth}
   body{background:var(--bg);color:var(--fg);font-family:var(--cn);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
-  /* header */
-  .site-header{position:fixed;top:0;left:0;width:100%;height:68px;z-index:99;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(7,7,8,.55);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-  .site-logo{font-weight:800;font-size:19px;color:#fff;text-decoration:none;letter-spacing:.12em}
-  .site-nav{display:flex;gap:30px}
-  .site-nav a{color:var(--mut);text-decoration:none;font-size:14px;letter-spacing:.1em;transition:color .2s}
-  .site-nav a:hover,.site-nav a[aria-current=page]{color:#fff}
-
-  /* hero */
   .hero{position:relative;min-height:92vh;display:flex;flex-direction:column;justify-content:center;padding:120px 7vw 60px;overflow:hidden}
   .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 80% -10%,rgba(255,34,51,.22),transparent 50%),radial-gradient(80% 60% at 0% 110%,rgba(40,40,60,.5),transparent 60%);pointer-events:none}
   .eyebrow{position:relative;font-family:var(--display);font-size:clamp(15px,1.4vw,20px);letter-spacing:.4em;color:var(--red);margin-bottom:24px}
   .hero h1{position:relative;font-weight:800;font-size:clamp(48px,9vw,128px);line-height:.92;letter-spacing:-.01em}
   .hero h1 .red{color:var(--red)}
   .hero p{position:relative;margin-top:32px;max-width:560px;color:var(--mut);font-size:clamp(15px,1.5vw,19px);line-height:1.7}
-  .hero-jump{position:relative;margin-top:48px;display:flex;flex-wrap:wrap;gap:14px}
-  .hero-jump a{font-family:var(--display);letter-spacing:.18em;font-size:16px;color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:100px;padding:11px 26px;transition:border-color .2s,color .2s}
-  .hero-jump a:hover{border-color:var(--red);color:#fff}
-  .scrolldown{position:relative;margin-top:48px;font-family:var(--display);font-size:14px;letter-spacing:.4em;color:var(--mut)}
+  .scrolldown{position:relative;margin-top:64px;font-family:var(--display);font-size:14px;letter-spacing:.4em;color:var(--mut)}
 
-  /* chapter (role) */
-  .chapter{position:relative;border-top:1px solid var(--line)}
-  .chapter-head{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:stretch;min-height:60vh}
-  .chapter-intro{padding:9vh 7vw;display:flex;flex-direction:column;justify-content:center}
-  .chapter-index{font-family:var(--display);font-size:clamp(60px,9vw,150px);line-height:.8;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.22);margin-bottom:18px}
-  .chapter-en{font-family:var(--display);font-size:clamp(16px,1.6vw,22px);letter-spacing:.32em;color:var(--red);margin-bottom:8px}
-  .chapter-cn{font-weight:800;font-size:clamp(40px,5vw,72px);line-height:1;margin-bottom:26px}
-  .chapter-lead{color:var(--mut);font-size:clamp(15px,1.4vw,18px);line-height:1.8;max-width:460px}
-  .chapter-tags{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px}
-  .chapter-tags span{font-size:13px;letter-spacing:.06em;color:var(--fg);border:1px solid var(--line);border-radius:100px;padding:7px 16px;background:rgba(255,255,255,.03)}
-  .chapter-visual{position:relative;overflow:hidden;border-left:1px solid var(--line);min-height:60vh}
-  .chapter--merchant .chapter-visual{background:radial-gradient(circle at 50% 40%,rgba(255,34,51,.4),transparent 55%),linear-gradient(160deg,#1a0608,#070708)}
-  .chapter--club .chapter-visual{background:radial-gradient(circle at 50% 45%,rgba(48,209,88,.34),transparent 55%),linear-gradient(160deg,#06160c,#070708)}
-  .chapter-visual .glyph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:clamp(80px,16vw,240px);letter-spacing:.05em;color:rgba(255,255,255,.06)}
-  /* 第二章左右交替:visual 移到左侧,intro 在右 */
-  .chapter--club .chapter-head{direction:rtl}
-  .chapter--club .chapter-intro,.chapter--club .chapter-visual{direction:ltr}
-  .chapter--club .chapter-visual{border-left:0;border-right:1px solid var(--line)}
+  .roles{position:relative}
+  .role{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:stretch;border-top:1px solid var(--line);min-height:74vh}
+  .role-text{padding:9vh 7vw;display:flex;flex-direction:column;justify-content:center}
+  .role-index{font-family:var(--display);font-size:clamp(60px,9vw,150px);line-height:.8;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.22);margin-bottom:18px}
+  .role-en{font-family:var(--display);font-size:clamp(16px,1.6vw,22px);letter-spacing:.32em;color:var(--red);margin-bottom:8px}
+  .role-cn{font-weight:800;font-size:clamp(40px,5vw,72px);line-height:1;margin-bottom:26px}
+  .role-desc{color:var(--mut);font-size:clamp(15px,1.4vw,18px);line-height:1.8;max-width:460px}
+  .role-tags{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px}
+  .role-tags span{font-size:13px;letter-spacing:.06em;color:var(--fg);border:1px solid var(--line);border-radius:100px;padding:7px 16px;background:rgba(255,255,255,.03)}
+  .role-visual{position:relative;overflow:hidden;border-left:1px solid var(--line)}
+  .role:nth-child(1) .role-visual{background:radial-gradient(circle at 50% 40%,rgba(255,34,51,.4),transparent 55%),linear-gradient(160deg,#1a0608,#070708)}
+  .role:nth-child(2) .role-visual{background:radial-gradient(circle at 50% 45%,rgba(10,132,255,.4),transparent 55%),linear-gradient(160deg,#05101f,#070708)}
+  .role:nth-child(3) .role-visual{background:radial-gradient(circle at 50% 45%,rgba(48,209,88,.34),transparent 55%),linear-gradient(160deg,#06160c,#070708)}
+  .role-visual .glyph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:clamp(80px,16vw,240px);letter-spacing:.05em;color:rgba(255,255,255,.06)}
+  .role:nth-child(even) .role-visual{order:-1;border-left:0;border-right:1px solid var(--line)}
 
-  /* 章节内步骤(全宽,黑白高对比) */
-  .chapter-body{border-top:1px solid var(--line);padding:11vh 7vw}
-  .chapter-body-label{font-family:var(--display);font-size:clamp(14px,1.3vw,18px);letter-spacing:.34em;color:var(--red);margin-bottom:14px}
-  .chapter-body-title{font-weight:800;font-size:clamp(28px,4vw,52px);line-height:1.05;margin-bottom:48px;max-width:14ch}
-  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0;border-top:1px solid var(--line)}
-  .step{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:32px 30px;min-height:200px;display:flex;flex-direction:column}
-  .step-no{font-family:var(--display);font-size:clamp(28px,3vw,42px);letter-spacing:.04em;color:rgba(255,255,255,.22);margin-bottom:14px}
-  .step h4{font-weight:800;font-size:19px;margin-bottom:10px;letter-spacing:.02em}
-  .step p{color:var(--mut);font-size:14.5px;line-height:1.7}
-
-  /* 章末 CTA */
-  .chapter-cta{border-top:1px solid var(--line);padding:9vh 7vw;display:flex;flex-wrap:wrap;align-items:center;gap:24px 40px;background:radial-gradient(70% 140% at 0% 0%,rgba(255,34,51,.1),transparent 60%)}
-  .chapter-cta .cta-copy{flex:1 1 300px}
-  .chapter-cta h3{font-weight:800;font-size:clamp(24px,3vw,40px);line-height:1.1;margin-bottom:10px}
-  .chapter-cta p{color:var(--mut);font-size:15px;line-height:1.7;max-width:480px}
-  .cta-pills{display:flex;flex-wrap:wrap;gap:14px}
-  .cta-pill{display:inline-block;font-family:var(--display);letter-spacing:.18em;font-size:18px;text-decoration:none;border-radius:100px;padding:15px 36px;transition:transform .2s,background .2s,color .2s}
-  .cta-pill--solid{color:#fff;border:1px solid var(--red);background:var(--red)}
-  .cta-pill--ghost{color:var(--fg);border:1px solid var(--line);background:transparent}
-  .cta-pill--ghost:hover{border-color:var(--red);color:#fff}
-  .cta-pill:hover{transform:translateY(-3px)}
-
-  /* closing */
-  .closing{border-top:1px solid var(--line);padding:14vh 7vw;text-align:center;background:radial-gradient(80% 120% at 50% 0%,rgba(255,34,51,.16),transparent 60%)}
-  .closing h2{font-weight:800;font-size:clamp(34px,5vw,64px);line-height:1.05;margin-bottom:30px}
-  .closing a{display:inline-block;font-family:var(--display);letter-spacing:.2em;font-size:20px;color:#fff;text-decoration:none;border:1px solid var(--red);background:var(--red);padding:16px 42px;border-radius:100px;transition:transform .2s}
-  .closing a:hover{transform:translateY(-3px)}
+  .cta{border-top:1px solid var(--line);padding:14vh 7vw;text-align:center;background:radial-gradient(80% 120% at 50% 0%,rgba(255,34,51,.16),transparent 60%)}
+  .cta h2{font-weight:800;font-size:clamp(34px,5vw,64px);line-height:1.05;margin-bottom:30px}
+  .cta a{display:inline-block;font-family:var(--display);letter-spacing:.2em;font-size:20px;color:#fff;text-decoration:none;border:1px solid var(--red);background:var(--red);padding:16px 42px;border-radius:100px;transition:transform .2s}
+  .cta a:hover{transform:translateY(-3px)}
 
   @media(max-width:860px){
-    .site-nav{gap:18px}
-    .chapter-head{grid-template-columns:1fr}
-    .chapter--club .chapter-head{direction:ltr}
-    .chapter-visual,.chapter--club .chapter-visual{order:0;border:0;border-top:1px solid var(--line);min-height:40vh}
-    .step{border-right:0}
+    .role,.role:nth-child(even){grid-template-columns:1fr}
+    .role-visual,.role:nth-child(even) .role-visual{order:0;border:0;border-top:1px solid var(--line);min-height:38vh}
   }
 </style>
   <link rel="stylesheet" href="/site-shell.css" />
@@ -104,95 +64,49 @@
 <body>
 <section class="hero">
   <p class="eyebrow">BUILD · 构建</p>
-  <h1>俱乐部 + 商家,<br>共建一座<span class="red">可玩</span>的城市。</h1>
-  <p>城瘾不是一个广告位,而是一套城市事件系统。俱乐部把人组织起来,商家把门店变成节点,共同让街区运转成一场真人游戏。</p>
-
-  <nav class="hero-jump">
-    <a href="#club">01 / 俱乐部</a>
-    <a href="#merchant">02 / 商家</a>
-  </nav>
+  <h1>三种角色,<br>共建一座<span class="red">可玩</span>的城市。</h1>
+  <p>城瘾不是一个广告位,而是一套城市事件系统。商家、玩家、俱乐部各自进入,共同让街区运转起来。</p>
   <p class="scrolldown">SCROLL ↓</p>
 </section>
 
-<!-- ===== 01 俱乐部 ===== -->
-<section class="chapter chapter--club" id="club">
-  <div class="chapter-head">
-    <div class="chapter-intro">
-      <div class="chapter-index">01</div>
-      <p class="chapter-en">CLUB</p>
-      <h2 class="chapter-cn">俱乐部</h2>
-      <p class="chapter-lead">俱乐部把围绕同一主题的人组织起来,让成员可以加入组织、查看活动并共同参与城市探索。具体创建、报名和管理能力以小程序实际开放页面为准。</p>
-      <div class="chapter-tags"><span>加入俱乐部</span><span>创建俱乐部</span><span>主题活动</span><span>成员协作</span></div>
+<div class="roles">
+  <section class="role">
+    <div class="role-text">
+      <div class="role-index">01</div>
+      <p class="role-en">MERCHANT</p>
+      <h2 class="role-cn">商家</h2>
+      <p class="role-desc">把门店变成城市事件的节点,而不是被刷过的广告。提供线索、奖励、验证动作或隐藏玩法,让玩家带着目的到达你的空间。</p>
+      <div class="role-tags"><span>事件节点</span><span>到店任务</span><span>奖励核销</span><span>客流数据</span></div>
     </div>
-    <div class="chapter-visual"><div class="glyph">CLUB</div></div>
-  </div>
+    <div class="role-visual"><div class="glyph">M</div></div>
+  </section>
 
-  <div class="chapter-body">
-    <p class="chapter-body-label">HOW IT WORKS · 俱乐部如何参与</p>
-    <h2 class="chapter-body-title">从建群到办活动,一条线走完。</h2>
-    <div class="steps">
-      <div class="step"><div class="step-no">01</div><h4>创建 / 加入俱乐部</h4><p>新建一个城市探索俱乐部,或加入已有社群,获得组织主题活动的身份与权限。</p></div>
-      <div class="step"><div class="step-no">02</div><h4>创建或参与活动</h4><p>围绕已开放的主题查看活动；具备相应权限的用户可按小程序页面创建活动。</p></div>
-      <div class="step"><div class="step-no">03</div><h4>招募玩家 · 建队</h4><p>开放报名、组建队伍,把感兴趣的人聚到同一场活动里,分好角色与分工。</p></div>
-      <div class="step"><div class="step-no">04</div><h4>配置时间 · 路线 · 集合点</h4><p>安排出发时间、城市路线和集合地点,让线下行程清晰可执行。</p></div>
-      <div class="step"><div class="step-no">05</div><h4>管理报名与现场进度</h4><p>围绕活动页面管理参与信息和现场进度,具体能力以小程序实际开放页面为准。</p></div>
-      <div class="step"><div class="step-no">06</div><h4>保留成员与活动记录</h4><p>活动结束后保留必要的成员关系和参与记录,为后续运营提供依据。</p></div>
-      <div class="step"><div class="step-no">07</div><h4>继续组织活动</h4><p>根据实际开放能力继续组织活动，并沉淀可复用的运营经验。</p></div>
+  <section class="role">
+    <div class="role-text">
+      <div class="role-index">02</div>
+      <p class="role-en">PLAYER</p>
+      <h2 class="role-cn">玩家</h2>
+      <p class="role-desc">带着目的进入城市,完成任务、推进剧情、获得奖励。一个人可以玩,一群人更好玩——组队、竞速、对抗、冲榜。</p>
+      <div class="role-tags"><span>城市任务</span><span>剧情解锁</span><span>组队挑战</span><span>成长路径</span></div>
     </div>
-  </div>
+    <div class="role-visual"><div class="glyph">P</div></div>
+  </section>
 
-  <div class="chapter-cta">
-    <div class="cta-copy">
-      <h3>把你的社群,变成一支城市探索俱乐部。</h3>
-      <p>无论你已经有一群玩伴,还是想从零组建,都可以联系我们了解当前开放的俱乐部能力。</p>
+  <section class="role">
+    <div class="role-text">
+      <div class="role-index">03</div>
+      <p class="role-en">CLUB</p>
+      <h2 class="role-cn">俱乐部</h2>
+      <p class="role-desc">以旅游团、兴趣组的形式组织起来,把一次出门变成一场有主题的城市探索。俱乐部既是组织者,也是城市事件的共建方。</p>
+      <div class="role-tags"><span>旅游团</span><span>主题组局</span><span>共建事件</span><span>社群运营</span></div>
     </div>
-    <div class="cta-pills">
-      <a class="cta-pill cta-pill--solid" href="./about.html#contact">咨询创建俱乐部 →</a>
-      <a class="cta-pill cta-pill--ghost" href="./about.html#contact">联系俱乐部合作</a>
-    </div>
-  </div>
-</section>
+    <div class="role-visual"><div class="glyph">C</div></div>
+  </section>
+</div>
 
-<!-- ===== 02 商家 ===== -->
-<section class="chapter chapter--merchant" id="merchant">
-  <div class="chapter-head">
-    <div class="chapter-intro">
-      <div class="chapter-index">02</div>
-      <p class="chapter-en">MERCHANT</p>
-      <h2 class="chapter-cn">商家</h2>
-      <p class="chapter-lead">商家可以申请合作，并在实际开放范围内参与城市主题、配置门店内容或权益，让真实空间成为城市探索的一部分。</p>
-      <div class="chapter-tags"><span>合作申请</span><span>城市节点</span><span>门店内容</span><span>参与权益</span></div>
-    </div>
-    <div class="chapter-visual"><div class="glyph">SHOP</div></div>
-  </div>
-
-  <div class="chapter-body">
-    <p class="chapter-body-label">HOW IT WORKS · 商家如何参与</p>
-    <h2 class="chapter-body-title">让门店成为游戏里的任务点。</h2>
-    <div class="steps">
-      <div class="step"><div class="step-no">01</div><h4>申请加入城市主题</h4><p>提交门店信息,申请参与由城瘾运营的城市主题,具体开放范围以通知为准。</p></div>
-      <div class="step"><div class="step-no">02</div><h4>提供场景 · 线索 · 奖励</h4><p>用门店场景、线索、奖励或隐藏菜单设计一个到店动作,给玩家一个非来不可的理由。</p></div>
-      <div class="step"><div class="step-no">03</div><h4>选择验证方式</h4><p>扫码、口令、拍照、答题或店员互动,选一种适合你门店的方式确认玩家真的到了。</p></div>
-      <div class="step"><div class="step-no">04</div><h4>到店核销</h4><p>玩家完成任务后现场核销,奖励发放与任务推进一步到位,流程顺滑不卡壳。</p></div>
-      <div class="step"><div class="step-no">05</div><h4>看参与 · 到店 · 结果数据</h4><p>查看参与人数、到店人数和活动结果,用真实数据评估这次合作的效果。</p></div>
-      <div class="step"><div class="step-no">06</div><h4>评估后续合作</h4><p>结合实际参与结果决定是否继续参与主题或沟通新的合作方案。</p></div>
-    </div>
-  </div>
-
-  <div class="chapter-cta">
-    <div class="cta-copy">
-      <h3>让玩家带着目的,走进你的门店。</h3>
-      <p>让门店从被展示的地址变成可参与的城市节点，为玩家提供更明确的到达与互动场景。</p>
-    </div>
-    <div class="cta-pills">
-      <a class="cta-pill cta-pill--solid" href="./about.html#contact">申请成为合作商家 →</a>
-    </div>
-  </div>
-</section>
-
-<section class="closing">
+<section class="cta">
   <h2>想让你的角色进入这座城市?</h2>
-  <a href="./about.html#contact">联系我们 →</a>
+  <a href="./about.html">联系我们 →</a>
 </section>
   <script src="/site-shell.js" defer></script>
 </body>
